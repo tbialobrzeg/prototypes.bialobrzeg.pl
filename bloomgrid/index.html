@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>Bloomgrid — prototyp r7.1</title>
+<link rel="stylesheet" href="assets/bloomgrid.css">
+<script src="assets/bloomgrid-rules.js"></script>
+<script src="assets/bloomgrid-ui.js"></script>
+</head>
+<body class="bg-page">
+<div id="app"></div>
+<script>
+(async function () {
+  'use strict';
+  var h = BG.h, app = document.getElementById('app');
+  /* Stan = ekran + scenariusz z fixture (klucz: state_id bez sufiksu „.en”). Plansza, trójka, wynik, rekordy i teksty pochodzą z fixture. */
+  var SCREEN = { home: 'screen.home', game: 'screen.game' };
+  var ALLOWED = ['mode', 'state', 'target', 'capture_scenario'];
+  var CAPTURE_SCENARIOS = {};
+
+  function fail(msg) {
+    document.body.className = 'bg-page';
+    app.replaceChildren(h('div', { 'class': 'bg-error', role: 'alert', 'data-prototype-error': 'true' }, 'Błąd renderu prototypu: ' + msg));
+    throw new Error(msg);
+  }
+  async function load(url) {
+    var r = await fetch(url, { cache: 'no-store' });
+    if (!r.ok) throw new Error(url + ' → HTTP ' + r.status);
+    return r.json();
+  }
+
+  var q = new URLSearchParams(location.search);
+  q.forEach(function (_, k) {
+    if (ALLOWED.indexOf(k) < 0) fail('nieznany parametr „' + k + '”');
+    if (q.getAll(k).length > 1) fail('parametr „' + k + '” podany więcej niż raz');
+  });
+
+  var manifest, fixtures;
+  try { manifest = await load('prototype-manifest.json'); fixtures = await load('assets/fixtures.json'); }
+  catch (e) { fail('nie można wczytać manifestu lub fixture (' + e.message + '). Uruchom paczkę przez lokalny serwer HTTP — zob. README.md'); }
+
+  var noParams = Array.from(q.keys()).length === 0;
+  var mode = noParams ? 'user_preview' : q.get('mode');
+  if (mode !== 'capture' && mode !== 'user_preview') fail('nieznany lub brakujący tryb „' + mode + '”');
+  var stateId = q.get('state'), targetId = q.get('target');
+  if (mode === 'capture' && (!stateId || !targetId)) fail('mode=capture wymaga parametrów state i target');
+  if (mode === 'user_preview') { stateId = stateId || manifest.states[0].state_id; targetId = targetId || 'iphone-standard'; }
+  var st = manifest.states.filter(function (x) { return x.state_id === stateId; })[0];
+  if (!st) fail('nieznany stan „' + stateId + '”');
+  var tg = manifest.targets.filter(function (x) { return x.target_id === targetId; })[0];
+  if (!tg) fail('nieznany target „' + targetId + '”');
+  if (st.target_ids && st.target_ids.indexOf(targetId) < 0) fail('niedozwolona para stanu „' + stateId + '” i targetu „' + targetId + '”');
+  var scenario = q.get('capture_scenario');
+  if (scenario !== null) {
+    if (mode !== 'capture') fail('capture_scenario jest dozwolony tylko w mode=capture');
+    if (!CAPTURE_SCENARIOS[stateId] || CAPTURE_SCENARIOS[stateId].indexOf(scenario) < 0) fail('nieobsługiwany capture_scenario „' + scenario + '” dla stanu „' + stateId + '”');
+  }
+  var fx = fixtures.fixtures && fixtures.fixtures[st.fixture_id];
+  if (!fx) fail('fixture „' + st.fixture_id + '” nie istnieje w assets/fixtures.json');
+  var en = /\.en$/.test(stateId), key = stateId.replace(/\.en$/, '');
+  var sc = fx.scenarios && fx.scenarios[key];
+  if (!sc || !SCREEN[sc.screen]) fail('brak scenariusza „' + key + '” w fixture „' + st.fixture_id + '”');
+  document.documentElement.lang = fx.locale;
+
+  var geo = BG.geometry(tg);
+  /* Tło sceny (Q104): ekran startowy — stałe; wyzwanie dnia — z daty ciągu (fixture daily_date_iso);
+     gra klasyczna — losowane przy każdej grze, w prototypie wynik losowania zapisany w scenariuszu stanu (pole background). */
+  var background = sc.screen === 'home' ? BG.HOME_BACKGROUND : sc.mode === 'daily' ? BG.dailyBackground(fx.daily_date_iso) : sc.background;
+  if (BG.CIRCLE.indexOf(background) < 0) fail('brak albo nieznane tło sceny dla stanu „' + key + '” (' + background + ')');
+  var surface = h('div', {
+    'class': 'bg-surface ' + (geo.wide ? 'bg-wide' : 'bg-phone') + (geo.layout === 'landscape' ? ' bg-land' : '') + (tg.height > tg.width ? ' is-portrait' : ' is-landscape') + (mode === 'user_preview' ? ' bg-anim' : ''),
+    'data-background': background,
+    /* r6 (Q177–Q181): układ dopasowany do wysokości okna (phone | phone-merged | landscape | wide) i jego odstępy. */
+    'data-layout': geo.layout,
+    'data-game-mode': sc.screen === 'game' ? sc.mode : null,
+    'data-element-id': 'element.product-work-surface',
+    'data-screen-id': SCREEN[sc.screen],
+    'data-state-id': stateId,
+    'data-target-id': targetId,
+    'data-fixture-id': st.fixture_id,
+    style: { width: tg.width + 'px', height: tg.height + 'px', '--pad-t': geo.sp.t + 'px', '--pad-b': geo.sp.b + 'px', '--pad-x': geo.padX + 'px',
+      '--score-gap': (geo.sp.s || 0) + 'px', '--tray-gap': (geo.sp.g || 0) + 'px', '--min-h': geo.minH + 'px', '--board-w': geo.boardW + 'px', '--side-w': (geo.sideW || 380) + 'px', '--content-w': (geo.wide ? 380 : geo.colW - 2 * geo.padX) + 'px' }
+  });
+
+  function urlFor(s, t) { var u = new URLSearchParams(); u.set('mode', 'user_preview'); u.set('state', s); u.set('target', t); return '?' + u.toString(); }
+  var toast = null, toastTimer = null;
+  function say(msg) {
+    if (!toast) return;
+    toast.textContent = msg; clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toast.textContent = ''; }, 3600);
+  }
+  var known = manifest.states.map(function (s) { return s.state_id; });
+  /* Nawigacja klikalnego prototypu (tylko user_preview): przejście do stanu paczki, w wersji językowej bieżącego stanu, gdy istnieje. */
+  var nav = {
+    live: mode === 'user_preview',
+    go: function (s) {
+      if (mode !== 'user_preview') return;
+      var target = en && known.indexOf(s + '.en') >= 0 ? s + '.en' : s;
+      if (known.indexOf(target) < 0) { say('Akcja → ' + s + ' (stan poza paczką)'); return; }
+      location.search = urlFor(target, targetId);
+    },
+    say: function (m) { if (mode === 'user_preview') say(m); }
+  };
+  /* Ekran leży w przewijanym obszarze (r2: niskie okno przewija stronę); nakładki i przeciągany klocek leżą na powierzchni. */
+  var scroller = h('div', { 'class': 'bg-scroll' });
+  surface.append(scroller);
+  var ctx = { fx: fx, sc: sc, S: fx.strings, loc: fx.locale, geo: geo, nav: nav, surface: surface, root: scroller };
+  var view = sc.screen === 'home' ? renderHome(surface, ctx) : renderGame(surface, ctx);
+
+  if (mode === 'capture') {
+    document.body.className = 'bg-capture';
+    app.append(surface);
+  } else {
+    if (noParams || q.get('mode') !== 'user_preview' || !q.get('state') || !q.get('target')) history.replaceState(null, '', urlFor(stateId, targetId));
+    var stage = h('div', { 'class': 'bg-stage' }, surface);
+    var box = h('div', { 'class': 'bg-stage-box' }, stage);
+    toast = h('div', { 'class': 'bg-toast', role: 'status', 'aria-live': 'polite', 'data-prototype-tool': 'preview-toast' });
+    var bar = BG.previewToolbar({
+      catalogHref: 'catalog.html?target=' + encodeURIComponent(targetId),
+      states: manifest.states.map(function (s) { return { state_id: s.state_id, screen_id: SCREEN[(fixtures.fixtures[s.fixture_id].scenarios[s.state_id.replace(/\.en$/, '')] || {}).screen] }; }),
+      stateId: stateId, targetId: targetId, noteStateId: stateId, targets: manifest.targets, replay: !!(sc.replay || sc.levelUp),
+      onState: function (s) { location.search = urlFor(s, targetId); },
+      onTarget: function (t) { location.search = urlFor(stateId, t); }
+    });
+    app.append(h('div', { 'class': 'bg-preview' }, box), toast, bar);
+    var fit = function () {
+      var bh = bar.offsetHeight;
+      document.body.style.paddingBottom = bh + 'px';
+      toast.style.bottom = (bh + 10) + 'px';
+      var k = Math.min(1, (window.innerWidth - 32) / tg.width, (window.innerHeight - bh - 32) / tg.height);
+      k = Math.max(k, 0.1);
+      stage.style.transform = 'scale(' + k + ')';
+      box.style.width = Math.round(tg.width * k) + 'px';
+      box.style.height = Math.round(tg.height * k) + 'px';
+      if (view && view.layout) view.layout();
+    };
+    fit(); window.addEventListener('resize', fit);
+    if (window.ResizeObserver) new ResizeObserver(fit).observe(bar);
+  }
+
+  await BG.preload();
+  if (document.fonts && document.fonts.ready) await document.fonts.ready;
+  if (view && view.layout) view.layout();
+  surface.setAttribute('data-prototype-ready', 'true');
+  if (mode === 'user_preview' && view && view.focus) view.focus();
+  if (mode === 'user_preview' && view && view.start) view.start();
+
+  /* screen.home (R-3.1, R-4.6) */
+  function renderHome(surface, ctx) {
+    var S = ctx.S, loc = ctx.loc, sc = ctx.sc, wide = ctx.geo.wide;
+    var screen = h('div', { 'class': 'bg-screen bg-home' });
+    var rec = sc.records;
+    var metaRec = BG.fmt(S.meta_record, { n: BG.num(rec.classic, loc) });
+    var metaDaily = BG.fmt(S.meta_daily, { date: S.daily_date, n: BG.num(rec.daily, loc) });
+    screen.append(h('div', { 'class': 'bg-home-top' },
+      BG.wordmark({ elementId: 'element.home.wordmark', S: S, style: wide ? { '--wm-fs': '48px', '--mark': '60px' } : null }),
+      h('img', { 'class': 'bg-home-hero', src: 'assets/img/home-hero.webp', alt: '', draggable: 'false', width: '320', height: '160' })));
+    var actions = h('div', { 'class': 'bg-home-actions' });
+    if (sc.notice === 'read-error') actions.append(BG.alert({ variant: 'read-error', S: S, elementId: 'element.home.read-error' }));
+    if (sc.saved) actions.append(BG.menuButton({ elementId: 'element.home.continue', variant: 'primary', icon: 'resume', label: S.continue, meta: BG.fmt(S.meta_saved, { n: BG.num(sc.saved.score, loc) }),
+      interactionId: 'interaction.home.continue', action: 'tap', expected: 'navigate game.classic-resumed: zapisana gra klasyczna (plansza, trójka, wynik, seria, dalszy ciąg klocków; R-4.2)', onClick: function () { ctx.nav.go('game.classic-resumed'); } }));
+    actions.append(BG.menuButton({ elementId: 'element.home.new-game', variant: sc.saved ? 'secondary' : 'primary', icon: 'play', label: S.new_game, meta: metaRec,
+      interactionId: 'interaction.home.new-game', action: 'tap', expected: 'navigate game.classic-start' + (sc.saved ? '; usuwa zapisaną grę bez potwierdzenia, rekord bez zmian (R-4.4)' : ''), onClick: function () { ctx.nav.go('game.classic-start'); } }));
+    actions.append(BG.menuButton({ elementId: 'element.home.daily', variant: 'secondary', icon: 'calendar', label: S.daily, meta: metaDaily,
+      interactionId: 'interaction.home.daily', action: 'tap', expected: 'navigate game.daily-start: od pierwszej trójki ciągu bieżącej daty (R-3.2, R-3.3)', onClick: function () { ctx.nav.go('game.daily-start'); } }));
+    screen.append(wide ? h('div', { 'class': 'bg-home-mid' }, actions) : actions);
+    /* r5 (Q143): przełącznik dźwięku w prawym górnym rogu ekranu startowego. */
+    screen.append(h('div', { 'class': 'bg-home-sound' }, soundToggles(ctx, 'home')));
+    ctx.root.append(screen);
+    return null;
+  }
+
+  /* component.sound-toggle (Q143): stan z fixture (sound: false = wyciszony), zmiana tylko w user_preview; dźwięku prototyp nie odtwarza. */
+  /* r7: dwa przełączniki obok siebie — „Muzyka” (element.<ekran>.music) i „Efekty” (element.<ekran>.sound, ID z r5); oba domyślnie włączone,
+     stan z fixture (music: false, sound: false = wyciszone). Dźwięku prototyp nie odtwarza. */
+  function soundToggles(ctx, scope) {
+    var music = BG.soundToggle({ kind: 'music', elementId: 'element.' + scope + '.music', S: ctx.S, on: ctx.sc.music !== false, interactionId: 'interaction.' + scope + '.music-toggle', action: 'tap / klik',
+      expected: 'przełącza muzykę (aria-pressed true ↔ false, ikona nuty ↔ przekreślonej nuty); efekty bez zmian; ustawienie zostaje po przeładowaniu (ustawienia urządzenia), nie należy do zapisu gry',
+      inert: !ctx.nav.live,
+      onChange: function (on) { ctx.nav.say(on ? 'Muzyka włączona (prototyp nie odtwarza dźwięku)' : 'Muzyka wyciszona'); } });
+    var effects = BG.soundToggle({ kind: 'effects', elementId: 'element.' + scope + '.sound', S: ctx.S, on: ctx.sc.sound !== false, interactionId: 'interaction.' + scope + '.sound-toggle', action: 'tap / klik',
+      expected: 'przełącza efekty dźwiękowe (aria-pressed true ↔ false, ikona głośnika ↔ przekreślonego głośnika); muzyka bez zmian; ustawienie zostaje po przeładowaniu (ustawienia urządzenia), nie należy do zapisu gry',
+      inert: !ctx.nav.live,
+      onChange: function (on) { ctx.nav.say(on ? 'Efekty włączone (prototyp nie odtwarza dźwięku)' : 'Efekty wyciszone'); } });
+    return h('div', { 'class': 'bg-sound-pair' }, music, effects);
+  }
+
+  /* screen.game */
+  function renderGame(surface, ctx) {
+    var S = ctx.S, loc = ctx.loc, geo = ctx.geo, sc = ctx.sc, daily = sc.mode === 'daily';
+    var screen = h('div', { 'class': 'bg-screen' });
+    var overlay = null, crash = null, levelApi = null;
+    function closeOverlay() { if (overlay) { overlay.remove(); overlay = null; } }
+    function openConfirm(focus) {
+      closeOverlay();
+      overlay = BG.dialog({ elementId: 'element.game.confirm', prefix: 'element.game.confirm.', S: S, row: geo.wide || geo.layout === 'landscape',
+        onKeep: function () { closeOverlay(); }, onEnd: function () { ctx.nav.go('home.with-records'); } });
+      surface.append(overlay);
+      if (focus) overlay.querySelector('[data-element-id="element.game.confirm.keep"]').focus();
+    }
+    var recordBefore = daily ? sc.records.daily : sc.records.classic;
+    function openOver(o, focus, live) {
+      closeOverlay();
+      endMarks();
+      overlay = BG.gameOverPanel({ elementId: 'element.game.over', prefix: 'element.game.over.', S: S, loc: loc, mode: sc.mode, score: o.score, record: o.record, recordBefore: recordBefore, newRecord: o.newRecord, dailyInfo: o.dailyInfo, row: geo.wide || geo.layout === 'landscape',
+        level: daily ? null : BG.levelOf(o.score), motif: daily ? null : BG.motifOf(circleStart, BG.levelOf(o.score)),
+        onAgain: function () { ctx.nav.go(daily ? 'game.daily-start' : 'game.classic-start'); }, onHome: function () { ctx.nav.go('home.with-records'); } });
+      surface.append(overlay);
+      /* Nagłówek pod panelem zgadza się z panelem: po nowym rekordzie pokazuje nowy rekord (R-4.1, R-3.4);
+         po podejściu zakończonym innego dnia nie pokazuje rekordu dnia (R-3.6). */
+      if (daily && o.dailyInfo === 'new-available') record.el.remove();
+      else if (o.newRecord) record.set(o.record);
+      var card = overlay.querySelector('.bg-card');
+      if (live) {
+        /* Q131: panel przez 300 ms nie przyjmuje kliknięć, więc stuknięcie, które skróciło krok, nie uruchamia przycisku panelu. */
+        card.inert = true; setTimeout(function () { card.inert = false; if (focus) overlay.querySelector('[data-element-id="element.game.over.play-again"]').focus(); }, 300);
+        if (BG.fx.reduced()) BG.fx.fade(card); else BG.fx.play(card, 'fx-panel', 250);
+        if (o.newRecord) BG.fx.rain(card, BG.fx.reduced());                                                       /* (8) */
+      } else if (focus) overlay.querySelector('[data-element-id="element.game.over.play-again"]').focus();
+    }
+    /* Q129: oznaczenie klocków trójki i przygaszenie planszy — tylko w chwili końca gry (krok końca i pod panelem końca). */
+    function endMarks() {
+      board.el.classList.add('is-ended');
+      tray.pieces.forEach(function (pe, i) {
+        if (!pe) return;
+        pe.setAttribute('data-variant', 'no-fit');
+        pe.setAttribute('aria-label', pe.getAttribute('aria-label').replace(/( — .*)?$/, ' — ' + S.no_fit_sr));
+        tray.slots[i].setAttribute('data-no-fit', 'true');
+        if (!tray.slots[i].querySelector('.bg-nofit-mark')) tray.slots[i].append(h('span', { 'class': 'bg-nofit-mark', 'aria-hidden': 'true' }, BG.icon('no-fit', 16)));
+      });
+    }
+    /* Krok końca gry (Q128, Q131): 1,5 s plansza i trójka z komunikatem nad trójką; stuknięcie, klik albo Esc pokazuje panel od razu.
+       W mode=capture stan game.no-moves-* zostaje na tym kroku (bez timera). */
+    var step = null;
+    function openNoMoves(o, live) {
+      endMarks();
+      main.classList.add('is-ending');
+      step = BG.noMovesStep({ elementId: 'element.game.no-moves', S: S, interactionId: 'interaction.game.no-moves-skip', action: 'tap / klik / Escape',
+        expected: 'pokazuje panel końca gry od razu (bez czekania 1,5 s); to kliknięcie nie uruchamia przycisku panelu' });
+      /* Warstwa leży na ekranie (przewija się razem z planszą i trójką, np. na phone-landscape) i pokrywa cały ekran. */
+      screen.append(step);
+      placeStep();
+      if (!live) return;
+      if (BG.fx.reduced()) BG.fx.fade(step._msg); else BG.fx.play(step._msg, 'fx-msg', 300);
+      var done = false, timer;
+      var show = function (e) {
+        if (done) return; done = true;
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        clearTimeout(timer); document.removeEventListener('keydown', key, true);
+        step.remove(); step = null; main.classList.remove('is-ending');
+        openOver(o, true, true);
+      };
+      var key = function (e) { if (e.key === 'Escape') show(e); };
+      step.addEventListener('click', show);
+      document.addEventListener('keydown', key, true);
+      timer = setTimeout(function () { show(null); }, BG.MOTION.step);
+    }
+    /* Komunikat nad górną krawędzią trójki (na mac-wide w miejscu paska serii i punktów, który w kroku jest ukryty). */
+    function placeStep() {
+      if (!step) return;
+      var sr = screen.getBoundingClientRect(), k = sr.width / screen.offsetWidth || 1, tr = tray.el.getBoundingClientRect();
+      step._msg.style.left = ((tr.left - sr.left) / k) + 'px';
+      step._msg.style.width = (tr.width / k) + 'px';
+      step._msg.style.top = ((tr.top - sr.top) / k - 12) + 'px';
+    }
+    var exit = BG.iconButton({
+      elementId: 'element.game.exit', label: S.exit_label, icon: 'home', interactionId: 'interaction.game.exit', action: 'tap',
+      expected: daily ? 'open component.dialog „' + S.confirm_title + '” (game.daily-exit-confirm)' : 'navigate home.resume-available bez pytania; gra zachowana do „' + S.continue + '” (R-3.5)',
+      onClick: function () { if (!ctx.nav.live || overlay || crash) return; if (daily) openConfirm(true); else ctx.nav.go('home.resume-available'); }
+    });
+    var record = BG.scoreDisplay({ variant: 'record', label: daily ? S.record_daily : S.record, value: daily ? sc.records.daily : sc.records.classic, loc: loc, elementId: 'element.game.record' });
+    var score = BG.scoreDisplay({ variant: 'score', label: S.score, value: sc.score, loc: loc, elementId: 'element.game.score' });
+    score.el.style.setProperty('--score-fs', geo.wide ? '60px' : '40px');
+    /* r3 (Q107): gra klasyczna to tryb domyślny — bez nazwy trybu w nagłówku; nazwa i data tylko w wyzwaniu dnia (wariant daily, Q108). */
+    /* r5 (Q143): przełącznik dźwięku obok przycisku wyjścia (lewa grupa nagłówka; na mac-wide w siatce Q112). */
+    var centerEl = daily ? BG.modeLabel({ variant: 'daily', S: S, elementId: 'element.game.mode' }) : (levelApi = BG.levelLabel({ S: S, elementId: 'element.game.level', level: 1, motif: surface.getAttribute('data-background') })).el;
+    /* r7 (Q232): na telefonach (także w poziomie) etykieta poziomu albo wstęga wyzwania stoi w wierszu 24 px pod nagłówkiem, w jednej linii;
+       w nagłówku zostają dom, „Muzyka”, „Efekty” i rekord. mac-wide: jak w r6 — środek nagłówka. */
+    var head = h('header', { 'class': 'bg-game-head' }, h('div', { 'class': 'bg-head-left' }, exit, soundToggles(ctx, 'game')),
+      geo.wide ? centerEl : null, record.el);
+    var levelRow = geo.wide ? null : h('div', { 'class': 'bg-level-row' }, centerEl);
+    var board = BG.board({ geo: geo, S: S, elementId: 'element.game.board', elementPrefix: 'element.game.board.' });
+    var tray = BG.tray({ geo: geo, S: S, elementId: 'element.game.tray' });
+    var strip = h('div', { 'class': 'bg-strip', style: { '--board-w': geo.boardW + 'px' } });
+    var saveWrap = null;
+    var scoreWrap = h('div', { 'class': 'bg-score-wrap' }, score.el);
+    if (sc.alert === 'save-error') {
+      /* r6 (Q201): gdy komunikat (76 px) się nie mieści, leży na wierszu wyniku w wariancie jednowierszowym — nigdy na przyciskach
+         nagłówka, planszy ani trójce. */
+      saveWrap = h('div', { 'class': 'bg-save-wrap' + (geo.saveOver ? ' is-over' : '') }, BG.alert({ variant: 'save-error', S: S, line: geo.saveOver, elementId: 'element.game.save-error', interactionId: 'interaction.game.save-retry',
+        onAction: function () { if (!ctx.nav.live) return; saveWrap.remove(); ctx.nav.say('Symulacja: ponowny zapis udany — komunikat znika (R-4.5)'); } }));
+      if (geo.saveOver) { scoreWrap.append(saveWrap); saveWrap = null; }
+    }
+    var main;
+    if (geo.wide) {
+      screen.append(head);
+      main = h('div', { 'class': 'bg-game-main', style: { '--board-w': geo.boardW + 'px' } },
+        board.el, h('div', { 'class': 'bg-side' }, scoreWrap, strip, tray.el, saveWrap));
+    } else if (geo.layout === 'landscape') {
+      /* Q180, Q200: telefon w poziomie — plansza po lewej, po prawej kolumna: nagłówek, wynik, pasek serii i punktów, trójka. */
+      main = h('div', { 'class': 'bg-game-main', style: { '--board-w': geo.boardW + 'px' } },
+        board.el, h('div', { 'class': 'bg-side' }, head, levelRow, scoreWrap, strip, h('div', { 'class': 'bg-tray-wrap' }, tray.el), saveWrap));
+    } else {
+      screen.append(head, levelRow);
+      main = h('div', { 'class': 'bg-game-main', style: { '--board-w': geo.boardW + 'px' } },
+        h('div', { 'class': 'bg-play' }, scoreWrap, strip, board.el),
+        saveWrap, h('div', { 'class': 'bg-tray-wrap' }, tray.el));
+    }
+    screen.append(main);
+    ctx.root.append(screen);
+
+    /* Stan gry z fixture; klatka ruchu (move) liczona regułami z położenia przed ruchem. */
+    var state = { board: BGRules.parseBoard(sc.board), tray: sc.tray.slice(), score: sc.score, combo: sc.combo, dry: sc.dry };
+    var view = {}, moveRes = null;
+    /* r7: w user_preview stany z polem replay zaczynają się sprzed ruchu, a prototyp sam wykonuje ruch ze scenariusza po 0,7 s —
+       widać jego animacje (pochwała, Podlewanie, Kolorowa rabata, święto, awans). „Odtwórz” w pasku narzędzi powtarza. */
+    var replay = !!(ctx.nav.live && sc.replay && sc.move), stateBefore = state;
+    /* r6 (Q175): stany z ruchem (line-clear, color-bonus, combo) pokazują stan PO ruchu — plansza po czyszczeniu, punkty ruchu, seria;
+       rozkwit jest tylko w katalogu (foundation.motion) i na żywo. */
+    if (sc.move) {
+      var res = BGRules.play(state, sc.move.slot, sc.move.row, sc.move.col, BGRules.rng(sc.seed));
+      moveRes = res;
+      state = res.state;
+      view.points = res.move.points;
+      /* r6 (Q189, Q203), r7: premia „Pusta grządka” z danych scenariusza (move.emptyBonus, r7: +2500) — w sumie punktów ruchu, bez osobnego
+         dopisku (premię pokazuje pochwała „Pusta grządka! +2500”); punktacji prototyp nie liczy. */
+      if (sc.move.emptyBonus) {
+        view.points = Object.assign({}, res.move.points, { total: res.move.points.total + sc.move.emptyBonus });
+        state.score += sc.move.emptyBonus;
+      }
+    }
+    if (sc.drag) view.drag = sc.drag;
+    /* Poziomy (Q147–Q153, tylko gra klasyczna): poziom z wyniku. r7.1 (Q219, Q237): motyw wynika wyłącznie z poziomu — początek kręgu 0,
+       poziom 1 = Łąka o świcie (BG.CIRCLE); tło powierzchni = motyw poziomu (pole background w fixture musi mu odpowiadać, sprawdza motif71.cjs). */
+    var level = BG.levelOf(state.score), circleStart = 0;
+    if (!daily) {
+      surface.setAttribute('data-background', BG.motifOf(circleStart, level));
+      levelApi.set(level, BG.motifOf(circleStart, level));
+      if (replay) { var lb = BG.levelOf(stateBefore.score); levelApi.set(lb, BG.motifOf(circleStart, lb)); surface.setAttribute('data-background', BG.motifOf(circleStart, lb)); }
+    }
+    function onLevelChange(newLevel) {
+      var motif = BG.motifOf(circleStart, newLevel), red = BG.fx.reduced();
+      levelApi.set(newLevel, motif);
+      BG.fx.crossfade(surface, function () { surface.setAttribute('data-background', motif); }, red);                       /* (11) */
+      BG.fx.levelUp(score.el.parentElement, BG.levelUpBadge({ S: S, level: newLevel, motif: motif, elementId: 'element.game.level-up' }), red); /* (10) na wyniku */
+      if (red) BG.fx.fade(levelApi.el); else BG.fx.play(levelApi.el, 'fx-pop', BG.MOTION.pop);
+    }
+    var game = BG.play({
+      /* Warstwą przeciąganego klocka jest ekran (przewija się razem z planszą), nie cała powierzchnia. */
+      geo: geo, S: S, loc: loc, state: replay ? stateBefore : state, seed: sc.seed, surface: screen, interactive: true, view: replay ? {} : view,
+      board: board, tray: tray, score: score, strip: strip,
+      ids: { piece: 'element.game.piece-', drag: 'interaction.game.drag-piece-', combo: 'element.game.combo', points: 'element.game.move-points', praise: 'element.game.praise' },
+      animate: ctx.nav.live, levels: !daily,
+      blocked: function () { return !ctx.nav.live || !!overlay || !!crash || !!step; },
+      onMove: function (s, before, x) {
+        if (daily || BG.levelOf(s.score) <= BG.levelOf(before)) return;
+        /* r7: po Pustej grządce plakietka awansu przychodzi ok. 1,5 s później (po napisie święta). */
+        if (x && x.emptyGarden) setTimeout(function () { onLevelChange(BG.levelOf(s.score)); }, BG.MOTION.emptyLevelDelay);
+        else onLevelChange(BG.levelOf(s.score));
+      },
+      onOver: function (s) {
+        openNoMoves({ score: s.score, record: Math.max(recordBefore, s.score), newRecord: s.score > recordBefore, dailyInfo: 'until-midnight' }, true);
+      }
+    });
+    if (sc.overlay === 'confirm') openConfirm(false);
+    if (sc.over) openOver({ score: sc.score, record: sc.over.record, newRecord: sc.over.newRecord, dailyInfo: sc.over.dailyInfo }, false, false);
+    /* game.level-up, game.level-up-praise: stała klatka awansu — nowe tło, etykieta poziomu i plakietka na wyniku (Q188: nie na planszy
+       ani trójce); na żywo plakietka znika po 1,5 s. */
+    if (sc.levelUp && !replay) {
+      var lub = BG.levelUpBadge({ S: S, level: level, motif: BG.motifOf(circleStart, level), elementId: 'element.game.level-up' });
+      score.el.parentElement.append(lub);
+      if (ctx.nav.live) setTimeout(function () { lub.remove(); }, BG.MOTION.levelUp);
+    }
+    /* r7 (Q233, Q234): stany z pochwałą — stała klatka pochwały z ruchu scenariusza (pierwszeństwo: Pusta grządka, Kolorowa rabata,
+       drabina według siły ruchu); „Rajski ogród!” z rozbłyskiem płatków. Inne miejsce niż plakietka awansu (na wyniku). */
+    if (sc.showPraise && moveRes && !replay) {
+      var pv = BG.praiseFor(moveRes.move, state.combo, !!sc.emptyGarden);
+      if (pv && pv !== 'empty-garden') {
+        board.el.append(BG.praise({ S: S, variant: pv, elementId: 'element.game.praise' }));
+        if (pv === 'paradise') { var bst = BG.petalBurst(16); bst.classList.add('is-static'); board.el.append(bst); }
+      }
+    }
+    /* game.empty-garden* (Q189, Q203, r7): stan po ruchu, który opróżnił planszę — rozkwit na całej planszy i pochwała „Pusta grządka! +2500”;
+       capture: stała klatka (bez lotu płatków przez ekran — to tylko ruch); user_preview: święto (12) z ruchu scenariusza. */
+    if (sc.emptyGarden && !replay) {
+      var eg = BG.emptyGarden({ S: S, loc: loc, n: sc.move && sc.move.emptyBonus, elementId: 'element.game.praise' });
+      board.fx.append(BG.emptyBloomFrame(board)); board.el.append(eg);
+    }
+    /* Ruch odtwarzany 0,7 s po gotowości strony (obrazy wczytane), żeby było widać stan sprzed ruchu. */
+    var startReplay = replay ? function () { setTimeout(function () { game.playMove(sc.move, { emptyGarden: sc.emptyGarden ? sc.move.emptyBonus : 0 }); }, 700); } : null;
+    /* Stany game.no-moves-*: krok końca; w user_preview po 1,5 s (albo po stuknięciu) panel końca. */
+    if (sc.noMoves) openNoMoves({ score: sc.score, record: Math.max(recordBefore, sc.score), newRecord: sc.score > recordBefore, dailyInfo: 'until-midnight' }, ctx.nav.live);
+    if (sc.alert === 'crash') {
+      crash = h('div', { 'class': 'bg-crash' }, BG.alert({ variant: 'crash', S: S, elementId: 'element.app.crash', interactionId: 'interaction.app.crash-restart',
+        onAction: function () { ctx.nav.go('home.resume-available'); } }));
+      surface.append(crash);
+    }
+    return {
+      layout: function () { game.layout(); placeStep(); },
+      start: startReplay,
+      focus: function () {
+        var f = surface.querySelector('[data-element-id="element.game.confirm.keep"], [data-element-id="element.game.over.play-again"]');
+        if (f) f.focus();
+      }
+    };
+  }
+})();
+</script>
+</body>
+</html>

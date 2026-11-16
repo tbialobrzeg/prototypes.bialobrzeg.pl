@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Bloomgrid — katalog komponentów r7</title>
+<link rel="stylesheet" href="assets/bloomgrid.css">
+<script src="assets/bloomgrid-rules.js"></script>
+<script src="assets/bloomgrid-ui.js"></script>
+<style>
+body.cat-body{margin:0;background:#E4E2DA;font-family:var(--font);color:var(--ink)}
+.bg-cat{max-width:1240px;margin:0 auto;padding:32px 24px 80px;background:var(--paper)}
+.bg-cat.is-framed{box-shadow:0 0 0 1px var(--line),0 8px 30px rgba(40,34,20,.12)}
+.bg-cat.is-narrow{padding:24px 8px 48px}
+.bg-cat.is-narrow .cat-grid{grid-template-columns:minmax(0,1fr)}
+.bg-cat.is-narrow .cat-spm-box{padding:14px 16px}
+.cat-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;padding-bottom:20px;border-bottom:2px solid var(--line)}
+.cat-head h1{margin:0;font-size:30px;line-height:1.15}
+.cat-head p{margin:6px 0 0;color:var(--ink-2);font-size:15px;max-width:66ch;text-wrap:pretty}
+.cat-tools{display:flex;gap:6px;align-items:center;font-size:14px}
+.cat-tools button{font:inherit;font-weight:700;padding:6px 14px;border-radius:999px;border:2px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.cat-tools button[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.cat-toc{display:flex;flex-wrap:wrap;gap:6px 14px;margin:16px 0 8px;font:13px var(--mono)}
+.cat-toc a{color:var(--green-d)}
+.cat-sec{padding:36px 0;border-bottom:1px solid var(--line);scroll-margin-top:12px}
+.cat-sec > h2{margin:0;font:700 13px var(--mono);color:var(--green);letter-spacing:.02em}
+.cat-sec > h3{margin:4px 0 6px;font-size:24px;line-height:1.2}
+.cat-sem{margin:0 0 20px;color:var(--ink-2);font-size:16px;max-width:72ch;text-wrap:pretty}
+.cat-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:28px;align-items:start}
+@media (max-width:900px){.cat-grid{grid-template-columns:minmax(0,1fr)}}
+.cat-spec{margin:0;display:grid;gap:14px;font-size:14.5px;line-height:1.45}
+.cat-spec dt{font:700 11px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2)}
+.cat-spec dd{margin:2px 0 0;text-wrap:pretty}
+.cat-spec code,.cat-sem code,.cat-table code{font:12.5px var(--mono);background:#F0EBDC;padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+.cat-spec ul{margin:2px 0 0;padding-left:18px}
+.cat-specimens{display:flex;flex-wrap:wrap;gap:18px;min-width:0}
+.cat-spm{display:flex;flex-direction:column;gap:8px;min-width:0;max-width:100%}
+.cat-spm-box{position:relative;max-width:100%;min-width:0;overflow-x:auto;display:flex;align-items:center;justify-content:center;padding:22px;border-radius:14px;background:linear-gradient(180deg,#F3EAD3,#E2D6B8);min-height:96px}
+.cat-spm-label{font:11.5px var(--mono);color:var(--ink-2);display:flex;gap:6px;flex-wrap:wrap;align-items:baseline}
+.cat-spm-label b{font-weight:700;color:var(--ink);background:var(--card);border:1px solid var(--line);padding:1px 6px;border-radius:5px}
+.cat-wide{flex-basis:100%;width:100%}.cat-wide .cat-spm-box{width:100%}
+.cat-table{width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.4}
+.cat-table th,.cat-table td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.cat-table th{font:700 11px var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--ink-2)}
+.cat-table-wrap{overflow-x:auto;max-width:100%}
+.cat-swatch{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px;text-align:center}
+.cat-swatch-cell{--cell:56px}
+.cat-cellrow{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.cat-shapes{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:10px;width:100%}
+.cat-shape{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:92px;padding:8px 4px;border-radius:12px;background:rgba(255,255,255,.6);font:10.5px var(--mono);color:var(--ink-2)}
+.cat-dragbox{position:relative}
+.cat-finger{position:absolute;width:44px;height:44px;border-radius:50%;background:rgba(34,48,30,.18);border:2px solid rgba(34,48,30,.45);transform:translate(-50%,-50%);pointer-events:none}
+.cat-finger-label{position:absolute;transform:translate(-100%,0);font:11px var(--mono);color:var(--ink-2);white-space:nowrap}
+.cat-demo{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px;border-radius:18px;background:linear-gradient(180deg,#F3EAD3,#E2D6B8)}
+.cat-demo .bg-strip{width:var(--board-w)}
+.cat-demo .bg-tray{width:min(100%,var(--tray-w))}
+.cat-stack{display:flex;flex-direction:column;gap:12px;width:min(100%,361px)}
+.cat-replay{margin-top:18px;font:700 13px var(--font);padding:6px 12px;border-radius:999px;border:1.5px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+.cat-replay:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.cat-strip{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;width:100%}
+.cat-cardbox{position:relative;width:100%;display:flex;justify-content:center}
+.cat-note{font-size:13.5px;color:var(--ink-2);margin:8px 0 0}
+</style>
+</head>
+<body class="cat-body">
+<div class="bg-cat" id="cat"></div>
+<script>
+(async function () {
+  'use strict';
+  var h = BG.h, root = document.getElementById('cat');
+  var fixtures, manifest;
+  try { fixtures = await (await fetch('assets/fixtures.json', { cache: 'no-store' })).json(); manifest = await (await fetch('prototype-manifest.json', { cache: 'no-store' })).json(); }
+  catch (e) { root.append(h('div', { 'class': 'bg-error', role: 'alert' }, 'Nie można wczytać assets/fixtures.json lub prototype-manifest.json — uruchom przez lokalny serwer HTTP (README.md).')); return; }
+  var lang = 'default';
+  var cq = new URLSearchParams(location.search);
+  var ctg = manifest.targets.filter(function (t) { return t.target_id === cq.get('target'); })[0] || manifest.targets.filter(function (t) { return t.target_id === 'mac-wide'; })[0];
+  var cUrl = function (t) { var u = new URLSearchParams(); u.set('target', t); return '?' + u.toString(); };
+  if (cq.get('target') !== ctg.target_id) history.replaceState(null, '', cUrl(ctg.target_id));
+  root.style.maxWidth = Math.min(1240, ctg.width) + 'px';
+  if (ctg.width < 1240) root.classList.add('is-framed');
+  if (ctg.width < 900) root.classList.add('is-narrow');
+  var cbar = BG.previewToolbar({
+    catalogHref: cUrl(ctg.target_id), catalogCurrent: true,
+    backHref: 'index.html?mode=user_preview&state=' + encodeURIComponent(manifest.states[0].state_id) + '&target=' + encodeURIComponent(ctg.target_id),
+    targetId: ctg.target_id, noteStateId: 'catalog', targets: manifest.targets,
+    onTarget: function (t) { location.search = cUrl(t); }
+  });
+  document.body.append(cbar);
+  var cfit = function () { document.body.style.paddingBottom = cbar.offsetHeight + 'px'; };
+  cfit(); window.addEventListener('resize', cfit);
+  if (window.ResizeObserver) new ResizeObserver(cfit).observe(cbar);
+  await BG.preload();
+
+  function spm(label, note, node, opts) {
+    opts = opts || {};
+    return h('div', { 'class': 'cat-spm' + (opts.wide ? ' cat-wide' : ''), 'data-catalog-variant': label },
+      h('div', { 'class': 'cat-spm-box', style: opts.boxStyle || null }, node),
+      h('div', { 'class': 'cat-spm-label' }, h('b', {}, label), note || null));
+  }
+  /* r5: przycisk „Odtwórz” przy animacji — narzędzie katalogu (data-prototype-tool), nie UI produktu. */
+  function replayBtn(fn, label) {
+    return h('button', { type: 'button', 'class': 'cat-replay', 'data-prototype-tool': 'catalog-replay', onclick: fn }, '▶ ' + (label || 'Odtwórz'));
+  }
+  function spec(rows) { return h('dl', { 'class': 'cat-spec' }, rows.map(function (r) { return [h('dt', { html: r[0] }), h('dd', { html: r[1] })]; })); }
+  function table(head, rows) {
+    return '<div class="cat-table-wrap"><table class="cat-table"><thead><tr>' + head.map(function (c) { return '<th>' + c + '</th>'; }).join('') + '</tr></thead><tbody>' +
+      rows.map(function (r) { return '<tr>' + r.map(function (c) { return '<td>' + c + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table></div>';
+  }
+  function section(id, title, sem, specRows, specimens) {
+    return h('section', { 'class': 'cat-sec', id: id, 'data-catalog-component': id },
+      h('h2', {}, id), h('h3', {}, title), h('p', { 'class': 'cat-sem', html: sem }),
+      h('div', { 'class': 'cat-grid' }, spec(specRows), h('div', { 'class': 'cat-specimens' }, specimens)));
+  }
+  function geoCell(cell) { var gap = 3, pad = 6; return { cell: cell, gap: gap, pad: pad, boardW: 8 * cell + 9 * gap + 2 * pad }; }
+  function cellBox(o, size) { var w = h('div', { style: { '--cell': (size || 52) + 'px', position: 'relative' } }, BG.cell(o)); return w; }
+  var narrow = ctg.width < 900;
+  var specCell = narrow ? 26 : 30;
+
+  function render() {
+    var fx = fixtures.fixtures[lang], S = fx.strings, loc = fx.locale, C = fx.catalog;
+    document.documentElement.lang = loc;
+    root.replaceChildren();
+    root.append(h('header', { 'class': 'cat-head' },
+      h('div', {}, h('h1', {}, 'Bloomgrid — katalog komponentów'),
+        h('p', {}, 'Rewizja r7 (Q232–Q234): przełączniki „Muzyka” i „Efekty”; na telefonach etykieta poziomu w wierszu pod nagłówkiem; drabina czterech pochwał według siły ruchu; Podlewanie (roślina i krople) zamiast „Seria ×c”; Kolorowa rabata; święto Pustej grządki +2500 (sekcje component.sound-toggle, component.combo-badge, foundation.motion z „Odtwórz”). Z r6 (Q147–Q153, Q175, Q176, Q184, Q185): poziomy gry klasycznej — krąg sześciu motywów tła, etykieta poziomu w nagłówku, plakietka awansu i przenikanie tła, poziom w panelu końca; bez stuknij-stuknij (Q185); przycisk „' + S.to_home + '” w panelu końca (Q184); stany po ruchu bez ramki czyszczenia; deszcz płatków przez całą wysokość karty. Z r5 (Q128–Q143, Q162): krok końca gry z komunikatem i oznaczeniem trójki, panel końca z powodem i różnicą do rekordu, przełącznik dźwięku, animacje z przyciskami „Odtwórz” (foundation.motion). Z r4 (Q111–Q114): tekst wyśrodkowany w poziomie wszędzie; na mac-wide wspólna siatka (przycisk domu i rekord na krawędziach planszy i tacki, wynik, seria i punkty na osi środkowego slotu), większy przycisk domu i rekord; sloty tacki bez szwów. Z r3: nowy wygląd z grafik rastrowych (Q96, Q102–Q106) — kafle z kwiatami, drewniana skrzynia planszy, przyciski i panele z obrazów, trzy ilustrowane tła sceny. Zachowanie, układ, stany, komponenty i publiczne ID bez zmian względem r2. Każdy komponent pokazuje przeznaczenie, warianty, konfiguracje, stany interakcji, rolę i nazwę dostępną, kontrakt akcji (action → expected_effect) w każdym kontekście oraz różnice responsywne. Okazy renderuje ten sam runtime co index.html (assets/bloomgrid-ui.js, reguły w assets/bloomgrid-rules.js). Teksty z fixture „' + lang + '”.')),
+      h('div', { 'class': 'cat-tools', 'data-prototype-tool': 'catalog-fixture' }, 'fixture:',
+        ['default', 'english'].map(function (f) { return h('button', { type: 'button', 'aria-pressed': f === lang ? 'true' : 'false', onclick: function () { lang = f; render(); } }, f); }))));
+    var ids = ['foundation.palette', 'component.board-cell', 'component.board', 'component.piece', 'component.piece-tray', 'component.score-display', 'component.combo-badge', 'component.move-points', 'component.mode-label', 'component.level-label', 'component.level-up-badge', 'component.icon-button', 'component.menu-button', 'component.button', 'component.wordmark', 'component.dialog', 'component.game-over-panel', 'component.alert', 'component.sound-toggle', 'component.no-moves-step', 'foundation.motion', 'responsive', 'states-plan'];
+    root.append(h('nav', { 'class': 'cat-toc' }, ids.map(function (i) { return h('a', { href: '#' + i }, i); })));
+
+    /* Podstawy: kolory i symbole */
+    var colorRows = [['poppy', 'mak — 4 szerokie okrągłe płatki, ciemny środek', '#D44624', '3,84', '#D91D08', 'tile-poppy'], ['sun', 'słonecznik — wieniec wąskich płatków, duży brązowy środek', '#F4BB3D', '9,81', '#D89F2E', 'tile-sun'], ['leaf', 'koniczyna — 4 liście w kształcie serca', '#22A663', '5,47', '#0DA86F', 'tile-leaf'], ['drop', 'chaber — kolczasta gwiazda płatków', '#3C74C3', '3,65', '#4770C4', 'tile-drop'], ['berry', 'kwiat wiśni — kwiaty o 5 płatkach z wcięciem', '#E1339C', '4,21', '#B743A7', 'tile-berry']];
+    root.append(section('foundation.palette', 'Kafle z kwiatami, tła sceny i oprawa',
+      'Pięć kolorów klocków (R-1.3), każdy z własnym kwiatem na każdym polu, na planszy i w trójce (R-1.9, Q27, Q103). Kwiat, a nie barwa, jest pierwszym rozróżnieniem: kolory dają się odróżnić bez widzenia barw (WCAG 1.4.1); para mak–kwiat wiśni różni się sylwetką (4 okrągłe płatki z ciemnym środkiem kontra gromada kwiatów o 5 płatkach z wcięciem). Klucze kolorów w kodzie i DOM (<code>data-color</code>) bez zmian. Jeden jasny wygląd niezależnie od trybu ciemnego systemu (Q32, Q101).',
+      [['Kolory i kwiaty (Q103)', table(['klucz', 'kwiat', 'lico : puste'], colorRows.map(function (r) { return ['<code>' + r[0] + '</code>', r[1], '<code>' + r[2] + '</code> ' + r[3] + ':1']; })) + '<p>Obrazy: <code>assets/img/tile-&lt;klucz&gt;.webp</code>, mały kafel <code>tile-&lt;klucz&gt;-s.webp</code>. Lico = mediana obrazu poza kwiatem.</p>'],
+       ['Kontrola dostępności (Q99, Q102)', 'Puste pole: obraz wgłębienia w ziemi przyciemniony do 62% (mediana <code>#2F140B</code>); lico każdego kafla ma z nim ≥ 3:1 (najmniej chaber 3,65). Symulacja Machado 2009 (pełne nasilenie), najmniejsza różnica par ΔE76 lica: protanopia 14,4 (chaber–wiśnia), deuteranopia 30,0, tritanopia 17,6 (mak–wiśnia); kwiatów: 18,2 / 17,7 / 25,6. Mak–kwiat wiśni: lico 71,2 / 62,2 / 17,6, kwiat 49,2 / 41,2 / 59,1. Kontur kwiatu na najjaśniejszym połysku ≥ 3,7:1. Kafel koniczyny ma przesunięty odcień (szmaragd zamiast limonki), bo limonka zlewała się ze słonecznikiem przy protanopii (ΔE 8,8).'],
+       ['Mały rozmiar (Q102)', 'W trójce (pole 15–20 px) kafel uproszczony: jeden duży kwiat z grubym konturem, bez drobnych płatków i iskier (<code>assets/img/tile-*-s.webp</code>). Plansza (pole ≥ 36 px) i przeciągany klocek używają pełnego kafla.'],
+       ['Tła sceny (Q98, Q104)', 'Trzy ilustracje: <code>blossom-wall</code> (mur z kwitnącą wiśnią), <code>garden-dusk</code> (ogród o zmierzchu z latarniami), <code>hedge</code> (żywopłot z różami). Ekran startowy: zawsze <code>blossom-wall</code>. Gra klasyczna: tło losowane przy każdej nowej grze (w prototypie wynik losowania zapisany w scenariuszu stanu). Wyzwanie dnia: tło z daty ciągu — numer dnia od 1970-01-01 modulo 3 w kolejności blossom-wall, garden-dusk, hedge (10 listopada 2026: <code>garden-dusk</code>). Kadr 9:16 dla powierzchni wyższej niż szeroka, 16:9 dla pozostałych; cover, zakotwiczenie u dołu.'],
+       ['Krąg motywów poziomów (r6, Q147, Q148; r7.1: Q219, Q237)', 'r7.1: kolejność „dzień w podróży” (Q237), poziom 1 = Łąka o świcie (inne tło niż ekran startowy, Q219), motyw wynika wyłącznie z poziomu: poziom n ma motyw <code>CIRCLE[(n − 1) mod 6]</code>; zdania niżej o losowym starcie i naprzemiennych tłach opisują r6. Sześć teł w stałej kolejności: ' + BG.CIRCLE.map(function (b, i) { return (i + 1) + '. <code>' + b + '</code> „' + S.motifs[b] + '”'; }).join(', ') + '. Nowe: <code>lily-pond</code> (staw z liliami wodnymi, poranek), <code>dawn-meadow</code> (łąka o świcie z makami i rumiankami), <code>firefly-night</code> (nocny ogród ze świetlikami i świecącymi grzybami). Gra klasyczna zaczyna na losowym motywie kręgu (motyw poziomu 1); każdy awans przechodzi do następnego motywu, po szóstym znów pierwszy. Poziom n ma motyw <code>CIRCLE[(start + n − 1) mod 6]</code>. Ekran startowy i wyzwanie dnia bez zmian (R-5.4: <code>blossom-wall</code> i data modulo 3 z trzech pierwotnych teł); wyzwanie dnia nie ma poziomów.'],
+       ['Oprawa', 'Plansza to drewniana skrzynia z mosiężnymi gwoździami (<code>assets/img/board-frame.webp</code>, border-image wychodzący 8 / 10 px poza planszę), ziemia <code>#5E321B</code> między polami. Przyciski, sloty trójki, karta dialogu, plakietka serii, plakietka „×2” i przycisk wyjścia to obrazy z tego samego zestawu. Tekst na tle sceny leży na kremowej tabliczce (<code>rgba(255,246,226,.92)</code>, tekst <code>#2A1C10</code>). Czcionka systemowa zaokrąglona (<code>ui-rounded</code>, fallback system-ui), cyfry o stałej szerokości.'],
+       ['Ruch (r5)', 'Animacje tylko po interakcji, opis i przyciski „Odtwórz” w sekcji <a href="#foundation.motion">foundation.motion</a>. W <code>mode=capture</code> stany pokazują jedną stałą klatkę.']],
+      [spm('5 kolorów', 'pole 56 px', h('div', { 'class': 'cat-cellrow' }, BGRules.COLORS.map(function (c) {
+        return h('div', { 'class': 'cat-swatch' }, cellBox({ elementId: 'catalog.palette.' + c, color: c }, 56), h('span', {}, h('code', {}, c)), h('span', {}, S.colors[c]));
+      }))),
+       spm('skala szarości', 'kontrola bez barw', h('div', { 'class': 'cat-cellrow', style: { filter: 'grayscale(1)' } }, BGRules.COLORS.map(function (c) { return cellBox({ elementId: 'catalog.palette.gray.' + c, color: c }, 44); }))),
+       spm('pole 15 px', 'najmniejszy rozmiar (trójka, mobile-compact): kafel uproszczony', h('div', { 'class': 'cat-cellrow bg-small-tiles' }, BGRules.COLORS.map(function (c) { return cellBox({ elementId: 'catalog.palette.small.' + c, color: c }, 15); }))),
+       spm('tła sceny — krąg motywów (r6)', 'kolejność kręgu poziomów; kadr 9:16 i 16:9', h('div', { 'class': 'cat-cellrow' }, BG.CIRCLE.map(function (b) {
+         return h('div', { 'class': 'cat-swatch' }, h('div', { style: { display: 'flex', gap: '6px' } },
+           h('div', { style: { width: '54px', height: '96px', borderRadius: '6px', background: 'url(assets/img/bg-' + b + '-phone.webp) center/cover' } }),
+           h('div', { style: { width: '128px', height: '72px', borderRadius: '6px', background: 'url(assets/img/bg-' + b + '-desktop.webp) center/cover' } })), h('span', {}, h('code', {}, b)), h('span', {}, S.motifs[b]));
+       })))]));
+
+    /* component.board-cell */
+    var pb = { 'class': 'cat-cellrow' };
+    root.append(section('component.board-cell', 'Pole planszy',
+      'Jedno z 64 pól planszy; ta sama oprawa rysuje pola klocka. Pole samo nie ma akcji — gest przyjmuje <code>component.piece</code>. Podświetlenia opisują skutek położenia trzymanego klocka (R-1.4).',
+      [['Warianty', '<ul><li><code>empty</code> — puste: wgłębienie w ziemi (<code>assets/img/cell-empty.webp</code>, przyciemnione do 62%)</li><li><code>filled</code> × 5 kolorów (<code>data-color</code>) — błyszczący kafel z kwiatem koloru (<code>assets/img/tile-&lt;color&gt;.webp</code>; w trójce wersja uproszczona <code>-s</code>)</li></ul>'],
+       ['Modyfikatory podglądu', '<ul><li><code>preview=place</code> — pole, które zajmie trzymany klocek: kafel klocka przykryty 45% koloru pustego pola, biała obwódka 2 px</li><li><code>line=clear</code> — pole linii, którą położenie wyczyści: jasna zasłona i podwójna obwódka ciągła (jasna <code>#FFF1B8</code> 2 px + ciemna <code>#1A1008</code> 1 px, ≥ 4:1 na każdym polu)</li><li><code>line=bonus</code> — pole linii jednego koloru (premia R-2.4): ukośne białe paski i przerywana jasna obwódka na ciemnym pasie; plakietka „' + S.bonus_badge + '” (złota moneta) leży poza polami (<code>component.board</code>, Q59); wyróżnienie nie tylko kolorem (Q25)</li><li><code>clearing</code> — czyszczenie po położeniu: jasny błysk i zmniejszanie do zera (320 ms); w capture stała klatka: rozjaśniony kafel, skala 0,86</li></ul>'],
+       ['Konfiguracje', 'Rozmiar <code>--cell</code>; kafel wypełnia pole (narożniki przezroczyste); puste pole zaokrąglone 20% boku. Pole na przecięciu czyszczonego rzędu i kolumny należy do obu linii (R-1.6) — wariant <code>bonus</code> ma pierwszeństwo przed <code>clear</code>.'],
+       ['Stany interakcji', 'Brak (pole nie jest fokusowalne ani klikalne).'],
+       ['Rola i nazwa dostępna', 'Brak własnej roli; stan planszy opisuje nazwa <code>component.board</code>.'],
+       ['Responsywność', 'Bok 36 / 40 / 42 / 46 / 64 px (mobile-compact / iphone / android / mobile-large / mac-wide). W trójce 15–20 px.']],
+      [spm('empty · filled', '', h('div', pb, cellBox({ elementId: 'catalog.cell.empty' }), BGRules.COLORS.map(function (c) { return cellBox({ elementId: 'catalog.cell.' + c, color: c }); }))),
+       spm('preview=place', 'pole docelowe klocka „' + S.colors.leaf + '”', h('div', pb, cellBox({ elementId: 'catalog.cell.place' }, 52))),
+       spm('line=clear', 'pole zajęte i pole docelowe', h('div', pb, cellBox({ elementId: 'catalog.cell.clear-filled', color: 'drop', line: 'clear' }), cellBox({ elementId: 'catalog.cell.clear-place', line: 'clear' }))),
+       spm('line=bonus', 'linia jednego koloru', h('div', pb, cellBox({ elementId: 'catalog.cell.bonus-filled', color: 'leaf', line: 'bonus' }), cellBox({ elementId: 'catalog.cell.bonus-place', line: 'bonus' }))),
+       spm('clearing', 'klatka capture', h('div', pb, cellBox({ elementId: 'catalog.cell.clearing', color: 'sun', clearing: true })))]));
+    /* Ustaw podgląd „place” w okazach (kolor klocka bez wypełnienia). */
+    ['catalog.cell.place', 'catalog.cell.clear-place', 'catalog.cell.bonus-place'].forEach(function (id) {
+      var el = root.querySelector('[data-element-id="' + id + '"]');
+      el.setAttribute('data-preview', 'place'); el.setAttribute('data-color', 'leaf');
+    });
+
+    /* component.board */
+    var g1 = geoCell(specCell);
+    var demoBoard = BGRules.parseBoard(C.board);
+    function boardSpm(id, view, boardArr) {
+      var b = BG.board({ geo: g1, S: S, elementId: id, elementPrefix: id + '.' });
+      b.render(boardArr || demoBoard, view || {});
+      return b;
+    }
+    var dragP = C.tray[C.drag.slot], dragSh = BGRules.shape(dragP.shape);
+    var an = BGRules.analyze(demoBoard, dragSh, dragP.color, C.drag.row, C.drag.col);
+    var cleared = BGRules.play({ board: demoBoard, tray: C.tray, score: C.score, combo: C.combo, dry: C.dry }, C.drag.slot, C.drag.row, C.drag.col, BGRules.rng(C.seed));
+    function dragSpecimen(touch) {
+      var b = boardSpm('catalog.board.drag-' + (touch ? 'touch' : 'mouse'), { preview: an, previewColor: dragP.color });
+      var pitch = g1.cell + g1.gap, ox = g1.pad + g1.gap, lift = touch ? Math.max(44, g1.cell + 8) : 0;
+      var gh = BG.piece({ piece: dragP, cell: g1.cell, gap: g1.gap, S: S, elementId: null, variant: 'dragging' });
+      var gx = ox + C.drag.col * pitch, gy = ox + C.drag.row * pitch;
+      var box = h('div', { 'class': 'cat-dragbox', style: { width: g1.boardW + 'px', height: g1.boardW + (touch ? 0 : 0) + 'px' } }, b.el, gh);
+      gh.style.left = gx + 'px'; gh.style.top = gy + 'px';
+      var w = dragSh.w * g1.cell + (dragSh.w - 1) * g1.gap, hh = dragSh.h * g1.cell + (dragSh.h - 1) * g1.gap;
+      if (touch) {
+        var fxp = gx + w / 2, fyp = gy + hh + lift;
+        box.append(h('span', { 'class': 'cat-finger', 'aria-hidden': 'true', style: { left: fxp + 'px', top: fyp + 'px' } }));
+        box.append(h('span', { 'class': 'cat-finger-label', style: { left: (fxp + 22) + 'px', top: (fyp + 24) + 'px' } }, 'palec · ' + lift + ' px pod klockiem'));
+        box.style.paddingBottom = '0';
+      }
+      return box;
+    }
+    root.append(section('component.board', 'Plansza 8×8',
+      'Grządka 8×8 pól (R-1.1). Przyjmuje upuszczany klocek; podczas przeciągania pokazuje skutek położenia: pola do zajęcia, linie do wyczyszczenia i linie z premią jednego koloru (R-1.4). Nad miejscem, w którym klocek się nie mieści, i poza planszą nic nie jest podświetlone (Q24).',
+      [['Warianty', '<ul><li><code>idle</code> — stan planszy</li><li><code>preview</code> — trzymany klocek nad miejscem, w którym się mieści: modyfikatory pól z <code>component.board-cell</code> i plakietka „' + S.bonus_badge + '” dla każdej linii jednego koloru. Plakietka nie zasłania żadnego pola (Q59): dla rzędu zaczyna się na prawej ramce na wysokości rzędu i wystaje do 14 px poza planszę; dla kolumny stoi nad górną ramką nad kolumną i wystaje do 10 px ponad planszę (22×18 px)</li><li><code>no-fit</code> — klocek nad zajętymi polami albo poza planszą: wygląd jak <code>idle</code></li><li><code>clearing</code> — po położeniu: plansza z klockiem, czyszczone pola w wariancie <code>clearing</code>, plakietki linii z premią; potem plansza po czyszczeniu</li></ul>'],
+       ['Konfiguracje', 'Plansza (<code>board</code>, 64 pola), widok (<code>preview</code> | <code>clearing</code>). Wymiar: 8·pole + 9·odstęp 3 px (4 px na mac-wide) + 2·rama 6 px (8 px).'],
+       ['Wygląd (r3)', 'Drewniana skrzynia z obrazu (<code>assets/img/board-frame.webp</code>) rysowana jako border-image: obejmuje ramę 6 / 8 px i wychodzi 8 / 10 px poza planszę (border-image-outset, bez wpływu na układ), boki rozciągane (<code>stretch</code>; r4 — w r3 <code>round</code> zostawiał widoczne złącza powtórzeń na środku boków); w wyzwaniu dnia (Q108) na ramie złota listwa 2 px z ciemnym obrysem i złote słońca w narożnikach (<code>daily-sun-cap.webp</code>, 22 / 30 px) — tylko na ramie, co najmniej 9 px od pierwszego pola, więc nie mylą się z obwódką linii ani z plakietką; ziemia między polami <code>#5E321B</code>; cień pod skrzynią. Plakietka „' + S.bonus_badge + '” to złota moneta (<code>badge-coin.webp</code>), tekst <code>#3A2405</code> (≥ 7:1).'],
+       ['Wyznaczenie miejsca', 'Lewy górny róg rysowanego klocka zaokrąglany do najbliższego pola siatki (przyciąganie). Na dotyku klocek jest rysowany nad palcem, a miejsce wyznaczają pola pod narysowanym klockiem, nie pod palcem (R-1.8). Mysz: klocek zachowuje punkt chwytu względem kursora.'],
+       ['Stany interakcji', 'Plansza nie ma własnej akcji; upuszczenie opisuje <code>component.piece</code>. Na planszy <code>touch-action: none</code> — przeciąganie nie przewija strony.'],
+       ['Rola i nazwa dostępna', '<code>role="img"</code>, nazwa „' + BG.fmt(S.board_sr, { n: 23 }) + '” (liczba z bieżącej planszy). Plakietka „' + S.bonus_badge + '” ma tekst dla czytnika „' + S.bonus_sr + '”.'],
+       ['Responsywność', 'Szerokość 327 / 359 / 375 / 407 / 564 px (mobile-compact / iphone / android / mobile-large / mac-wide); na telefonach wyśrodkowana w kolumnie, na mac-wide w lewej kolumnie (zob. <a href="#responsive">responsywność</a>).']],
+      [spm('idle', 'fixture catalog.board', boardSpm('catalog.board.idle').el),
+       spm('preview', 'klocek „' + S.colors.leaf + '” 1×2 nad r6–r7 c8: rząd 6 jednego koloru (×2) i rząd 7 do wyczyszczenia', boardSpm('catalog.board.preview', { preview: an, previewColor: dragP.color }).el),
+       spm('daily · preview', 'wyzwanie dnia (Q108): złota listwa i złote słońca w narożnikach ramy; podgląd, linie i „' + S.bonus_badge + '” bez zmian', h('div', { 'data-game-mode': 'daily' }, boardSpm('catalog.board.daily-preview', { preview: an, previewColor: dragP.color }).el)),
+       spm('no-fit', 'kwadrat 2×2 nad zajętymi polami: bez podświetlenia', boardSpm('catalog.board.no-fit').el),
+       spm('clearing', 'klatka po położeniu', boardSpm('catalog.board.clearing', { clearing: cleared.move.clearedCells, bonusLines: cleared.move.lines }, cleared.move.placedBoard).el),
+       spm('preview · dotyk', 'R-1.8: klocek nad palcem', dragSpecimen(true), { boxStyle: { paddingBottom: '64px', paddingTop: '22px' } }),
+       spm('preview · mysz', 'punkt chwytu zachowany', dragSpecimen(false))]));
+
+    /* component.piece */
+    var pieceRows = [['Kontekst', 'action', 'expected_effect'],
+      ['<code>screen.game</code>, oba tryby; klocek w trójce (<code>element.game.piece-1…3</code>, <code>interaction.game.drag-piece-1…3</code>)', 'naciśnięcie (dotyk albo przycisk myszy)', 'klocek powiększa się do rozmiaru pól planszy; dotyk: rysowany nad palcem (odstęp max(44 px, pole + 8 px)), mysz: punkt chwytu zachowany; slot pokazuje bladą sylwetkę (<code>lifted</code>)'],
+      ['jw.', 'przeciąganie nad miejscem, w którym klocek się mieści', 'plansza w wariancie <code>preview</code>: pola do zajęcia, linie do wyczyszczenia, linie jednego koloru z „' + S.bonus_badge + '”'],
+      ['jw.', 'przeciąganie nad zajętymi polami albo poza planszą', 'nic nie jest podświetlone (Q24)'],
+      ['jw.', 'puszczenie tam, gdzie się mieści', 'klocek na podświetlonych polach, wynik +1 za pole (R-2.1); gdy linie: czyszczenie, <code>component.move-points</code> i ewentualnie <code>component.combo-badge</code>; slot pusty; po trzecim klocku nowa trójka (R-1.1); gdy żaden pozostały klocek się nie mieści — koniec gry (<code>game.over-*</code>) po 450 ms'],
+      ['jw.', 'puszczenie gdzie indziej, przerwanie wskaźnika', 'klocek wraca do slotu; plansza i wynik bez zmian (R-1.5)']];
+    var allShapes = h('div', { 'class': 'cat-shapes' }, BGRules.SHAPES.map(function (sh, i) {
+      return h('div', { 'class': 'cat-shape' }, BG.piece({ piece: { shape: sh.id, color: BGRules.COLORS[i % 5] }, cell: 12, gap: 2, S: S, elementId: 'catalog.piece.shape-' + sh.id, variant: 'static' }), sh.id);
+    }));
+    root.append(section('component.piece', 'Klocek',
+      'Klocek z trójki do przeciągnięcia na planszę. Jeden z 37 kształtów (R-1.2) w jednym z 5 kolorów; bez obrotu i odbicia. Klocek, który nigdzie się nie mieści, w trakcie gry nie jest oznaczony — można go chwycić, a po puszczeniu wraca (Q26). Wyjątek r5 (Q129): w chwili końca gry klocki trójki dostają wariant <code>no-fit</code>.',
+      [['Warianty', '<ul><li><code>tray</code> — w trójce, pola 15–21 px</li><li><code>lifted</code> — w trójce podczas przeciągania: przezroczystość 22%</li><li><code>dragging</code> — przeciągany: pola w rozmiarze pól planszy, cień, ponad interfejsem</li><li><code>static</code> — bez interakcji (okazy, panel końca gry nie używa)</li></ul>'],
+       ['Wariant no-fit (r5, Q129)', 'Tylko w chwili końca gry (krok końca i pod panelem końca), nigdy w trakcie gry: klocek wyszarzony i przygaszony (grayscale 0,85, brightness 0,72), slot z ukośnym kreskowaniem i znakiem przekreślonego koła (<code>#7A1E0E</code> na kremowym kółku) w prawym górnym rogu. Nazwa dostępna z dopiskiem „ — ' + S.no_fit_sr + '”. Bez interakcji (warstwa kroku końca przejmuje stuknięcia).'],
+       ['Konfiguracje', '<code>shape</code> (37 ID poniżej), <code>color</code> (5).'],
+       ['Stany interakcji', 'hover (tylko kursor): rozjaśnienie i cień; kursor <code>grab</code> / <code>grabbing</code>. Brak <code>disabled</code> (Q26). r5: animacje po położeniu nie blokują nowego chwycenia (Q136). Nie jest przełącznikiem.'],
+       ['Rola i nazwa dostępna', '<code>role="img"</code>, <code>aria-roledescription</code> „' + S.piece_role + '”, nazwa „' + BG.fmt(S.piece_sr, { n: 4, cells: BG.cellsWord(4, S), color: S.colors.poppy }) + '”. Tylko przeciąganie, bez drogi dwoma dotknięciami i bez klawiatury — świadome odstępstwo od WCAG 2.5.7 i 2.1.1 (Q22); klocek nie jest fokusowalny.'],
+       ['Interakcja (r6)', 'Dotknięcie lub wciśnięcie w slocie podnosi klocek; tylko przeciąganie (dotyk) albo przeciąganie i niesienie (mysz). Moment podniesienia, pole chwytu, niesienie i blokadę przewijania wdraża Wykonawca według decyzji Q182, Q185, Q186, Q187 i R-1.10, R-1.11; prototyp pokazuje przeciąganie jak w r5.'],
+       ['Interakcje', table(pieceRows[0], pieceRows.slice(1))],
+       ['Responsywność', 'Pole w trójce: 15 / 17 / 18 / 20 / 18 px (mobile-compact / iphone / android / mobile-large / mac-wide), odstęp 2 px. Przeciągany: jak pole planszy. Odstęp nad palcem: 44 / 48 / 50 / 54 px (mobile-compact / iphone / android / mobile-large).']],
+      [spm('tray', '', h('div', { 'class': 'cat-cellrow', style: { alignItems: 'center', gap: '20px' } }, C.tray.map(function (p, i) { return BG.piece({ piece: p, cell: 18, gap: 2, S: S, elementId: 'catalog.piece.tray-' + (i + 1), variant: 'static' }); }))),
+       spm('lifted', '', (function () { var p = BG.piece({ piece: C.tray[1], cell: 18, gap: 2, S: S, elementId: 'catalog.piece.lifted', variant: 'lifted' }); return p; })()),
+       spm('dragging', 'rozmiar pola planszy 40 px', (function () { var p = BG.piece({ piece: C.tray[2], cell: 40, gap: 3, S: S, elementId: 'catalog.piece.dragging', variant: 'static' }); p.style.filter = 'drop-shadow(0 10px 12px rgba(40,24,10,.32))'; return p; })()),
+       spm('no-fit', 'tylko w chwili końca gry (Q129)', (function () {
+         var gN = BG.geometry(narrow ? { width: Math.min(393, ctg.width - 40), height: 800 } : { width: 393, height: 852 });
+         var tN = BG.tray({ geo: gN, S: S, elementId: 'catalog.piece.no-fit-tray' }); tN.el.style.width = (3 * gN.slotPx + 2 * gN.slotGap) + 'px';
+         tN.render(C.tray, function (p, i) { return BG.piece({ piece: p, cell: gN.pc, gap: gN.pg, S: S, elementId: 'catalog.piece.no-fit-' + (i + 1), variant: 'no-fit' }); });
+         tN.slots.forEach(function (s) { s.setAttribute('data-no-fit', 'true'); s.append(h('span', { 'class': 'bg-nofit-mark', 'aria-hidden': 'true' }, BG.icon('no-fit', 16))); });
+         return tN.el;
+       })()),
+       spm('37 kształtów', 'ID kształtu = data-shape', allShapes, { wide: true })]));
+
+    /* component.piece-tray */
+    /* Okazy trójki w rozmiarze iphone-standard; w wąskim katalogu w rozmiarze, który mieści się w ramce okazu (r5: w r4 wychodziły poza ramkę). */
+    var gT = BG.geometry(narrow ? { width: Math.min(393, ctg.width - 40), height: 800 } : { width: 393, height: 852 });
+    function traySpm(id, trayArr) { var t = BG.tray({ geo: gT, S: S, elementId: id }); t.render(trayArr, function (p, i) { return BG.piece({ piece: p, cell: gT.pc, gap: gT.pg, S: S, elementId: id + '.piece-' + (i + 1), variant: 'static' }); }); t.el.style.width = (3 * gT.slotPx + 2 * gT.slotGap) + 'px'; return t.el; }
+    root.append(section('component.piece-tray', 'Trójka klocków',
+      'Trzy sloty z klockami do wyboru (R-1.1). Położony klocek zostawia pusty slot; nową trójkę gra daje dopiero po położeniu wszystkich trzech, w dowolnej kolejności.',
+      [['Warianty slotu', '<ul><li><code>filled</code> — klocek wyśrodkowany w slocie</li><li><code>empty</code> — klocek położony: przygaszone tło i przerywany znak w środku</li></ul>'],
+       ['Konfiguracje', '3 sloty, każdy mieści klocek do 5×5 pól. Kolejność slotów stała w trakcie trójki.'],
+       ['Wygląd (r4)', 'Slot to kremowy panel z jednego obrazu rozciągniętego na cały slot (<code>assets/img/slot.webp</code>, bez 9-slice); trzy sloty mają tę samą całkowitą szerokość i stoją na całkowitych pozycjach (iphone 111 px / odstęp 14, mobile-compact 100 / 14, android i mac-wide 118 / 13, mobile-large, tablet-narrow i phone-landscape 128 / 12), więc różnią się tylko stanem. Pusty slot przygaszony do 62%. Klocki w slocie używają uproszczonych kafli (<code>tile-*-s.webp</code>).'],
+       ['Stany interakcji', 'Brak własnych; interakcje mają klocki.'],
+       ['Rola i nazwa dostępna', '<code>role="group"</code>, nazwa „' + S.tray_sr + '”; pusty slot ma tekst dla czytnika „' + S.slot_empty_sr + '”.'],
+       ['Responsywność', 'Telefony: pełna szerokość treści, 3 kolumny, odstęp 12 px, wysokość slotu 101 / 111 / 116 / 126 px (mobile-compact / iphone / android / mobile-large). mac-wide: 380 px w prawej kolumnie, slot 116 px.']],
+      [spm('3 filled', '', traySpm('catalog.tray.full', C.tray)),
+       spm('1 empty', 'po położeniu pierwszego klocka', traySpm('catalog.tray.one-placed', [null, C.tray[1], C.tray[2]])),
+       spm('2 empty', '', traySpm('catalog.tray.two-placed', [null, C.tray[1], null]))]));
+
+    /* component.score-display */
+    function scoreSpm(id, variant, label, n, fs) { var s = BG.scoreDisplay({ variant: variant, label: label, value: n, loc: loc, elementId: id }); if (fs) s.el.style.setProperty('--score-fs', fs); return s.el; }
+    root.append(section('component.score-display', 'Wynik i rekord',
+      'Liczba z etykietą: wynik bieżącej gry i rekord trybu (R-4.1). Separator tysięcy według języka gry, do 7 cyfr (R-2.5): w PL liczby 4-cyfrowe bez separatora, od 10 000 twarda spacja (norma CLDR); w EN przecinek od 1 000.',
+      [['Warianty', '<ul><li><code>score</code> — „' + S.score + '”, cyfry 40 px (telefony) / 60 px (mac-wide), wyśrodkowane</li><li><code>record</code> — w nagłówku po prawej: „' + S.record + '” (klasyczny) albo „' + S.record_daily + '” (wyzwanie dnia), etykieta 12 px i cyfry 17 px (telefony) albo 14 / 22 px (mac-wide, Q113), tekst wyśrodkowany w tabliczce (Q111); na mac-wide prawa krawędź na prawej krawędzi kolumny tacki (Q112)</li></ul><p>mac-wide (Q112): <code>score</code> wyśrodkowany na osi środkowego slotu tacki, pod nim seria i punkty ruchu na tej samej osi.</p>'],
+       ['Konfiguracje', '<code>label</code>, <code>value</code> (0–9 999 999), język.'],
+       ['Wygląd (r3)', 'Tekst <code>#2A1C10</code> (etykieta <code>#5A4630</code>) na kremowej tabliczce pod tekstem (przy każdym tle sceny, także czarnym pod tabliczką: tekst ≥ 12,8:1, etykieta ≥ 6,9:1); tabliczka nie zmienia rozmiaru elementu. Na mac-wide tabliczka leży pod cyframi i sięga pod etykietę. Ta sama tabliczka jest pod nazwą trybu, punktami ruchu i znakiem.'],
+       ['Zachowanie', 'Wynik zmienia się od razu po położeniu klocka. W trakcie gry rekord w nagłówku pokazuje wartość sprzed bieżącej gry. Po końcu gry nagłówek pod panelem zgadza się z panelem: przy nowym rekordzie pokazuje nowy rekord (R-4.1, R-3.4); po podejściu do wyzwania zakończonym innego dnia rekordu w nagłówku nie ma (R-3.6).'],
+       ['Stany interakcji', 'Brak.'],
+       ['Rola i nazwa dostępna', 'Zwykły tekst (etykieta + liczba), bez regionu live.'],
+       ['Responsywność', 'Cyfry o stałej szerokości (<code>tabular-nums</code>); 7 cyfr z separatorami mieści się na 360 px.']],
+      [spm('score', '0', scoreSpm('catalog.score.zero', 'score', S.score, 0)),
+       spm('score', '4 cyfry', scoreSpm('catalog.score.four', 'score', S.score, 6210)),
+       spm('score', '7 cyfr', scoreSpm('catalog.score.max', 'score', S.score, 9999999)),
+       spm('record', '', scoreSpm('catalog.record.classic', 'record', S.record, C.records.classic)),
+       spm('record', 'wyzwanie dnia', scoreSpm('catalog.record.daily', 'record', S.record_daily, C.records.daily))]));
+
+    /* component.combo-badge */
+    root.append(section('component.combo-badge', 'Podlewanie (r7, zamiast „Seria ×c”)',
+      'Pokazuje stopień serii c, gdy c ≥ 2 (R-2.7), jako roślinę w doniczce, która rośnie z kolejnymi ruchami z czyszczeniem, oraz zapas wody: trzy krople = ruchy bez czyszczenia, które zostały do utraty serii (3 − ruchy bez czyszczenia, R-2.3). Stopień i zapas czytelne bez koloru: kształt rośliny i liczba pełnych kropli (puste krople mają przerywany obrys).',
+      [['Stopnie (data-stage)', '<ul><li>1 — kiełek: dwa listki (×2)</li><li>2 — listki: cztery liście (×3)</li><li>3 — pąk (×4)</li><li>4 — kwiat: pięć płatków (×5)</li><li>5 — złoty kwiat z promieniami blasku, pigułka ze złotą poświatą (×6 i więcej)</li></ul>Obok „×c” (17 px / 900, <code>#3A2405</code>) i trzy krople (<code>data-drops</code> 3 / 2 / 1). Przy ostatniej kropli (<code>data-wilt</code>) roślina więdnie: pąk i kwiat (×4, ×5) zmieniają się w obraz zwiędłej rośliny (<code>plant-wilt.webp</code>), a kiełek, listki i złoty kwiat zostają swoim obrazem, przygaszonym.'],
+       ['Wygląd', 'Kremowa pigułka 30 px (mac-wide 34 px) z brązowym obrysem; roślina w terakotowej doniczce wystaje nad pigułkę, w stałej ramce 44×48 px (mac-wide 50×56, zwarty 38×42), zawsze nad paskiem, nigdy nad planszą. Roślina rośnie w obrazie, doniczka ma tę samą szerokość we wszystkich stopniach. Grafika z generatora (r7): <code>assets/img/plant-1…5.webp</code> i <code>plant-wilt.webp</code>, 88×96 px (2×), w stylu kafli.'],
+       ['Zachowanie', 'Nowy stopień: skok i rozbłysk (300 ms). Wzrost c bez nowego stopnia (c ≥ 6): podbicie (250 ms). Utrata serii: roślina więdnie i opada (400 ms), potem znika. reduced-motion: tylko przezroczystość.'],
+       ['Stany interakcji', 'Brak.'],
+       ['Rola i nazwa dostępna', 'Tekst dla czytnika: „' + BG.fmt(S.combo, { c: 3 }) + ', ' + BG.fmt(S.combo_drops_sr, { d: 2 }) + '”; zmianę ogłasza region <code>component.move-points</code>.'],
+       ['Responsywność', 'Po lewej w pasku nad planszą (telefony), w wierszu wyniku na niskim oknie (Q199), pod wynikiem (mac-wide). r7: wariant zwarty (krople w kolumnie, roślina 38 px szerokości, pigułka ok. 78 zamiast ok. 113 px) — zawsze w wierszu wyniku (<code>phone-merged</code>, pigułka przy dolnej krawędzi wyniku), a na pasku telefonu wtedy, gdy suma i oba dopiski punktów nie mieszczą się obok pełnej pigułki (przed regułą Q203).']],
+      [spm('stopnie', 'c = 2, 3, 4, 5, 7 (3 krople)', h('div', { 'class': 'cat-cellrow', style: { gap: '18px', alignItems: 'flex-end', paddingTop: '18px' } }, [2, 3, 4, 5, 7].map(function (c) { return BG.comboBadge({ c: c, S: S, dry: 0, elementId: 'catalog.combo.' + c }); }))),
+       spm('zapas', 'c = 4: krople 3 / 2 / 1 (więdnie)', h('div', { 'class': 'cat-cellrow', style: { gap: '18px', alignItems: 'flex-end', paddingTop: '18px' } }, [0, 1, 2].map(function (d) { return BG.comboBadge({ c: 4, S: S, dry: d, elementId: 'catalog.combo.dry' + d }); }))),
+       spm('hidden', 'c = 1', h('span', { style: { font: '12px var(--mono)', color: 'var(--ink-2)' } }, '(brak elementu)')),
+       spm('Odtwórz', 'rośnięcie ×2 → ×7, potem usychanie: krople 3 → 2 → 1 i utrata', (function () {
+         var host = h('div', { style: { height: '64px', display: 'flex', alignItems: 'flex-end', paddingLeft: '8px' } });
+         var seq = [[2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0], [7, 1], [7, 2], [0, 0]];
+         function show(c, dry, anim, prevStage) {
+           var old = host.firstChild;
+           if (c < 2) { if (old) BG.fx.wither(old, BG.fx.reduced()); return; }
+           var cb = BG.comboBadge({ c: c, S: S, dry: dry, elementId: 'catalog.combo.play' });
+           host.replaceChildren(cb);
+           if (anim) { if (+cb.getAttribute('data-stage') > prevStage) BG.fx.grow(cb, BG.fx.reduced()); else BG.fx.pop(cb, BG.fx.reduced()); }
+         }
+         show(2, 0, false, 0);
+         return h('div', {}, host, replayBtn(function () {
+           seq.forEach(function (s, i) { setTimeout(function () { var st = host.firstChild ? +host.firstChild.getAttribute('data-stage') : 0; show(s[0], s[1], s[1] === 0, st); }, i * 700); });
+         }, 'Odtwórz Podlewanie'));
+       })())]));
+
+    /* component.move-points */
+    function mp(id, p) { return BG.movePoints({ points: p, S: S, loc: loc, elementId: id }); }
+    root.append(section('component.move-points', 'Punkty ruchu',
+      'Po ruchu, który czyści co najmniej jedną linię, przez chwilę pokazuje przy planszy punkty zdobyte w tym ruchu, z osobnym dopiskiem premii serii i premii za linię jednego koloru, gdy ruch je dał (R-2.6). Położenie bez czyszczenia nie pokazuje punktów ruchu.',
+      [['Warianty', '<ul><li><code>lines</code> — tylko suma</li><li><code>lines+combo</code> — dopisek „' + BG.fmt(S.move_combo, { n: 'n' }) + '”</li><li><code>lines+mono</code> — dopisek „' + BG.fmt(S.move_mono, { n: 'n' }) + '” z gwiazdką</li><li><code>lines+combo+mono</code></li></ul>'],
+       ['Konfiguracje', 'Suma = pola + linie + premia jednego koloru + premia serii (R-2.1–R-2.4); premia jednego koloru = dodatkowe 80·k za każdą linię jednego koloru.'],
+       ['Zachowanie', 'Pojawia się po puszczeniu, znika po 1,4 s; kolejny ruch z czyszczeniem zastępuje go od razu. Ruch bez czyszczenia usuwa poprzedni.'],
+       ['Stany interakcji', 'Brak; nie przechwytuje wskaźnika.'],
+       ['Rola i nazwa dostępna', '<code>role="status"</code>, <code>aria-live="polite"</code>: „' + BG.fmt(S.move_points_sr, { n: BG.num(632, loc) }) + '” + dopiski.'],
+       ['Responsywność', 'Telefony: po prawej w pasku 44 px nad planszą, wyrównanie do prawej, jeden wiersz. mac-wide: pasek pod wynikiem w prawej kolumnie. r6 (Q199): niskie okno w pionie — po prawej stronie wyniku, w jego wierszu, suma nad dopiskami. r6 (Q203): suma i dopiski serii i koloru, gdy się mieszczą; gdy nie (tabliczka wychodzi poza pasek albo wiersz, wchodzi na wskaźnik serii albo wynik), zostaje jeden dopisek — ten o większej wartości (przy równych: seria); na szerszych ekranach oba (stan <code>game.combo-color</code>). Premii „pusta grządka” tabliczka nie pokazuje osobno (jest w sumie i w pochwale).']],
+      [spm('lines', '1 linia', mp('catalog.points.lines', { cleared: 1, total: 83, combo: 0, mono: 0 })),
+       spm('lines+combo', '', mp('catalog.points.combo', { cleared: 2, total: 474, combo: 150, mono: 0 })),
+       spm('lines+mono', '', mp('catalog.points.mono', { cleared: 1, total: 163, combo: 0, mono: 80 })),
+       spm('lines+combo+mono', 'okaz z fixture', mp('catalog.points.all', cleared.move.points))]));
+
+    /* component.mode-label */
+    root.append(section('component.mode-label', 'Nazwa trybu',
+      'Środek nagłówka ekranu gry tylko w wyzwaniu dnia: nazwa trybu i data ciągu (R-3.6: podejście należy do daty rozpoczęcia). Gra klasyczna jest trybem domyślnym i nie ma nazwy w nagłówku (Q107): <code>element.game.mode</code> nie istnieje w stanach gry klasycznej. r6: w grze klasycznej to samo miejsce zajmuje <a href="#component.level-label">component.level-label</a> (poziom i motyw).',
+      [['Warianty', '<ul><li><code>daily</code> — „' + S.mode_daily + '” i pod spodem data rozpoczęcia podejścia, na ozdobnej śliwkowej wstędze ze złotymi lamówkami (<code>assets/img/daily-ribbon.webp</code>, Q108); tekst kremowy <code>#FFF6E2</code>, data złota <code>#FFD978</code></li><li><s><code>classic</code></s> — usunięty w r3 (Q107)</li></ul>'],
+       ['Stany interakcji', 'Brak.'],
+       ['Rola i nazwa dostępna', 'Zwykły tekst.'],
+       ['Responsywność', 'Wyśrodkowana między przyciskiem wyjścia a rekordem; zawija się do 2 wierszy. Wstęga jest pseudo-elementem wystającym 5 px w górę, 16 px w dół i w bok 22 px (mac-wide) albo 11 px (telefony, żeby na mobile-compact nie zachodziła na tabliczkę rekordu); bez wpływu na układ.']],
+      [spm('daily', '', h('div', { style: { padding: '8px 24px' } }, BG.modeLabel({ variant: 'daily', S: S, elementId: 'catalog.mode.daily' })))]));
+
+    /* r6: component.level-label (Q147, Q151, Q152) */
+    root.append(section('component.level-label', 'Etykieta poziomu',
+      'Środek nagłówka gry klasycznej (to samo miejsce i ta sama budowa w dwóch wierszach co nazwa trybu wyzwania dnia): „' + BG.fmt(S.level, { n: 3 }) + '” i nazwa motywu tła poziomu. Poziom wynika z wyniku, nie jest osobno zapisywany (Q153): poziom = 1 + liczba osiągniętych progów 300, 800, 2000, 3500, 6000, 9000, dalej co 4000 (13&nbsp;000, 17&nbsp;000, …) — Q197. Wyzwanie dnia nie ma poziomów i tej etykiety.',
+      [['Warianty', 'Jeden. Treść: <code>level</code> (liczba) i <code>motif</code> (klucz z kręgu, <code>data-level</code>, <code>data-motif</code>).'],
+       ['Wygląd', 'Kremowa tabliczka jak wynik i rekord (<code>rgba(255,246,226,.92)</code>, wystaje 4 px w pionie i 12 px w bok); „Poziom n” 16 px / 800 <code>#2A1C10</code>, nazwa motywu 12,5 px / 700 <code>#5A4630</code> w jednym wierszu (nazwy motywów mają do 14 znaków, żeby zmieściły się na mobile-compact); interlinia 1,15. mac-wide: 18 / 14 px. Kontrast ≥ 6,9:1 na każdym tle.'],
+       ['Zmiana poziomu', 'Przy awansie etykieta od razu pokazuje nowy poziom i motyw z animacją <code>fx-pop</code> 250 ms (reduced-motion: przezroczystość 150 ms); równocześnie plakietka awansu i przenikanie tła (<a href="#foundation.motion">foundation.motion</a> 10 i 11).'],
+       ['Stany interakcji', 'Brak.'],
+       ['Rola i nazwa dostępna', 'Zwykły tekst czytany „' + BG.fmt(S.level, { n: 3 }) + ': ' + S.motifs['dawn-meadow'] + '” (dwukropek tylko dla czytnika). Awans ogłasza plakietka awansu (<code>role="status"</code>); etykieta nie ogłasza drugi raz.'],
+       ['Responsywność', 'mac-wide: środek nagłówka, dwa wiersze jak w r6. r7 (Q232): telefony (także w poziomie) — wiersz 24 px pod nagłówkiem, jedna linia „' + BG.fmt(S.level, { n: 2504 }) + ' · ' + S.motifs['garden-dusk'] + '” (14 / 13 px) na tabliczce 20 px (≥ 2 px od tabliczki wyniku), wyśrodkowana; nie zawija się, a gdy brak miejsca, nazwa ogrodu skraca się wielokropkiem. Wstęga wyzwania dnia w tym samym wierszu: „' + S.mode_daily + ' · ' + S.daily_date + '”.']],
+      [spm('poziom 1', 'motyw ' + S.motifs['garden-dusk'] + ' — najszersza nazwa (PL)', h('div', { style: { padding: '8px 24px' } }, BG.levelLabel({ S: S, elementId: 'catalog.level.1', level: 1, motif: 'garden-dusk' }).el)),
+       spm('poziom 6', 'motyw ' + S.motifs['firefly-night'], h('div', { style: { padding: '8px 24px' } }, BG.levelLabel({ S: S, elementId: 'catalog.level.6', level: 6, motif: 'firefly-night' }).el)),
+       spm('poziom 12', 'po szóstym motywie krąg wraca do pierwszego', h('div', { style: { padding: '8px 24px' } }, BG.levelLabel({ S: S, elementId: 'catalog.level.12', level: 12, motif: 'hedge' }).el))]));
+
+    /* r6: component.level-up-badge (Q150) */
+    root.append(section('component.level-up-badge', 'Plakietka awansu',
+      'Pokazuje awans na kolejny poziom gry klasycznej: „' + BG.fmt(S.level_up, { n: 3 }) + '” i nazwa nowego motywu, na wyniku przez 1,5 s (r6, Q188: awans przychodzi często, więc plakietka nie zasłania planszy ani trójki). Pochwała „' + S.praise_2 + '” / „' + S.praise_3 + '” z tego samego ruchu stoi nad środkiem planszy — oba elementy naraz, w różnych miejscach, nigdy jeden na drugim (stan <code>game.level-up-praise</code>). Punkty ruchu, seria i rozkwit bez zmian.',
+      [['Warianty', 'Jeden. W <code>mode=capture</code> stany <code>game.level-up</code> i <code>game.level-up-praise</code> pokazują ją jako stałą klatkę.'],
+       ['Wygląd', 'Miodowa pigułka jak pochwała (gradient <code>#FFE9A6 → #F7C95A → #E9A93A</code>, obrys <code>#6F460F</code> 2,5 px), dwa wiersze: „Poziom n!” 24 px / 900 i nazwa motywu 15 px / 800, tekst <code>#3A2405</code> (≥ 7,1:1); mac-wide 32 / 17 px. Wysokość jak element wyniku (telefony ok. 58 px, mac-wide ok. 79 px), środek plakietki = środek wyniku; wynik pod nią dolicza się i jest widoczny po 1,5 s. Nie zasłania nic na stałe: <code>pointer-events: none</code>, gra przyjmuje ruchy w trakcie.'],
+       ['Ruch', 'Pojawienie ze skalą 0,7 → 1,06 → 1 (0–330 ms), postój, zanik od 1275 ms; razem 1500 ms. reduced-motion: tylko przezroczystość, pojawienie i zanik po 150 ms.'],
+       ['Stany interakcji', 'Brak.'],
+       ['Rola i nazwa dostępna', '<code>role="status"</code>, <code>aria-live="polite"</code>, nazwa „' + BG.fmt(S.level_up_sr, { n: 3, name: S.motifs['dawn-meadow'] }) + '”.'],
+       ['Responsywność', 'Na wyniku: telefony — w wierszu wyniku nad paskiem serii i punktów; mac-wide — na wyniku w kolumnie trójki. Nie nachodzi na planszę (z ramą) ani na trójkę na żadnym targecie (pomiar w README).']],
+      [spm('awans', 'poziom 3, motyw ' + S.motifs['dawn-meadow'], (function () {
+         var box = h('div', { style: { position: 'relative', width: '300px', height: '130px' } });
+         function show(anim) { box.replaceChildren(); var b = BG.levelUpBadge({ S: S, level: 3, motif: 'dawn-meadow', elementId: 'catalog.level-up' }); if (anim) BG.fx.levelUp(box, b, BG.fx.reduced()); else box.append(b); }
+         show(false);
+         return h('div', {}, box, replayBtn(function () { show(true); }));
+       })())]));
+
+
+    /* component.icon-button */
+    root.append(section('component.icon-button', 'Przycisk ikony — wyjście',
+      'Przycisk 44×44 px z ikoną domu w nagłówku ekranu gry. Ta sama oprawa ma dwa kontrakty zależnie od trybu (R-3.5).',
+      [['Warianty', '<code>exit</code> (ikona domu).'],
+       ['Interakcje', table(['Kontekst', 'action', 'expected_effect'], [
+         ['<code>screen.game</code>, tryb klasyczny (<code>element.game.exit</code>, <code>interaction.game.exit</code>)', 'tap / klik', 'navigate <code>screen.home</code> (<code>home.resume-available</code>) bez pytania; gra zachowana do „' + S.continue + '”'],
+         ['<code>screen.game</code>, wyzwanie dnia (<code>element.game.exit</code>, <code>interaction.game.exit</code>)', 'tap / klik', 'open <code>component.dialog</code> „' + S.confirm_title + '” (<code>game.daily-exit-confirm</code>); gra wstrzymana pod dialogiem']])],
+       ['Wygląd (r3)', 'Kremowy kafel z zielonym domkiem (<code>assets/img/icon-home.webp</code>); ikona SVG w DOM zostaje, niewidoczna, więc nazwa dostępna i rozmiar się nie zmieniają. Ikona : kafel ≥ 5:1.'],
+       ['Stany interakcji', 'default, hover (rozjaśnienie 6%), pressed (przesunięcie 1 px, przyciemnienie 5%), focus-visible (obrys 3 px <code>#1F5FBF</code>). Brak <code>disabled</code>/<code>busy</code>. Nie jest przełącznikiem.'],
+       ['Rola i nazwa dostępna', '<code>button</code>, nazwa „' + S.exit_label + '” (<code>aria-label</code> i <code>title</code>).'],
+       ['Responsywność', 'Telefony: 44×44 px, lewy róg nagłówka. mac-wide (Q112, Q113): 56×56 px z proporcjonalnie większą ikoną, lewa krawędź na lewej krawędzi planszy, środek na jednej linii ze środkiem tabliczki rekordu.']],
+      ['default', 'hover', 'pressed', 'focus'].map(function (d) { return spm(d, '', BG.iconButton({ elementId: 'catalog.icon-button.' + d, label: S.exit_label, icon: 'home', demo: d === 'default' ? null : d })); })));
+
+    /* component.menu-button */
+    var meta = { cont: BG.fmt(S.meta_saved, { n: BG.num(1240, loc) }), rec: BG.fmt(S.meta_record, { n: BG.num(C.records.classic, loc) }), daily: BG.fmt(S.meta_daily, { date: S.daily_date, n: BG.num(C.records.daily, loc) }) };
+    root.append(section('component.menu-button', 'Przycisk menu startowego',
+      'Duży przycisk ekranu startowego: etykieta trybu i wiersz informacji (rekord, data, zapisany wynik). Ekran startowy pokazuje rekord trybu klasycznego i rekord wyzwania bieżącej daty (R-3.1) w wierszach informacji tych przycisków.',
+      [['Warianty', '<ul><li><code>primary</code> — błyszcząca zielona pigułka (<code>assets/img/btn-primary.webp</code>), ciemnozielony tekst <code>#123F14</code> (5,7:1); pierwsza akcja ekranu: „' + S.continue + '”, gdy jest zapisana gra, w przeciwnym razie „' + S.new_game + '”</li><li><code>secondary</code> — kremowa pigułka z zieloną obwódką (<code>btn-secondary.webp</code>), tekst <code>#2A1C10</code> (12,3:1)</li></ul>'],
+       ['Konfiguracje', '<code>label</code>, <code>meta</code>, <code>icon</code> (resume | play | calendar).'],
+       ['Układ treści (r4, Q111, Q115)', 'Ikona przy lewej krawędzi; blok tekstu (etykieta 19 px i wiersz informacji 15 px, pełne krycie) wyśrodkowany w całym przycisku — jego prawy margines równa się szerokości ikony z odstępem (36 + 10 = 46 px), więc środek tekstu = środek przycisku (±1 px). Wiersze informacji: „' + meta.rec + '”, „' + BG.fmt(S.meta_daily, { n: BG.num(C.records.daily, loc) }) + '” (bez daty — dzisiejsza data jest znana, Q115) i „' + meta.cont + '”. Na mobile-compact wszystkie trzy mieszczą się w jednym wierszu i nie nachodzą na ikonę (najmniejszy odstęp 13,5 px, „' + S.continue + '”); dłuższy tekst zawija się w wyrównane wiersze (<code>text-wrap: balance</code>).'],
+       ['Interakcje', table(['Kontekst', 'action', 'expected_effect'], [
+         ['<code>screen.home</code>, „' + S.continue + '” — tylko przy zapisanej grze klasycznej', 'tap / klik', 'navigate <code>screen.game</code> z zapisaną grą (<code>game.classic-resumed</code>): plansza, trójka, wynik i seria (R-4.2)'],
+         ['<code>screen.home</code>, „' + S.new_game + '”', 'tap / klik', 'navigate <code>game.classic-start</code>; przy zapisanej grze usuwa zapis bez potwierdzenia, rekord bez zmian (R-4.4)'],
+         ['<code>screen.home</code>, „' + S.daily + '”', 'tap / klik', 'navigate <code>game.daily-start</code>: od pierwszej trójki ciągu bieżącej daty (R-3.2, R-3.3)']])],
+       ['Stany interakcji', 'default, hover, pressed (wciśnięcie 3 px), focus-visible (obrys 3 px). Brak <code>disabled</code>/<code>busy</code>; „' + S.continue + '” bez zapisu nie istnieje (nie jest wyłączony). Nie jest przełącznikiem.'],
+       ['Rola i nazwa dostępna', '<code>button</code>; nazwa = etykieta + wiersz informacji, np. „' + S.new_game + ' ' + meta.rec + '”.'],
+       ['Responsywność', 'Telefony: pełna szerokość treści, min. 68 px wysokości, odstęp 12 px, kolumna w dolnej połowie ekranu. mac-wide: kolumna 400 px wyśrodkowana. Wiersz informacji zawija się.']],
+      [spm('bez zapisu', 'home.first-run / home.with-records', h('div', { 'class': 'cat-stack' },
+         BG.menuButton({ elementId: 'catalog.menu.new-game', variant: 'primary', icon: 'play', label: S.new_game, meta: meta.rec }),
+         BG.menuButton({ elementId: 'catalog.menu.daily', variant: 'secondary', icon: 'calendar', label: S.daily, meta: meta.daily }))),
+       spm('z zapisem', 'home.resume-available', h('div', { 'class': 'cat-stack' },
+         BG.menuButton({ elementId: 'catalog.menu.continue', variant: 'primary', icon: 'resume', label: S.continue, meta: meta.cont }),
+         BG.menuButton({ elementId: 'catalog.menu.new-game-2', variant: 'secondary', icon: 'play', label: S.new_game, meta: meta.rec }),
+         BG.menuButton({ elementId: 'catalog.menu.daily-2', variant: 'secondary', icon: 'calendar', label: S.daily, meta: meta.daily }))),
+       spm('stany', 'hover · pressed · focus', h('div', { 'class': 'cat-stack' }, ['hover', 'pressed', 'focus'].map(function (d) { return BG.menuButton({ elementId: 'catalog.menu.' + d, variant: d === 'hover' ? 'secondary' : 'primary', icon: 'play', label: S.new_game, meta: meta.rec, demo: d }); })))]));
+
+    /* component.button */
+    root.append(section('component.button', 'Przycisk',
+      'Przycisk tekstowy w dialogu i panelu końca gry. Każde użycie ma własny kontrakt (tabela w <code>component.dialog</code> i <code>component.game-over-panel</code>).',
+      [['Warianty', '<ul><li><code>primary</code> — zalecana akcja: zielona pigułka, tekst <code>#123F14</code></li><li><code>secondary</code> — akcja alternatywna: kremowa pigułka z zieloną obwódką</li><li><code>danger</code> — akcja z utratą: kremowa pigułka z ceglaną obwódką (<code>btn-danger.webp</code>), tekst <code>#7A1E0E</code> (7,8:1)</li><li><code>light</code> — tylko w komunikacie <code>crash</code>: białe tło (bez zmian)</li></ul>'],
+       ['Stany interakcji', 'default, hover, pressed, focus-visible. Brak <code>disabled</code>/<code>busy</code>. Jednorazowe akcje, nie przełączniki.'],
+       ['Rola i nazwa dostępna', '<code>button</code>, nazwa = etykieta.'],
+       ['Responsywność', 'Min. 52 px wysokości. Telefony: pełna szerokość karty, jeden pod drugim; mac-wide: obok siebie, równa szerokość.']],
+      [spm('primary', '', BG.button({ elementId: 'catalog.button.primary', variant: 'primary', label: S.play_again })),
+       spm('secondary', '', BG.button({ elementId: 'catalog.button.secondary', variant: 'secondary', label: S.to_home })),
+       spm('danger', '', BG.button({ elementId: 'catalog.button.danger', variant: 'danger', label: S.confirm_end })),
+       spm('hover · pressed · focus', '', h('div', { 'class': 'cat-cellrow' }, ['hover', 'pressed', 'focus'].map(function (d) { return BG.button({ elementId: 'catalog.button.' + d, variant: 'primary', label: S.play_again, demo: d }); })))]));
+
+    /* component.wordmark */
+    root.append(section('component.wordmark', 'Nazwa gry',
+      'Znak (grządka 2×2 w kolorach kafli r3 z kiełkiem, <code>assets/bloomgrid-mark.svg</code>) i nazwa „Bloomgrid” na kremowej tabliczce na ekranie startowym, z hasłem; pod nim ilustracja skrzyni z kwiatami (<code>assets/img/home-hero.webp</code>, dekoracja).',
+      [['Warianty', '<code>with-tagline</code> (ekran startowy).'],
+       ['Stany interakcji', 'Brak.'],
+       ['Rola i nazwa dostępna', 'Nazwa jest nagłówkiem <code>h1</code> ekranu; znak ma pusty <code>alt</code> (dekoracja).'],
+       ['Responsywność', 'Telefony: nazwa 34 px, znak 44 px, w górnej części ekranu. mac-wide: nazwa 48 px, znak 60 px.']],
+      [spm('with-tagline', 'telefon', BG.wordmark({ elementId: 'catalog.wordmark.phone', S: S })),
+       spm('with-tagline', 'mac-wide', BG.wordmark({ elementId: 'catalog.wordmark.wide', S: S, style: { '--wm-fs': '48px', '--mark': '60px' } }))]));
+
+    /* component.dialog */
+    root.append(section('component.dialog', 'Dialog potwierdzenia — koniec podejścia',
+      'Pyta przed opuszczeniem wyzwania dnia: „' + S.confirm_title + ' ' + S.confirm_body + '” (R-3.5). Pojawia się nad ekranem gry na ciemnej zasłonie.',
+      [['Konfiguracje', '<code>title</code> „' + S.confirm_title + '”, <code>body</code> „' + S.confirm_body + '”, <code>actions</code> [„' + S.confirm_keep + '” primary, „' + S.confirm_end + '” danger].'],
+       ['Wygląd (r3)', 'Karta z obrazu. Dialog występuje tylko w wyzwaniu dnia, więc ma kartę wyzwania (Q108): drewniana rama ze złotą listwą i złotymi słońcami w narożnikach (<code>assets/img/daily-card.webp</code>, rama 22 px, z czego 6 px na zewnątrz karty); treść i przyciski bez zmian. Panel końca wyzwania (<code>component.game-over-panel</code> <code>daily</code>) ma tę samą kartę, panel gry klasycznej — zwykłą (<code>card.webp</code>). Ramy kart rozciągane (<code>stretch</code>, r4), bez złączy. Tekst karty wyśrodkowany w poziomie, także wielowierszowy (Q111).'],
+       ['Interakcje', table(['Element', 'action', 'expected_effect'], [
+         ['„' + S.confirm_keep + '” (<code>element.game.confirm.keep</code>, <code>interaction.game.confirm.keep</code>)', 'tap / klik / Escape', 'zamyka dialog; gra trwa bez zmian'],
+         ['„' + S.confirm_end + '” (<code>element.game.confirm.end</code>, <code>interaction.game.confirm.end</code>)', 'tap / klik', 'kończy podejście bez zapisu wyniku do rekordu; navigate <code>screen.home</code>'],
+         ['zasłona', 'tap / klik', 'brak efektu (chroni przed przypadkowym zamknięciem)']])],
+       ['Stany interakcji', 'Fokus startuje na „' + S.confirm_keep + '” i nie wychodzi poza dialog. Przyciski jak <code>component.button</code>.'],
+       ['Rola i nazwa dostępna', '<code>alertdialog</code>, <code>aria-modal="true"</code>, nazwa z tytułu, opis z treści.'],
+       ['Responsywność', 'Karta do 380 px (mac-wide do 460 px), wyśrodkowana; margines 16 px. Telefony: przyciski jeden pod drugim; mac-wide: obok siebie, etykiety w jednym wierszu.']],
+      [spm('telefon', '', h('div', { 'class': 'cat-cardbox', 'data-game-mode': 'daily' }, BG.dialog({ elementId: 'catalog.dialog.phone', prefix: 'catalog.dialog.phone.', S: S, scrim: false }))),
+       spm('mac-wide', 'przyciski w rzędzie', h('div', { 'class': 'cat-cardbox', 'data-game-mode': 'daily' }, BG.dialog({ elementId: 'catalog.dialog.wide', prefix: 'catalog.dialog.wide.', S: S, scrim: false, row: true })))]));
+
+    /* component.game-over-panel */
+    function over(id, o) { return h('div', { 'class': 'cat-cardbox', 'data-game-mode': o.mode === 'daily' ? 'daily' : null }, BG.gameOverPanel(Object.assign({ elementId: id, prefix: id + '.', S: S, loc: loc, scrim: false }, o))); }
+    root.append(section('component.game-over-panel', 'Panel końca gry',
+      'Szablon końca gry obu trybów (R-3.4): wynik, rekord trybu, „' + S.new_record + '” przy pobiciu rekordu, „' + S.play_again + '” i „' + S.to_home + '”; w wyzwaniu dnia informacja o ciągu. Panel leży nad planszą na zasłonie; końcowa plansza jest pod nią widoczna.',
+      [['Parametry szablonu', table(['parametr', 'wartości', 'skutek'], [
+         ['<code>mode</code>', 'classic | daily', 'tytuł: classic — „' + S.game_over + '” (r5: bez nazwy trybu, tryb domyślny, Q107); daily — „' + S.game_over + ' · ' + S.mode_daily + '”; etykieta rekordu „' + S.record + '” / „' + S.record_daily + '”'],
+         ['<code>score</code>', '0–9 999 999', 'duża liczba 54 px'],
+         ['<code>record</code>', 'liczba', 'rekord trybu po tej grze (przy nowym rekordzie równy wynikowi)'],
+         ['<code>newRecord</code>', 'true | false', 'visible: plakietka z gwiazdką „' + S.new_record + '” nad wynikiem; hidden: brak. Na żywo przy nowym rekordzie deszcz płatków na karcie, 1 s (animacja 8)'],
+         ['<code>recordBefore</code> (r5, Q130)', 'rekord trybu sprzed gry', 'wynik &lt; rekord: „' + BG.fmt(S.record_gap, { n: BG.num(11578, loc) }) + '” (<code>element.game.over.record-gap</code>, <code>data-variant="gap"</code>, grupowanie cyfr jak R-2.5); wynik = rekord: „' + S.record_tied + '” (<code>data-variant="tied"</code>); nowy rekord: bez tej linii (jest „' + S.new_record + '”); podejście innego dnia (<code>new-available</code>, R-3.6): bez tej linii'],
+         ['<code>level</code>, <code>motif</code> (r6, Q152)', 'tylko classic', '„' + BG.fmt(S.over_level, { n: 3, name: S.motifs.hedge }) + '” (<code>element.game.over.level</code>, 15 px / 700 <code>#5A4630</code>, 7,7:1) pod rekordem i różnicą do rekordu, nad przyciskami: osiągnięty poziom i jego motyw; wyzwanie dnia bez tej linii'],
+         ['powód końca (r5, Q130)', 'stały', '„' + S.over_reason + '” (<code>element.game.over.reason</code>, z ikoną przekreślonego koła) pod tytułem, we wszystkich wariantach, także po podejściu innego dnia; opis dostępny panelu (<code>aria-describedby</code>)'],
+         ['<code>dailyInfo</code>', 'until-midnight | new-available (tylko daily)', '„' + S.daily_until_midnight + '” albo, gdy data zmieniła się od rozpoczęcia podejścia, „' + S.daily_new_available + '”. Przy <code>new-available</code> panel nie pokazuje wiersza rekordu ani „' + S.new_record + '” — podejście zakończone innego dnia nie zmienia rekordu (R-3.6, Q44)']])],
+       ['Interakcje', table(['Element', 'action', 'expected_effect'], [
+         ['„' + S.play_again + '” (<code>element.game.over.play-again</code>, <code>interaction.game.over.play-again</code>), classic', 'tap / klik', 'navigate <code>game.classic-start</code> (nowa gra klasyczna)'],
+         ['jw., daily', 'tap / klik', 'navigate <code>game.daily-start</code>: nowe podejście od pierwszej trójki ciągu bieżącej daty'],
+         ['„' + S.to_home + '” (<code>element.game.over.to-home</code>, <code>interaction.game.over.to-home</code>)', 'tap / klik', 'navigate <code>screen.home</code> (z aktualnymi rekordami)']])],
+       ['Stany interakcji', 'Fokus startuje na „' + S.play_again + '”. Escape i zasłona: brak efektu (gra się skończyła, trzeba wybrać akcję).'],
+       ['Rola i nazwa dostępna', '<code>dialog</code>, <code>aria-modal="true"</code>, nazwa z tytułu.'],
+       ['Nagłówek ekranu pod panelem', 'Rekord w nagłówku zgadza się z panelem: przy <code>newRecord=true</code> pokazuje nowy rekord; przy <code>new-available</code> rekordu w nagłówku nie ma (tytuł trybu z datą zostaje).'],
+       ['Responsywność', 'Karta do 380 px (mac-wide do 460 px); telefony: przyciski w kolumnie, mac-wide: w rzędzie, etykiety w jednym wierszu. Informacja dnia zawija się.']],
+      [spm('classic', 'różnica do rekordu; r6: poziom', over('catalog.over.classic', { mode: 'classic', score: 6842, record: C.records.classic, recordBefore: C.records.classic, level: BG.levelOf(6842), motif: 'hedge' })),
+       spm('classic', 'rekord wyrównany', over('catalog.over.classic-tied', { mode: 'classic', score: C.records.classic, record: C.records.classic, recordBefore: C.records.classic, level: BG.levelOf(C.records.classic), motif: 'blossom-wall' })),
+       spm('classic', 'newRecord=true · odtwórz deszcz płatków', (function () {
+         var box = over('catalog.over.classic-record', { mode: 'classic', score: 21360, record: 21360, newRecord: true, recordBefore: C.records.classic, level: BG.levelOf(21360), motif: 'garden-dusk' });
+         return h('div', {}, box, replayBtn(function () { BG.fx.rain(box.querySelector('.bg-card'), BG.fx.reduced()); }));
+       })()),
+       spm('daily', 'until-midnight', over('catalog.over.daily', { mode: 'daily', score: 2140, record: C.records.daily, recordBefore: C.records.daily, dailyInfo: 'until-midnight' })),
+       spm('daily', 'new-available: bez rekordu, bez różnicy i bez „' + S.new_record + '”; powód zostaje', over('catalog.over.daily-new', { mode: 'daily', score: 3310, recordBefore: C.records.daily, dailyInfo: 'new-available' }))]));
+
+    /* component.alert */
+    root.append(section('component.alert', 'Komunikat błędu',
+      'Jedna oprawa dla trzech komunikatów o błędach. Każdy wariant ma własny kontrakt: błąd zapisu gry (R-4.5), nieczytelny zapis przy starcie (R-4.6) i nieoczekiwany błąd programu (R-5.3). Ikona ostrzeżenia i tekst, nie tylko kolor.',
+      [['Wariant jednowierszowy (r6, Q201)', 'Gdy komunikat błędu zapisu (76 px z odstępem) nie mieści się w kolumnie (niskie okno: <code>iphone-se</code>, 375×548, telefon w poziomie), leży na wierszu wyniku: ikona, krótki tekst „' + S.save_error_short + '” (pełny tekst dla czytnika), „' + S.retry + '”, wysokość 56 px w wierszu 58 px. Może zasłonić wynik, serię i punkty; nigdy przycisków nagłówka, planszy ani trójki.'],
+       ['Warianty', '<ul><li><code>save-error</code> — „' + S.save_error + '” z przyciskiem „' + S.retry + '” (<code>component.button</code> secondary); jasnopomarańczowe tło. Ekran gry, między planszą a trójką (telefony) albo pod trójką (mac-wide). Gra działa dalej, bez zasłony</li><li><code>read-error</code> — „' + S.read_error + '”, bez przycisku; ekran startowy, nad przyciskami menu</li><li><code>crash</code> — „' + S.crash + '” z przyciskiem „' + S.restart + '” (wariant <code>light</code>); ciemnoczerwony pasek u góry ekranu na zasłonie, która blokuje resztę ekranu</li></ul>'],
+       ['Interakcje', table(['Kontekst', 'action', 'expected_effect'], [
+         ['<code>save-error</code>: „' + S.retry + '” (<code>element.game.save-error.retry</code>, <code>interaction.game.save-retry</code>)', 'tap / klik', 'ponawia zapis: po udanym zapisie komunikat znika, po nieudanym zostaje; gra trwa bez zmian. Gra sama nie ponawia zapisu (R-4.5)'],
+         ['<code>read-error</code> (<code>element.home.read-error</code>)', '—', 'brak akcji; komunikat widoczny na ekranie startowym do pierwszego przejścia do gry. „' + S.continue + '” nie ma, bo zapisana gra przepadła; rekordy czytelne zostają (R-4.6)'],
+         ['<code>crash</code>: „' + S.restart + '” (<code>element.app.crash.restart</code>, <code>interaction.app.crash-restart</code>)', 'tap / klik', 'przeładowuje grę z ostatnim zapisem: ekran startowy (z „' + S.continue + '”, gdy zapis gry klasycznej istnieje) (R-5.3)'],
+         ['<code>crash</code>: zasłona', 'tap / klik', 'brak efektu']])],
+       ['Stany interakcji', 'Przyciski jak <code>component.button</code> (default, hover, pressed, focus-visible). Brak <code>disabled</code>; <code>busy</code> nie występuje (zapis lokalny jest natychmiastowy).'],
+       ['Rola i nazwa dostępna', '<code>role="alert"</code> (czytnik ogłasza tekst od razu); przyciski <code>button</code> z nazwą = etykieta.'],
+       ['Układ tekstu (r5, Q162)', 'Bez przycisku (<code>read-error</code>): ikona przy lewej krawędzi, tekst wyśrodkowany w całym komunikacie (prawy margines tekstu = ikona 20 + odstęp 10 px), jak przyciski menu (Q111). Z przyciskiem po prawej (<code>save-error</code>, <code>crash</code>): tekst wyśrodkowany w miejscu między ikoną a przyciskiem, jak w r4.'],
+       ['Responsywność', 'Telefony: pełna szerokość treści, tekst zawija się obok przycisku. mac-wide: <code>save-error</code> 380 px w prawej kolumnie, <code>crash</code> 560 px wyśrodkowany u góry, <code>read-error</code> 400 px w kolumnie menu.']],
+      [spm('save-error', '', h('div', { style: { width: '100%', maxWidth: '361px' } }, BG.alert({ variant: 'save-error', S: S, elementId: 'catalog.alert.save' }))),
+       spm('read-error', '', h('div', { style: { width: '100%', maxWidth: '361px' } }, BG.alert({ variant: 'read-error', S: S, elementId: 'catalog.alert.read' }))),
+       spm('crash', '', h('div', { style: { width: '100%', maxWidth: '361px' } }, BG.alert({ variant: 'crash', S: S, elementId: 'catalog.alert.crash' })))]));
+
+    /* r5: component.sound-toggle (Q143) */
+    root.append(section('component.sound-toggle', 'Przełączniki: Muzyka i Efekty',
+      'r7: gracz osobno włącza i wyłącza muzykę i efekty dźwiękowe. Dwa trwałe przełączniki obok siebie — „' + S.music + '” i „' + S.sound + '” — na ekranie startowym i w nagłówku gry. Oba domyślnie włączone, wybór zapamiętany w ustawieniach urządzenia (nie w zapisie gry). Prototyp dźwięku nie odtwarza.',
+      [['Warianty', '<ul><li><code>music</code> (<code>data-kind</code>) — nuta ósemkowa; wyciszona: ta sama nuta przekreślona ukośną kreską</li><li><code>effects</code> — głośnik z falami; wyciszony: głośnik z krzyżykiem</li></ul>Stany każdego: <code>on</code> (<code>aria-pressed="true"</code>, domyślnie) i <code>muted</code> (<code>aria-pressed="false"</code>). Okrągły kremowy przycisk z zieloną obwódką (<code>btn-secondary.webp</code>), ikona <code>#123F14</code> (włączony) albo <code>#5A4630</code> (wyciszony) — rozróżnienie kształtem ikony, nie kolorem. Stany: <code>home.music-muted</code>, <code>home.all-muted</code>, <code>game.music-muted</code>.'],
+       ['Interakcje', table(['Kontekst', 'action', 'expected_effect'], [
+         ['<code>screen.home</code>: „' + S.music + '” (<code>element.home.music</code>, <code>interaction.home.music-toggle</code>)', 'tap / klik', 'przełącza muzykę: <code>aria-pressed</code> true ↔ false, nuta ↔ przekreślona nuta; efekty bez zmian; ustawienie zostaje po przeładowaniu'],
+         ['<code>screen.home</code>: „' + S.sound + '” (<code>element.home.sound</code>, <code>interaction.home.sound-toggle</code>)', 'tap / klik', 'przełącza efekty dźwiękowe: głośnik ↔ przekreślony głośnik; muzyka bez zmian'],
+         ['<code>screen.game</code>: <code>element.game.music</code> (<code>interaction.game.music-toggle</code>), <code>element.game.sound</code> (<code>interaction.game.sound-toggle</code>)', 'tap / klik', 'jw.; gra trwa bez zmian']])],
+       ['Stany interakcji', 'default, hover, pressed, focus-visible (obrys 3 px <code>#1F5FBF</code>). Brak <code>disabled</code>/<code>busy</code>. Trwały przełącznik (<code>aria-pressed</code>).'],
+       ['Rola i nazwa dostępna', '<code>button</code> z <code>aria-pressed</code>, nazwy „' + S.music + '” i „' + S.sound + '” (<code>aria-label</code> i <code>title</code>).'],
+       ['Responsywność', 'Para: najpierw „' + S.music + '”, potem „' + S.sound + '”, odstęp jak w lewej grupie nagłówka (telefony 4 px, 44 px; mac-wide 12 px, 56 px). Ekran startowy: prawy górny róg; na telefonach w pionie para stoi w osobnym rzędzie nad znakiem (znak 56 px niżej). Nagłówek gry: dom, „' + S.music + '”, „' + S.sound + '” po lewej, rekord po prawej; na telefonach etykieta poziomu albo wstęga wyzwania schodzi do wiersza 24 px pod nagłówkiem (Q232), na mac-wide zostaje w środku nagłówka.']],
+      [].concat(['on', 'muted', 'hover', 'focus'].map(function (d) { return spm('music · ' + d, '', BG.soundToggle({ kind: 'music', elementId: 'catalog.music.' + d, S: S, on: d !== 'muted', demo: d === 'hover' || d === 'focus' ? d : null })); }),
+        ['on', 'muted'].map(function (d) { return spm('effects · ' + d, '', BG.soundToggle({ kind: 'effects', elementId: 'catalog.sound.' + d, S: S, on: d !== 'muted' })); }))));
+
+    /* r5: component.no-moves-step (Q128–Q131) i oznaczenie klocków (Q129) */
+    var nmBoard = BGRules.parseBoard(['pdsl.bsd', 'lb.dpsl.', 'sdplb.bp', '.bsdlpds', 'dlb.sp.l', 'sp.dlbsd', 'ldsbp.pl', 'd.spl.sd']);
+    function noMovesDemo(lang2) {
+      var g = geoCell(narrow ? 22 : 26), b = BG.board({ geo: g, S: S, elementId: 'catalog.nomoves.board', elementPrefix: 'catalog.nomoves.board.' });
+      b.render(nmBoard, {});
+      var tg = { pc: 12, pg: 2, slotH: 5 * 12 + 4 * 2 + 18, slotPx: Math.floor((g.boardW - 24) / 3), slotGap: 12 };
+      var tr = BG.tray({ geo: tg, S: S, elementId: 'catalog.nomoves.tray' });
+      tr.el.style.width = g.boardW + 'px';
+      tr.render([{ shape: 'square3', color: 'berry' }, { shape: 'line5-h', color: 'sun' }, { shape: 'rect-3x2', color: 'drop' }], function (p, i) { return BG.piece({ piece: p, cell: 12, gap: 2, S: S, elementId: 'catalog.nomoves.piece-' + (i + 1), variant: 'static' }); });
+      var msg = h('div', { 'class': 'cat-nomoves-msg bg-nomoves-msg', style: { position: 'relative', transform: 'none' } }, S.no_moves);
+      var box = h('div', { 'class': 'cat-stack', style: { alignItems: 'center', gap: '18px' } }, b.el, msg, tr.el);
+      function mark(on) {
+        b.el.classList.toggle('is-ended', on); msg.style.visibility = on ? 'visible' : 'hidden';
+        tr.pieces.forEach(function (pe, i) {
+          pe.setAttribute('data-variant', on ? 'no-fit' : 'static');
+          if (on) { tr.slots[i].setAttribute('data-no-fit', 'true'); if (!tr.slots[i].querySelector('.bg-nofit-mark')) tr.slots[i].append(h('span', { 'class': 'bg-nofit-mark', 'aria-hidden': 'true' }, BG.icon('no-fit', 16))); }
+          else { tr.slots[i].removeAttribute('data-no-fit'); var m = tr.slots[i].querySelector('.bg-nofit-mark'); if (m) m.remove(); }
+        });
+      }
+      mark(true);
+      var play = function () {
+        mark(false);
+        setTimeout(function () { box.classList.add('bg-anim'); mark(true); if (BG.fx.reduced()) BG.fx.fade(msg); else BG.fx.play(msg, 'fx-rise', 300); }, 400);
+      };
+      return h('div', {}, box, replayBtn(play, 'Odtwórz krok końca'));
+    }
+    root.append(section('component.no-moves-step', 'Krok końca gry — brak ruchów',
+      'Po ruchu kończącym grę (R-1.7) przez 1,5 s widać planszę i trójkę (także nowo wylosowaną) bez panelu: plansza łagodnie przygasa, klocki trójki są oznaczone jako niemieszczące się, a nad trójką stoi komunikat „' + S.no_moves + '”. Potem panel końca gry (Q128–Q134). Oznaczenie klocków występuje tylko w chwili końca gry, nigdy w trakcie (wyjątek od Q26).',
+      [['Elementy', '<ul><li><code>element.game.no-moves</code> — warstwa na cały ekran gry (przewija się z ekranem), przezroczysta, przyjmuje stuknięcie/klik</li><li><code>element.game.no-moves.message</code> — komunikat na kremowej tabliczce z ceglaną obwódką, 17 px, wyśrodkowany nad trójką (12 px nad jej górną krawędzią), zawija się w wyśrodkowane wiersze; <code>role="status"</code>, <code>aria-live="assertive"</code></li><li>klocki trójki: <code>component.piece</code> wariant <code>no-fit</code> (wyszarzone, przygaszone), slot z ukośnym kreskowaniem i znakiem przekreślonego koła w prawym górnym rogu; nazwa dostępna klocka z dopiskiem „ — ' + S.no_fit_sr + '”</li><li>plansza: przygaszenie pól i ziemi (brightness 0,62, saturate 0,75), rama bez zmian</li></ul>'],
+       ['Interakcje', table(['Element', 'action', 'expected_effect'], [
+         ['<code>element.game.no-moves</code> (<code>interaction.game.no-moves-skip</code>)', 'tap / klik / Escape', 'pokazuje panel końca od razu, bez czekania 1,5 s; to kliknięcie nie uruchamia przycisku panelu (panel przez 300 ms nie przyjmuje kliknięć)']])],
+       ['Czas', '1,5 s, także przy reduced-motion (wtedy bez ruchu: komunikat i panel tylko z przezroczystością ≤ 150 ms). Wyzwanie dnia działa tak samo.'],
+       ['Stany', '<code>game.no-moves-classic</code>, <code>game.no-moves-classic.en</code>, <code>game.no-moves-daily</code> (capture: stały krok; user_preview: po 1,5 s albo po stuknięciu panel końca). W stanach <code>game.over-*</code> pod panelem plansza zostaje przygaszona, a klocki oznaczone.'],
+       ['Responsywność', 'Telefony: komunikat między planszą a trójką; gdy miejsca brak (mobile-compact w 2 wierszach, phone-landscape), tabliczka nachodzi na dolną ramę przygaszonej planszy, nigdy na trójkę. mac-wide: komunikat w kolumnie trójki, w miejscu paska serii i punktów (w kroku pasek jest ukryty).']],
+      [spm('krok końca', 'plansza, komunikat, trójka', noMovesDemo())]));
+
+    /* r5: animacje (Q135–Q139) */
+    function miniBoard(id, rows) {
+      var g = geoCell(narrow ? 22 : 26), b = BG.board({ geo: g, S: S, elementId: id, elementPrefix: id + '.' });
+      b._rows = rows; b.render(BGRules.parseBoard(rows), {});
+      return b;
+    }
+    function moveDemo(id, rows, slotPiece, r, c, label) {
+      var b = miniBoard(id, rows), st0 = { board: BGRules.parseBoard(rows), tray: [slotPiece, null, null], score: 4210, combo: 1, dry: 0 };
+      var sc = BG.scoreDisplay({ variant: 'score', label: S.score, value: 4210, loc: loc, elementId: id + '.score' });
+      sc.el.style.setProperty('--score-fs', '30px');
+      var strip = h('div', { 'class': 'cat-strip' });
+      var praiseHost = b.el;
+      var play = function () {
+        var res = BGRules.play(st0, 0, r, c, BGRules.rng(7)), mv = res.move, red = BG.fx.reduced();
+        b.render(BGRules.parseBoard(rows), {});
+        setTimeout(function () {
+          b.render(res.state.board, {});
+          var cleared = {}; mv.clearedCells.forEach(function (i) { cleared[i] = true; });
+          BG.fx.settle(mv.cells.filter(function (i) { return !cleared[i]; }).map(function (i) { return b.cells[i]; }), red);
+          var mono = mv.lines.filter(function (l) { return l.mono; });
+          if (mv.clearedCells.length) BG.fx.bloom(b, mv.clearedCells, function (i) { return mv.placedBoard[i]; }, red, mono.length ? BG.MOTION.mono : BG.MOTION.bloom);
+          mono.forEach(function (l) { BG.fx.sweep(b, l, S, red); });
+          var pv = mv.points.cleared > 0 ? BG.praiseFor(mv, res.state.combo, false) : null;
+          if (pv) BG.fx.praise(praiseHost, BG.praise({ S: S, variant: pv, elementId: id + '.praise' }), red);
+          BG.fx.countUp(sc, 4210, 4210 + mv.points.total, red);
+          strip.replaceChildren();
+          var cb = BG.comboBadge({ c: 2, S: S, elementId: id + '.combo' }); if (cb) { strip.append(cb); BG.fx.pop(cb, red); }
+          var mp = BG.movePoints({ points: mv.points, S: S, loc: loc, elementId: id + '.points' }); if (mp) { strip.append(mp); if (red) BG.fx.fade(mp); else BG.fx.play(mp, 'fx-rise', 300); }
+        }, 250);
+      };
+      return h('div', {}, h('div', { 'class': 'cat-stack', style: { alignItems: 'center' } }, sc.el, strip, b.el), replayBtn(play, label));
+    }
+    function dealDemo() {
+      var sp = narrow ? 84 : 104, pcD = narrow ? 12 : 14;
+      var tg = { pc: pcD, pg: 2, slotH: 5 * pcD + 4 * 2 + 18, slotPx: sp, slotGap: 12 };
+      var tr = BG.tray({ geo: tg, S: S, elementId: 'catalog.motion.deal.tray' });
+      tr.el.style.width = (3 * sp + 24) + 'px';
+      var deal = [{ shape: 't4-down', color: 'poppy' }, { shape: 'square2', color: 'drop' }, { shape: 'line3-h', color: 'sun' }];
+      var mk = function (p, i) { return BG.piece({ piece: p, cell: pcD, gap: 2, S: S, elementId: 'catalog.motion.deal.piece-' + (i + 1), variant: 'static' }); };
+      tr.render(deal, mk);
+      return h('div', {}, tr.el, replayBtn(function () { tr.render(deal, mk); BG.fx.deal(tr.pieces, BG.fx.reduced()); }, 'Odtwórz nową trójkę'));
+    }
+    var M = BG.MOTION;
+    root.append(section('foundation.motion', 'Animacje (r5, r6)',
+      'Animacje gracza (Q135–Q139). Nie blokują gry: stan po ruchu jest od razu końcowy, a efekty grają na warstwie nad planszą (Q136). Bez wstrząsu ekranu, bez błysków częstszych niż 3 na sekundę, bez efektów kasynowych. W <code>mode=capture</code> animacji nie ma — każdy stan pokazuje stały stan końcowy. Czasy i krzywe: <code>responsive-spec.md</code>, sekcja „Ruch”. Przyciski „Odtwórz” są narzędziem katalogu.',
+      [['Lista', table(['#', 'animacja', 'czas', 'reduced-motion'], [
+         ['1', 'osadzenie położonego klocka (pola sprężynują 0,84 → 1,06 → 1)', M.settle + ' ms', 'przezroczystość 150 ms'],
+         ['2', 'czyszczenie linii jako rozkwit: kafel rozchyla się (1 → 1,14 → 0,3, obrót 18°) i znika, 3 płatki w kolorze kafla opadają i gasną', M.bloom + ' ms', 'zanikanie 150 ms, bez płatków'],
+         ['3', 'linia jednego koloru: rozkwit + jeden złoty błysk wzdłuż linii + „×2” podskakuje', M.mono + ' ms', 'zanikanie 150 ms, „×2” bez ruchu'],
+         ['4', 'Podlewanie (r7): przy wzroście licznika bez nowego stopnia rośliny podbicie (1 → 1,22 → 1); nowy stopień — 13', M.pop + ' ms', 'przezroczystość 150 ms'],
+         ['5', 'punkty ruchu unoszą się (10 px w górę, pojawienie) i zostają do następnego położenia', '300 ms', 'przezroczystość 150 ms'],
+         ['6', 'wynik dolicza się do nowej wartości (ease-out cubic)', '≤ ' + M.countUp + ' ms', 'od razu nowa wartość'],
+         ['7', 'nowa trójka wjeżdża do slotów kolejno (start co ' + M.dealStep + ' ms, każdy wjazd ' + M.deal + ' ms, z dołu)', '3 × ' + M.dealStep + ' ms', 'przezroczystość 150 ms'],
+         ['8', 'nowy rekord: deszcz płatków na karcie panelu; r6 (Q176): droga spadku = wysokość karty + 48 px (płatek startuje 24 px nad kartą i kończy 24 px pod nią), więc płatki są na karcie przez całą sekundę na każdym targecie', M.rain + ' ms', 'brak'],
+         ['9', 'krok końca gry: łagodne przygaszenie planszy (300 ms), komunikat wsuwa się (300 ms), potem panel', M.step + ' ms', 'ten sam czas, bez ruchu'],
+         ['10', 'r6 (Q150, Q188): awans — plakietka „Poziom n!” z nazwą motywu na wyniku, nie na planszy ani trójce (pojawienie ze skalą, postój, zanik; <a href="#component.level-up-badge">component.level-up-badge</a>); etykieta poziomu wyskakuje (jak 4); pochwała z tego samego ruchu równocześnie nad planszą', M.levelUp + ' ms', 'tylko przezroczystość, pojawienie i zanik po 150 ms'],
+         ['11', 'r6 (Q150): przenikanie tła przy awansie — nowe tło od razu pod spodem, stare na warstwie nad nim gaśnie liniowo', M.crossfade + ' ms', 'przezroczystość 150 ms'],
+         ['12', 'r7: święto Pustej grządki — największe w grze: plansza rozkwita falą od środka (płatki na polach, pierścień co ' + M.emptyWave + ' ms, płatek 1,2 s), płatki lecą przez cały ekran (28, każdy 1,6 s, start rozłożony do 0,9 s), pochwała „' + BG.fmt(S.praise_empty, { n: BG.num(2500, loc) }) + '” (32 px, mac-wide 48 px; premia w grze klasycznej max(1000, 500 × poziom ruchu), w wyzwaniu dnia 2000; okaz: poziom 5) z doliczaniem wyniku (' + M.emptyCount + ' ms); nowa trójka wjeżdża po napisie (od ' + M.emptyDeal + ' ms); awans w tym samym ruchu: plakietka ' + M.emptyLevelDelay + ' ms później', M.emptyGarden + ' ms', 'bez fali, skali i lotu płatków: płatki na planszy i pochwała tylko przezroczystość (pojawienie i zanik po 150 ms), wynik od razu, trójka wjeżdża po ' + M.emptyDeal + ' ms także przy ograniczeniu ruchu (pauza święta jest regułą produktu, a nie animacją; pominięcie działa po 600 ms, Q254)'],
+         ['13', 'r7: Podlewanie — nowy stopień rośliny: skok (do −6 px, skala 1,15) i złoty rozbłysk; utrata serii: roślina pochyla się, blednie, opada i znika (<a href="#component.combo-badge">component.combo-badge</a>)', M.grow + ' / ' + M.wither + ' ms', 'przezroczystość 150 ms'],
+         ['—', 'r7 (Q233, Q234): jedna pochwała na ruch, pierwszeństwo: „' + BG.fmt(S.praise_empty, { n: BG.num(2500, loc) }) + '”, potem „' + S.praise_flowerbed + '” (linia jednego koloru, ze złotym błyskiem 3), potem drabina według siły ruchu S = L + max(0, c − 1): S 2–3 „' + S.praise_2 + '”, 4–5 „' + S.praise_3 + '”, 6 „' + S.praise_4 + '”, ≥ 7 „' + S.praise_5 + '” (z rozbłyskiem płatków); S = 1 bez pochwały', M.praise + ' ms (pusta grządka ' + M.emptyGarden + ' ms)', 'przezroczystość (pojawienie i zanik po 144 ms), bez płatków']])],
+       ['component.praise', 'Pochwała (<code>element.game.praise</code>, <code>role="status"</code>, <code>aria-live="polite"</code>): miodowa pigułka nad środkiem planszy — nigdy na trójce, szerokość do planszy − 24 px (zawija się wyśrodkowana). Drabina (r7): <code>great</code> 26 px, <code>wonderful</code> 30 px z ciepłym blaskiem, <code>amazing</code> 34 px, jaśniejsza, z mocnym blaskiem, <code>paradise</code> 38 px, złoto-różowa, z najmocniejszym blaskiem i rozbłyskiem 16 płatków; mac-wide 34 / 38 / 42 / 48 px. <code>flowerbed</code> „' + S.praise_flowerbed + '” — różowa pigułka 30 px (mac-wide 38 px); w punktach ruchu dopisek „' + BG.fmt(S.move_mono, { n: 500 }) + '” za każdą linię jednego koloru. <code>empty-garden</code> — święto (12). Stany: <code>game.praise-great</code>, <code>-wonderful</code>, <code>-amazing</code>, <code>-paradise</code>, <code>game.flower-bed</code>, <code>game.empty-garden</code>, <code>game.empty-garden-level-up</code>, <code>game.level-up-praise</code>; w <code>user_preview</code> każdy odtwarza ruch z animacją, a „▶ Odtwórz animację” w pasku narzędzi powtarza.']],
+      [spm('1 + 2 + 4 + 5 + 6', 'jedna linia: osadzenie, rozkwit, seria, punkty, wynik', moveDemo('catalog.motion.clear', ['........', '........', '........', '........', '........', '........', 'pdsbl..p', '........'], { shape: 'line2-h', color: 'drop' }, 6, 5, 'Odtwórz rozkwit')),
+       spm('3 + Kolorowa rabata', 'linia jednego koloru i kolumna: złoty błysk, „×2”, „' + S.praise_flowerbed + '”, „' + BG.fmt(S.move_mono, { n: 500 }) + '”', moveDemo('catalog.motion.mono', ['.......l', '.......l', '.......l', '.......l', '.......l', 'lllllll.', '.......l', '.......l'], { shape: 'single', color: 'leaf' }, 5, 7, 'Odtwórz Kolorową rabatę')),
+       spm('drabina pochwał', 'szczebel po szczeblu: „' + S.praise_2 + '”, „' + S.praise_3 + '”, „' + S.praise_4 + '”, „' + S.praise_5 + '”', (function () {
+         var gL = BG.geometry(narrow ? { width: Math.min(393, ctg.width - 40), height: 800 } : { width: 393, height: 852 });
+         var bL = BG.board({ geo: gL, S: S, elementId: 'catalog.motion.ladder', elementPrefix: 'catalog.motion.ladder.' });
+         bL.render(BGRules.parseBoard(['........', '........', '........', '........', '........', '........', '........', '........']), {});
+         bL.el.append(BG.praise({ S: S, variant: 'paradise', elementId: 'catalog.motion.ladder.praise' }));
+         return h('div', {}, bL.el, replayBtn(function () {
+           [].forEach.call(bL.el.querySelectorAll('.bg-praise'), function (x) { x.remove(); });
+           ['great', 'wonderful', 'amazing', 'paradise'].forEach(function (v, i) { setTimeout(function () { BG.fx.praise(bL.el, BG.praise({ S: S, variant: v, elementId: 'catalog.motion.ladder.' + v }), BG.fx.reduced()); }, i * 1000); });
+         }, 'Odtwórz drabinę'));
+       })()),
+       spm('7', 'nowa trójka', dealDemo()),
+       spm('10 + 11', 'awans: przenikanie tła ' + S.motifs['garden-dusk'] + ' → ' + S.motifs['dawn-meadow'] + ' i plakietka poziomu', (function () {
+         var sf = h('div', { 'class': 'bg-surface is-landscape', 'data-background': 'garden-dusk', style: { width: '300px', height: '170px', borderRadius: '12px' } });
+         var host = h('div', { style: { position: 'absolute', inset: '0' } });
+         sf.append(host);
+         /* Krąg od blossom-wall (start 0): poziom 3 = garden-dusk; każde „Odtwórz” to kolejny awans po kręgu. */
+         var lvl = 3;
+         return h('div', {}, sf, replayBtn(function () {
+           var red = BG.fx.reduced(); lvl++; var motif = BG.motifOf(0, lvl);
+           BG.fx.crossfade(sf, function () { sf.setAttribute('data-background', motif); }, red);
+           BG.fx.levelUp(host, BG.levelUpBadge({ S: S, level: lvl, motif: motif, elementId: 'catalog.motion.level-up' }), red);
+         }, 'Odtwórz awans'));
+       })()),
+       spm('12', 'święto Pustej grządki: rozkwit, płatki przez cały okaz, „' + BG.fmt(S.praise_empty, { n: BG.num(2500, loc) }) + '”, doliczanie wyniku, nowa trójka po napisie', (function () {
+         var gE = BG.geometry(narrow ? { width: Math.min(393, ctg.width - 40), height: 800 } : { width: 393, height: 852 });
+         var bE = BG.board({ geo: gE, S: S, elementId: 'catalog.motion.empty', elementPrefix: 'catalog.motion.empty.' });
+         var scE = BG.scoreDisplay({ variant: 'score', label: S.score, value: 8681, loc: loc, elementId: 'catalog.motion.empty.score' });
+         scE.el.style.setProperty('--score-fs', '30px');
+         var tE = BG.tray({ geo: gE, S: S, elementId: 'catalog.motion.empty.tray' }); tE.el.style.width = (3 * gE.slotPx + 2 * gE.slotGap) + 'px';
+         var deal = [{ shape: 't4-up', color: 'poppy' }, { shape: 'square2', color: 'drop' }, { shape: 'line3-h', color: 'sun' }];
+         var mk = function (p, i) { return BG.piece({ piece: p, cell: gE.pc, gap: gE.pg, S: S, elementId: 'catalog.motion.empty.piece-' + (i + 1), variant: 'static' }); };
+         tE.render(deal, mk);
+         bE.render(BGRules.parseBoard(['........', '........', '........', '........', '........', '........', '........', '........']), {});
+         bE.fx.append(BG.emptyBloomFrame(bE)); bE.el.append(BG.emptyGarden({ S: S, loc: loc, n: 2500, elementId: 'catalog.motion.empty-garden' }));
+         var box = h('div', { style: { position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', overflow: 'hidden', padding: '8px' } }, scE.el, bE.el, tE.el);
+         return h('div', {}, box, replayBtn(function () {
+           bE.fx.replaceChildren(); [].forEach.call(bE.el.querySelectorAll('.bg-empty-garden'), function (x) { x.remove(); });
+           tE.render([null, null, null], mk);
+           BG.fx.emptyGarden(bE, BG.emptyGarden({ S: S, loc: loc, n: 2500, elementId: 'catalog.motion.empty-garden' }), BG.fx.reduced(),
+             { screen: box, score: scE, from: 6181, to: 8681, after: function () { tE.render(deal, mk); BG.fx.deal(tE.pieces, BG.fx.reduced()); } });
+         }, 'Odtwórz święto'));
+       })())]));
+
+    /* Responsywność */
+    var sizes = manifest.targets.concat([{ target_id: 'pomiar: iPhone 14 w Safari', width: 390, height: 660 }, { target_id: 'pomiar: iPhone SE w Safari (granica Q181)', width: 375, height: 548 },
+      { target_id: 'pomiar: laptop', width: 1280, height: 680 }, { target_id: 'pomiar: telefon poziomo w Safari', width: 852, height: 340 }, { target_id: 'pomiar: iPhone SE 1. gen. w Safari (poniżej granicy)', width: 320, height: 449 }]);
+    var rows = sizes.map(function (t) {
+      var g = BG.geometry(t);
+      return [(t.target_id.indexOf('pomiar') === 0 ? t.target_id : '<code>' + t.target_id + '</code>'), t.width + '×' + t.height, g.layout, g.cell + ' px', g.boardW + ' px', g.pc + ' px', Math.round(g.slotH) + ' px', g.wide ? '—' : g.lift + ' px', g.minH > t.height ? 'tak (' + (g.minH - t.height) + ' px)' : 'nie'];
+    });
+    root.append(h('section', { 'class': 'cat-sec', id: 'responsive' },
+      h('h2', {}, 'responsive'), h('h3', {}, 'Responsywność ekranu gry'),
+      h('p', { 'class': 'cat-sem', html: 'Powierzchnia robocza = cały ekran targetu. Reguła układu (r2, Q65): okno węższe niż 1024 px — układ telefonu w kolumnie do 440 px, wyśrodkowanej, tło ogrodu na całą szerokość; od 1024 px — układ mac-wide. r6 (Q177–Q181, Q199–Q202): każdy ekran mieści się w wysokości okna (w aplikacji <code>100dvh</code>) bez przewijania do 375×548 w pionie i 852×340 w poziomie; najpierw maleją odstępy, potem (pion) seria i punkty przechodzą do wiersza wyniku (<code>phone-merged</code>), potem plansza i trójka proporcjonalnie; pole planszy nigdy &lt; 32 px — niższe okno przewija. Telefon w poziomie: plansza po lewej, kolumna z nagłówkiem, wynikiem i trójką po prawej (<code>landscape</code>). Szczegóły: <code>responsive-spec.md</code>.' }),
+      h('div', { html: table(['target / pomiar', 'okno', 'układ', 'pole planszy', 'plansza', 'pole w trójce', 'slot', 'odstęp nad palcem', 'przewija'], rows) })));
+
+    /* Plan stanów */
+    var plan = [
+      ['home.first-run', 'screen.home', 'bez rekordów (0) i bez zapisu; „' + S.new_game + '” primary, „' + S.daily + '”'],
+      ['home.first-run.en', 'screen.home', 'jw. po angielsku'],
+      ['home.with-records', 'screen.home', 'rekord klasyczny i rekord dnia &gt; 0, bez zapisu'],
+      ['home.resume-available', 'screen.home', 'zapisana gra: „' + S.continue + '” primary, „' + S.new_game + '”, „' + S.daily + '”'],
+      ['home.read-error', 'screen.home', '„' + S.read_error + '”, rekordy zostają, bez „' + S.continue + '” (R-4.6)'],
+      ['game.classic-start', 'screen.game', 'pusta plansza, pierwsza trójka, wynik 0'],
+      ['game.classic-start.en', 'screen.game', 'jw. po angielsku'],
+      ['game.classic-resumed', 'screen.game', 'wznowiona gra: plansza z kolorami, 2 klocki w trójce, wynik, „' + BG.fmt(S.combo, { c: 2 }) + '”'],
+      ['game.daily-start', 'screen.game', 'wyzwanie dnia: nazwa trybu z datą, rekord dnia'],
+      ['game.dragging-fits', 'screen.game', 'klocek nad miejscem, w którym się mieści, bez linii'],
+      ['game.dragging-line-preview', 'screen.game', 'klocek nad miejscem, które wyczyści linię zwykłą i linię jednego koloru'],
+      ['game.line-clear', 'screen.game', 'r6 (Q175): stan po ruchu czyszczącym zwykłą linię — plansza po czyszczeniu, wynik po ruchu, punkty ruchu; rozkwit tylko w foundation.motion'],
+      ['game.color-bonus', 'screen.game', 'r6 (Q175): stan po ruchu z linią jednego koloru — plansza po czyszczeniu, punkty ruchu z dopiskiem premii'],
+      ['game.combo', 'screen.game', 'r6 (Q175): stan po ruchu w serii — „' + BG.fmt(S.combo, { c: 3 }) + '”, plansza po czyszczeniu, punkty ruchu z dopiskiem serii'],
+      ['game.daily-exit-confirm', 'screen.game', 'dialog „' + S.confirm_title + '”'],
+      ['game.save-error', 'screen.game', 'wznowiona gra z komunikatem „' + S.save_error + '” (R-4.5)'],
+      ['game.crash', 'screen.game', 'pasek „' + S.crash + '” na zasłonie (R-5.3)'],
+      ['game.over-classic', 'screen.game', 'panel końca gry, classic; r5: powód końca i „' + BG.fmt(S.record_gap, { n: BG.num(11578, loc) }) + '”, pod panelem przygaszona plansza i oznaczona trójka'],
+      ['game.over-classic.en', 'screen.game', 'jw. po angielsku'],
+      ['game.over-classic-new-record', 'screen.game', 'classic, „' + S.new_record + '”'],
+      ['game.over-daily', 'screen.game', 'daily, until-midnight; r5: powód końca i „' + BG.fmt(S.record_gap, { n: BG.num(840, loc) }) + '”'],
+      ['game.over-daily.en', 'screen.game', 'jw. po angielsku'],
+      ['game.over-daily-new-day', 'screen.game', 'daily, new-available: wynik bez rekordu i bez „' + S.new_record + '” (R-3.6); nagłówek bez rekordu dnia, tytuł z datą zostaje; powód końca zostaje, różnicy do rekordu brak'],
+      ['home.music-muted', 'screen.home', 'r7: muzyka wyciszona, efekty włączone'],
+      ['home.all-muted', 'screen.home', 'r7: muzyka i efekty wyciszone'],
+      ['game.no-moves-classic', 'screen.game', 'r5: krok końca gry klasycznej — przygaszona plansza, oznaczona trójka, „' + S.no_moves + '” (Q128, Q129); w user_preview po 1,5 s albo stuknięciu panel'],
+      ['game.no-moves-classic.en', 'screen.game', 'r5: jw. po angielsku'],
+      ['game.no-moves-daily', 'screen.game', 'r5: krok końca wyzwania dnia, jeden slot pusty'],
+      ['game.over-classic-tied', 'screen.game', 'r5: panel końca z „' + S.record_tied + '” (wynik równy rekordowi, Q130)'],
+      ['game.level-up', 'screen.game', 'r6 (Q150, Q188): chwila awansu na poziom 3 (wynik 860) — nowe tło <code>dawn-meadow</code>, etykieta „' + BG.fmt(S.level, { n: 3 }) + '”, plakietka „' + BG.fmt(S.level_up, { n: 3 }) + '” na wyniku (w user_preview znika po 1,5 s)'],
+      ['game.level-5', 'screen.game', 'r6: poziom 5, tło <code>lily-pond</code>, wynik 5940 — w user_preview kwadrat 2×2 przeciągnięty w lewy górny róg daje awans na poziom 6 z przenikaniem tła'],
+      ['game.level-6', 'screen.game', 'r6: poziom 6, tło <code>firefly-night</code>, wynik 6480 (inna gra: inny początek kręgu)'],
+      ['game.level-up-praise', 'screen.game', 'r6 (Q188): stan po ruchu, który czyści 2 linie i daje awans na poziom 4 (1580 → 2062): plakietka „' + BG.fmt(S.level_up, { n: 4 }) + '” na wyniku i „' + S.praise_2 + '” nad planszą — w różnych miejscach'],
+      ['game.empty-garden', 'screen.game', 'r6 (Q189, Q203): stan po ruchu, który opróżnia planszę: rozkwit na całej planszy, pochwała „' + BG.fmt(S.praise_empty, { n: 300 }) + '”, punkty ruchu z sumą (bez dopisku premii). r7: poziom 7, wynik 9100 → 12 681, „' + BG.fmt(S.praise_empty, { n: BG.num(3500, loc) }) + '” (max(1000, 500 × 7)), bez awansu'],
+      ['game.combo-color', 'screen.game', 'r6 (Q203): ruch w serii czyszczący linię jednego koloru — dwa dopiski punktów; gdzie się nie mieszczą (mobile-compact, niskie okno), zostaje dopisek o większej wartości'],
+      ['game.music-muted', 'screen.game', 'r7: gra z wyciszoną muzyką (efekty włączone)'],
+      ['game.praise-great', 'screen.game', 'r7 (Q233): ruch 2 linie bez serii (S = 2) — „' + S.praise_2 + '”'],
+      ['game.praise-wonderful', 'screen.game', 'r7: 2 linie, podlewanie ×3 (S = 4) — „' + S.praise_3 + '”'],
+      ['game.praise-amazing', 'screen.game', 'r7: 2 linie, podlewanie ×5 (S = 6) — „' + S.praise_4 + '”'],
+      ['game.praise-paradise', 'screen.game', 'r7: 2 linie, podlewanie ×6 (S = 7) — „' + S.praise_5 + '” z rozbłyskiem płatków, złota roślina'],
+      ['game.flower-bed', 'screen.game', 'r7 (Q234): linia jednego koloru — „' + S.praise_flowerbed + '”, „' + BG.fmt(S.move_mono, { n: 500 }) + '”'],
+      ['game.watering-wilt', 'screen.game', 'r7: podlewanie ×4 (pąk), jedna kropla — roślina lekko więdnie'],
+      ['game.watering-gold', 'screen.game', 'r7: podlewanie ×7 — złoty kwiat'],
+      ['game.empty-garden-level-up', 'screen.game', 'r7: święto Pustej grządki i awans w tym samym ruchu — ruch na poziomie 4, „' + BG.fmt(S.praise_empty, { n: BG.num(2000, loc) }) + '” (max(1000, 500 × 4)), wynik 2100 → 4181, awans na poziom 5; plakietka awansu na wyniku (w user_preview 1,5 s po napisie)']];
+    root.append(h('section', { 'class': 'cat-sec', id: 'states-plan' },
+      h('h2', {}, 'states-plan'), h('h3', {}, 'Stany rewizji r7'),
+      h('p', { 'class': 'cat-sem', html: 'Stany z manifestu r7 (44: 33 z r6 bez <code>home.sound-muted</code> i 11 nowych; 8 targetów), otwierane w <code>index.html</code>. Stany z animacją w <code>user_preview</code> odtwarzają ruch, „▶ Odtwórz animację” w pasku narzędzi powtarza. Bez <code>game.dragging-blocked</code> (Q24). Tło sceny każdego stanu: README.md, sekcja „Tła stanów”.' }),
+      h('div', { html: table(['state_id', 'screen_id', 'opis'], plan.map(function (r) { return ['<code>' + r[0] + '</code>', '<code>' + r[1] + '</code>', r[2]]; })) })));
+
+    /* Demo na żywo w sekcji planszy */
+    var boardSec = root.querySelector('#component\\.board .cat-specimens');
+    /* Demo w rozmiarze iphone-standard; w wąskim katalogu pomniejszone, żeby zmieściło się w ramce okazu. */
+    var gD = BG.geometry(ctg.width >= 900 ? { width: 393, height: 852 } : { width: ctg.width - 72, height: 800 });
+    var demo = h('div', { 'class': 'cat-demo', style: { '--board-w': gD.boardW + 'px', '--tray-w': gD.boardW + 'px' } });
+    var dScore = BG.scoreDisplay({ variant: 'score', label: S.score, value: C.score, loc: loc, elementId: 'catalog.demo.score' });
+    dScore.el.style.setProperty('--score-fs', '32px');
+    var dStrip = h('div', { 'class': 'bg-strip' });
+    var dBoard = BG.board({ geo: gD, S: S, elementId: 'catalog.demo.board', elementPrefix: 'catalog.demo.board.' });
+    var dTray = BG.tray({ geo: gD, S: S, elementId: 'catalog.demo.tray' });
+    var reset = h('button', { type: 'button', 'class': 'pt-btn', 'data-prototype-tool': 'catalog-demo-reset', style: { color: 'var(--ink)', borderColor: 'var(--line)', background: '#fff' }, onclick: function () { render(); } }, 'Od nowa');
+    demo.append(dScore.el, dStrip, dBoard.el, dTray.el);
+    BG.play({
+      geo: gD, S: S, loc: loc, seed: C.seed, surface: demo, interactive: true, board: dBoard, tray: dTray, score: dScore, strip: dStrip,
+      state: { board: BGRules.parseBoard(C.board), tray: C.tray.slice(), score: C.score, combo: C.combo, dry: C.dry },
+      ids: { piece: 'catalog.demo.piece-', drag: 'catalog.demo.drag-piece-', combo: 'catalog.demo.combo', points: 'catalog.demo.move-points' },
+      onOver: function () { reset.textContent = 'Koniec gry — od nowa'; }
+    });
+    boardSec.append(h('div', { 'class': 'cat-spm cat-wide', 'data-catalog-variant': 'na żywo' },
+      h('div', { 'class': 'cat-spm-box bg-anim', style: { flexDirection: 'column', gap: '10px' } }, demo, reset),
+      h('div', { 'class': 'cat-spm-label' }, h('b', {}, 'na żywo'), 'przeciągnij „' + S.colors.leaf + '” 1×2 na prawy koniec rzędów 6–7: premia jednego koloru i seria ×3')));
+  }
+  render();
+})();
+</script>
+</body>
+</html>

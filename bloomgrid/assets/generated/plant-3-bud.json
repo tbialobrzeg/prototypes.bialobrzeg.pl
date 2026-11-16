@@ -1,0 +1,19 @@
+{
+  "model": "google/gemini-3-pro-image",
+  "prompt": "The attached image is a flower tile from a cozy garden block-puzzle game. Create one small game icon in exactly the same art style: polished casual mobile game, glossy, juicy and candy-like, extra saturated colors with strong gradients, thick darker outline, bright soft highlights and a small sparkle, crisp clean edges, readable at 48 pixels.\n\nThe icon is a small potted plant, stage 3 of 5 of a growing plant: a plant with a closed flower bud. A green stem with four plump glossy leaves in lime to emerald shades, and on top one closed teardrop-shaped bud, green sepals around it with bright pink-magenta petal tips just showing. Growing from dark rich soil.\n\nThe pot (identical in every stage of this set): a small round terracotta flower pot, front view, wider at the top rim than at the bottom, warm orange-brown with a lighter rim band, a glossy highlight stripe on the left side and a darker bevel at the bottom. The pot fills the lower third of the image; the plant reaches about two thirds of the image height.\n\nOne single centered object, front view, no perspective, on a plain flat pure white background, no shadow on the background, nothing touching the image edges. No text, no letters, no numbers, no watermark, no tile, no square, no frame.\n",
+  "prompt_file": "/Users/tomab/Projects/ClosedLoopDevelopmentV4/Projects/Bloomgrid/prototype/assets/prompts/plant-3-bud.txt",
+  "references": [
+    {
+      "path": "/Users/tomab/Projects/ClosedLoopDevelopmentV4/Projects/Bloomgrid/prototype/assets/img/tile-leaf.webp",
+      "sha256": "0b5c15a6a96511e0bcaa64bed4b367e8ffd54043ea1ce53818da3f712311ee99"
+    }
+  ],
+  "aspect": "4:5",
+  "seconds": 17.15,
+  "cost_usd": 0.139926,
+  "at": "2026-11-14T12:10:53+01:00",
+  "images": [
+    "tmp/image-gen/out/plant-3-bud.png"
+  ],
+  "text": null
+}

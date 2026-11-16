@@ -1,0 +1,569 @@
+/* Bloomgrid r3 — style prototypu (index.html i catalog.html). Jeden jasny wygląd niezależnie od trybu ciemnego systemu (Q32, Q101).
+   r3: grafika rastrowa z generatora (assets/img/*.webp, pochodzenie w assets/generated/*.json i assets/img/derived.json).
+   Układ (położenia i rozmiary) bez zmian względem r2; zmienia się tylko wygląd (Q96, Q102). */
+:root{
+  color-scheme:light;
+  --font:ui-rounded,"SF Pro Rounded","Nunito","Segoe UI Variable Display","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --ink:#2A1C10; --ink-2:#5A4630; --paper:#FFF6E2; --card:#FFFFFF; --line:#DCD6C2;
+  --plaque:rgba(255,246,226,.92);
+  --green:#2E6B3A; --green-d:#123F14; --green-l:#E3F0D8;
+  --soil:#5E321B; --empty:#2F140B;
+  /* Lico klocka (mediana obrazu, do pomiarów i okazów): */
+  --c-poppy:#D44624; --c-sun:#F4BB3D; --c-leaf:#22A663; --c-drop:#3C74C3; --c-berry:#E1339C;
+  --hl:#FFF1B8; --line-dark:#1A1008; --danger:#7A1E0E; --focus:#1F5FBF;
+}
+*{box-sizing:border-box}
+.bg-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* Strona podglądu i capture */
+body.bg-page{margin:0;background:#E4E2DA;font-family:var(--font);color:var(--ink)}
+body.bg-capture{margin:0;background:#fff;overflow:hidden}
+.bg-preview{display:flex;flex-direction:column;align-items:center;padding:16px}
+.bg-stage-box{position:relative;flex:none;box-shadow:0 8px 30px rgba(40,34,20,.2);border-radius:6px;overflow:hidden}
+.bg-stage{transform-origin:0 0;position:absolute;left:0;top:0}
+.bg-toast{position:fixed;left:50%;transform:translateX(-50%);z-index:51;max-width:calc(100% - 32px);padding:8px 14px;border-radius:10px;background:#16171A;color:#fff;font:13px/1.35 var(--mono);box-shadow:0 6px 20px rgba(0,0,0,.25);text-align:center}
+.bg-toast:empty{display:none}
+.bg-error{margin:24px;padding:16px 18px;border:2px solid #B4321E;border-radius:8px;background:#FFF1EE;color:#7A2414;font:15px/1.4 var(--mono)}
+
+/* Powierzchnia robocza = cały ekran targetu */
+.bg-surface{position:relative;overflow:hidden;font-family:var(--font);color:var(--ink);-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;
+  background:#24301F center bottom / cover no-repeat;}
+/* Tło sceny (Q104): jedno z trzech; kadr pionowy 9:16 dla powierzchni wyższej niż szeroka, poziomy 16:9 dla pozostałych.
+   Obraz pokrywa całą powierzchnię (cover), zakotwiczony u dołu (trawa), nadmiar przycięty od góry albo po bokach. Tło nie przewija się z ekranem. */
+.bg-surface.is-portrait[data-background=blossom-wall]{background-image:url(img/bg-blossom-wall-phone.webp)}
+.bg-surface.is-portrait[data-background=garden-dusk]{background-image:url(img/bg-garden-dusk-phone.webp)}
+.bg-surface.is-portrait[data-background=hedge]{background-image:url(img/bg-hedge-phone.webp)}
+.bg-surface.is-landscape[data-background=blossom-wall]{background-image:url(img/bg-blossom-wall-desktop.webp)}
+.bg-surface.is-landscape[data-background=garden-dusk]{background-image:url(img/bg-garden-dusk-desktop.webp)}
+.bg-surface.is-landscape[data-background=hedge]{background-image:url(img/bg-hedge-desktop.webp)}
+/* r6 (Q148): trzy nowe motywy kręgu poziomów. */
+.bg-surface.is-portrait[data-background=lily-pond]{background-image:url(img/bg-lily-pond-phone.webp)}
+.bg-surface.is-portrait[data-background=dawn-meadow]{background-image:url(img/bg-dawn-meadow-phone.webp)}
+.bg-surface.is-portrait[data-background=firefly-night]{background-image:url(img/bg-firefly-night-phone.webp)}
+.bg-surface.is-landscape[data-background=lily-pond]{background-image:url(img/bg-lily-pond-desktop.webp)}
+.bg-surface.is-landscape[data-background=dawn-meadow]{background-image:url(img/bg-dawn-meadow-desktop.webp)}
+.bg-surface.is-landscape[data-background=firefly-night]{background-image:url(img/bg-firefly-night-desktop.webp)}
+/* Przenikanie tła przy awansie: stare tło na warstwie pod ekranem gasnie. */
+.bg-bgfade{position:absolute;inset:0;z-index:0;pointer-events:none;background-repeat:no-repeat}
+.fx-bgfade{animation:fx-bgfade linear forwards}
+@keyframes fx-bgfade{from{opacity:1}to{opacity:0}}
+/* Tabliczka pod tekstem na tle sceny (nagłówek, wynik, punkty ruchu, znak): nie zmienia układu (pseudo-element poza przepływem). */
+.bg-score,.bg-mode,.bg-points,.bg-wordmark,.bg-level{position:relative;isolation:isolate}
+.bg-score::before,.bg-mode::before,.bg-points::before,.bg-wordmark::before,.bg-level::before{content:"";position:absolute;inset:-4px -12px;z-index:-1;border-radius:14px;background:var(--plaque);box-shadow:0 2px 0 rgba(90,60,30,.25),0 6px 16px rgba(20,12,4,.25)}
+.bg-wordmark::before{inset:-10px -14px;border-radius:20px}
+/* mac-wide: wynik zajmuje całą kolumnę (380 px), więc tabliczka leży pod cyframi i sięga w górę pod etykietę. */
+/* Tabliczka należy do kontekstu .bg-score (izolowanego), więc leży pod etykietą i cyframi, nie nad etykietą. */
+.bg-wide .bg-score[data-variant=score]::before{display:none}
+.bg-wide .bg-score[data-variant=score] .bg-score-value{position:relative}
+.bg-wide .bg-score[data-variant=score] .bg-score-value::before{content:"";position:absolute;inset:-21px -14px -4px -12px;z-index:-1;border-radius:14px;background:var(--plaque);box-shadow:0 2px 0 rgba(90,60,30,.25),0 6px 16px rgba(20,12,4,.25)}
+/* Reguła układu (r2): przewijany obszar na całą powierzchnię; ekran telefonu to kolumna do 440 px wyśrodkowana,
+   o wysokości co najmniej 800 px (niższe okno, np. telefon w poziomie, przewija stronę). Tło zostaje na całej szerokości. */
+.bg-scroll{position:absolute;inset:0;overflow-x:hidden;overflow-y:auto}
+.bg-screen{position:relative;display:flex;flex-direction:column;width:100%;min-height:100%;margin:0 auto}
+/* r6 (Q177–Q181): ekran ma wysokość okna (w aplikacji 100dvh), bez dawnej reguły „co najmniej 800 px”. Odstępy liczy BG.fitHeight
+   (zmienne na powierzchni); --min-h to wysokość układu z polem planszy 32 px — dopiero niższe okno (poniżej 375×548) przewija ekran. */
+.bg-phone .bg-screen{max-width:440px;min-height:max(100%,var(--min-h,0px));padding:var(--pad-t,59px) var(--pad-x,16px) var(--pad-b,34px)}
+.bg-wide .bg-screen{padding:32px 40px}
+
+/* component.board */
+/* Rama: drewniana skrzynia z obrazu (border-image). Ramka rysowana jest od --pad + --frame-out na zewnątrz (border-image-outset),
+   więc pola, odstępy i rozmiar planszy są jak w r2; rama wychodzi poza planszę o --frame-out (telefony 8 px, mac-wide 10 px). */
+.bg-board{--frame-out:8px;position:relative;flex:none;padding:var(--pad);border-radius:calc(var(--pad) * 2.2);background:none;
+  border:0 solid transparent;border-image:url(img/board-frame.webp) 22 / calc(var(--pad) + var(--frame-out)) / var(--frame-out) stretch;
+  border-image-repeat:stretch;filter:drop-shadow(0 10px 14px rgba(20,10,2,.45));touch-action:none}
+/* r4: ramy z fakturą wracają do stretch. W r3 `round` powtarzał środek boku kilka razy, a złącza powtórzeń (urwane słoje,
+   ząbki) były widoczne jako drobne kreski na środku boków ramy i karty — te same „kreski”, które Tomasz widział przy slotach. */
+.bg-wide .bg-board{--frame-out:10px}
+/* Wyzwanie dnia (Q108): złota listwa na środku ramy i złote słońca w narożnikach. Leżą tylko na ramie
+   (od −frame-out do 0 px od krawędzi planszy); pierwsze pole zaczyna się 9 / 12 px od krawędzi. */
+[data-game-mode=daily] .bg-board{--cap:22px}
+.bg-wide[data-game-mode=daily] .bg-board{--cap:30px}
+[data-game-mode=daily] .bg-board::before{content:"";position:absolute;inset:-3px;z-index:1;pointer-events:none;border:2px solid #F7C948;border-radius:calc(var(--pad) * 2.4);box-shadow:0 0 0 1px rgba(74,40,6,.85),inset 0 0 0 1px rgba(74,40,6,.85)}
+[data-game-mode=daily] .bg-board::after{content:"";position:absolute;inset:calc(-2px - var(--cap) / 2);z-index:2;pointer-events:none;
+  background:url(img/daily-sun-cap.webp) left top / var(--cap) var(--cap) no-repeat,url(img/daily-sun-cap.webp) right top / var(--cap) var(--cap) no-repeat,
+    url(img/daily-sun-cap.webp) left bottom / var(--cap) var(--cap) no-repeat,url(img/daily-sun-cap.webp) right bottom / var(--cap) var(--cap) no-repeat}
+.bg-grid{display:grid;grid-template-columns:repeat(8,var(--cell));grid-auto-rows:var(--cell);gap:var(--gap);padding:var(--gap);border-radius:calc(var(--pad) * 1.4);background:var(--soil);box-shadow:inset 0 3px 8px rgba(0,0,0,.45)}
+.bg-badges{position:absolute;inset:0;pointer-events:none}
+
+/* component.board-cell (także pola klocka) */
+/* Puste pole: wgłębienie w ziemi z obrazu, przyciemnione do 62% (warstwa 38% czerni), żeby każde lico klocka miało ≥ 3:1 (Q99). */
+.bg-cell{position:relative;width:var(--cell);height:var(--cell);border-radius:20%;background:linear-gradient(rgba(0,0,0,.38),rgba(0,0,0,.38)),url(img/cell-empty.webp) center/100% 100%}
+/* Pole zajęte: kafel z kwiatem (obraz), symbol koloru jest częścią obrazu (R-1.9, Q103). Narożniki kafla są przezroczyste. */
+.bg-cell[data-variant=filled]{background:var(--tile) center/100% 100% no-repeat;border-radius:0}
+.bg-cell[data-color=poppy]{--c:var(--c-poppy);--tile:url(img/tile-poppy.webp)}
+.bg-cell[data-color=sun]{--c:var(--c-sun);--tile:url(img/tile-sun.webp)}
+.bg-cell[data-color=leaf]{--c:var(--c-leaf);--tile:url(img/tile-leaf.webp)}
+.bg-cell[data-color=drop]{--c:var(--c-drop);--tile:url(img/tile-drop.webp)}
+.bg-cell[data-color=berry]{--c:var(--c-berry);--tile:url(img/tile-berry.webp)}
+/* Podgląd położenia (R-1.4): kafel przykryty 45% koloru pustego pola, biały obrys 2 px (znak poza kolorem). */
+.bg-cell[data-preview=place]{background:linear-gradient(rgba(47,20,11,.45),rgba(47,20,11,.45)),var(--tile) center/100% 100% no-repeat,linear-gradient(var(--empty),var(--empty));box-shadow:inset 0 0 0 2px #fff,0 0 8px rgba(255,255,255,.4)}
+/* Linia do wyczyszczenia: jasna zasłona i podwójny obrys ciągły (jasny 2 px + ciemny 1 px) — widoczny na każdym kolorze. */
+.bg-cell[data-line=clear]::before,.bg-cell[data-line=bonus]::before{content:"";position:absolute;inset:0;border-radius:20%;z-index:1}
+.bg-cell[data-line=clear]::before{background:rgba(255,241,184,.22);box-shadow:inset 0 0 0 2px var(--hl),inset 0 0 0 3px var(--line-dark)}
+/* Linia ×2: ukośne paski i obrys przerywany (jasne kreski 2 px na ciemnym pasie 4 px) + plakietka „×2” poza polami. */
+.bg-cell[data-line=bonus]::before{background:repeating-linear-gradient(135deg,rgba(255,255,255,.5) 0 3px,rgba(255,255,255,0) 3px 7px);box-shadow:inset 0 0 0 4px rgba(26,16,8,.85);outline:2px dashed var(--hl);outline-offset:-3px}
+.bg-cell[data-clearing=true]{background:linear-gradient(rgba(255,248,224,.75),rgba(255,248,224,.75)),var(--tile) center/100% 100% no-repeat;border-radius:20%;box-shadow:0 0 0 2px var(--hl);transform:scale(.86)}
+/* r5: klatka czyszczenia w stanach capture jest statyczna; na żywo rozkwit gra na warstwie efektów (.bg-fx). */
+
+/* znacznik linii ×2 (część component.board-cell, wariant bonus) */
+/* Plakietka „×2” leży poza polami (Q59): przy prawej krawędzi ramki na wysokości rzędu albo nad górną krawędzią ramki nad kolumną. */
+.bg-badge{position:absolute;display:inline-flex;align-items:center;justify-content:center;width:22px;height:18px;padding:0;border-radius:999px;background:url(img/badge-coin.webp) center/100% 100% no-repeat;color:#3A2405;border:0;font:900 11px/1 var(--font);letter-spacing:-.02em;white-space:nowrap;filter:drop-shadow(0 2px 2px rgba(0,0,0,.45));z-index:3}
+.bg-badge.is-row{transform:translate(0,-50%)}
+.bg-badge.is-col{transform:translate(-50%,-100%)}
+.bg-badge svg{display:block}
+
+/* component.piece */
+.bg-piece{position:relative;display:grid;grid-template-columns:repeat(var(--w),var(--cell));grid-auto-rows:var(--cell);gap:var(--gap);touch-action:none;cursor:grab}
+.bg-piece .bg-cell.is-gap{background:transparent;box-shadow:none}
+/* Mały rozmiar (klocki w trójce, pole 15–20 px; Q102 warunek 1): uproszczony kafel — jeden duży kwiat z grubym konturem.
+   Przeciągany klocek i plansza mają pole ≥ 36 px i używają pełnego kafla. */
+.bg-slot .bg-cell[data-variant=filled],.bg-small-tiles .bg-cell[data-variant=filled]{background-image:var(--tile-s)}
+.bg-cell[data-color=poppy]{--tile-s:url(img/tile-poppy-s.webp)}
+.bg-cell[data-color=sun]{--tile-s:url(img/tile-sun-s.webp)}
+.bg-cell[data-color=leaf]{--tile-s:url(img/tile-leaf-s.webp)}
+.bg-cell[data-color=drop]{--tile-s:url(img/tile-drop-s.webp)}
+.bg-cell[data-color=berry]{--tile-s:url(img/tile-berry-s.webp)}.bg-piece[data-variant=lifted]{opacity:.22}
+.bg-piece[data-variant=dragging]{position:absolute;z-index:60;pointer-events:none;cursor:grabbing;filter:drop-shadow(0 10px 12px rgba(40,24,10,.32))}
+.bg-piece[data-variant=static]{cursor:default}
+@media (hover:hover){.bg-piece[data-variant=tray]:hover{filter:brightness(1.06) drop-shadow(0 4px 6px rgba(40,24,10,.25))}}
+
+/* component.piece-tray */
+.bg-tray{display:grid;grid-template-columns:repeat(3,var(--slot-w,minmax(0,1fr)));justify-content:space-between;gap:var(--tray-gap,12px);width:100%}
+/* r4: slot to jeden obraz rozciągnięty na cały slot (bez 9-slice). W r3 border-image (slice 40 → 20 px) przy ułamkowych
+   szerokościach slotów (np. 112,33 / 118,67 px) i DPR > 1 dawał szwy na granicach wycinków: różne kreski i ramki w każdym slocie. */
+.bg-slot{position:relative;display:flex;align-items:center;justify-content:center;height:var(--slot-h);border-radius:18px;background:url(img/slot.webp) center / 100% 100% no-repeat;border:0;filter:drop-shadow(0 4px 8px rgba(20,12,4,.35))}
+.bg-slot[data-variant=empty]{opacity:.62}.bg-slot[data-variant=empty]::after{content:"";width:22%;aspect-ratio:1;border-radius:30%;border:2px dashed rgba(42,28,16,.35)}
+
+/* component.score-display */
+.bg-score{display:flex;flex-direction:column;align-items:center;gap:0}
+.bg-score-label{font-size:13px;font-weight:700;color:var(--ink-2);letter-spacing:.02em}
+.bg-score-value{font-weight:800;font-size:var(--score-fs,40px);line-height:1.05;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.bg-score[data-variant=record]{align-items:center}
+.bg-score[data-variant=record] .bg-score-value{font-size:var(--record-fs,17px);display:inline-flex;align-items:center;gap:5px}
+.bg-score[data-variant=record] .bg-score-label{font-size:12px}
+
+/* component.combo-badge */
+/* Miodowa plakietka z kiełkiem (obraz); kiełek jest w lewym kapslu obrazu, ikona w DOM zostaje niewidoczna i zachowuje miejsce. */
+/* r7: component.combo-badge — „Podlewanie”: kremowa pigułka z rośliną w doniczce (SVG, wystaje nad pigułkę), „×c” i trzy krople zapasu.
+   Roślina rośnie z umiarem: wysokość 34 / 36 / 38 / 40 / 42 px (stopnie 1–5); pigułka 30 px; całość w pasku 36 px (rama planszy niżej). */
+.bg-combo{position:relative;display:inline-flex;align-items:center;gap:4px;height:30px;padding:0 10px 0 46px;border-radius:999px;color:#3A2405;font-weight:900;font-size:17px;font-variant-numeric:tabular-nums;white-space:nowrap;
+  background:linear-gradient(180deg,#FFF8E6 0%,#FBE6B8 100%);box-shadow:inset 0 2px 0 rgba(255,255,255,.8),inset 0 -2px 0 rgba(150,90,20,.25),0 0 0 2px #8A5A1E,0 4px 8px rgba(20,12,4,.35)}
+.bg-plant{position:absolute;left:0;bottom:-2px;width:44px;height:48px;transform-origin:50% 100%;pointer-events:none}
+/* r7: obraz z generatora 88×96 (2×); ramka stała, roślina rośnie w obrazie (doniczka tej samej szerokości we wszystkich stopniach). */
+.bg-plant img{display:block;width:100%;height:100%;object-fit:contain;object-position:50% 100%;-webkit-user-drag:none;user-select:none}
+.bg-combo[data-stage="5"]{box-shadow:inset 0 2px 0 rgba(255,255,255,.8),inset 0 -2px 0 rgba(150,90,20,.25),0 0 0 2px #B07A12,0 0 12px 2px rgba(255,210,74,.75),0 4px 8px rgba(20,12,4,.35)}
+.bg-combo-mult{min-width:20px}
+.bg-drops{display:inline-flex;gap:1px;align-items:center}
+.bg-drop{display:inline-flex;width:10px;height:13px}
+.bg-drop svg{width:100%;height:100%}
+/* Ostatnia kropla: pąk i kwiat mają obraz zwiędłej rośliny (plant-wilt); kiełek, listki i złoty kwiat — swój obraz przygaszony. */
+.bg-combo[data-wilt=true] .bg-plant:not([data-img=wilt]) img{filter:saturate(.5) brightness(.9) sepia(.2)}
+.bg-wide .bg-combo{height:34px;font-size:19px;padding-left:52px}
+.bg-wide .bg-plant{width:50px;height:56px}
+.fx-grow .bg-plant{animation:fx-grow .3s ease-out}
+.fx-grow{animation:fx-grow-glow .3s ease-out}
+@keyframes fx-grow{0%{transform:translateY(0) scale(.85)}45%{transform:translateY(-6px) scale(1.15)}100%{transform:translateY(0) scale(1)}}
+@keyframes fx-grow-glow{0%{filter:none}40%{filter:drop-shadow(0 0 8px rgba(255,220,90,.95))}100%{filter:none}}
+.fx-wither .bg-plant{animation:fx-wither-plant .4s ease-in forwards}
+.fx-wither{animation:fx-wither .4s ease-in forwards}
+@keyframes fx-wither-plant{0%{transform:rotate(0)}100%{transform:rotate(28deg) translateY(4px);filter:saturate(.2) brightness(.8)}}
+@keyframes fx-wither{0%{opacity:1;transform:translateY(0)}60%{opacity:1}100%{opacity:0;transform:translateY(10px)}}
+
+/* component.move-points */
+.bg-points{display:flex;flex-direction:column;align-items:center;text-align:center;line-height:1.1;font-variant-numeric:tabular-nums;color:var(--green-d)}
+.bg-points-total{font-weight:800;font-size:22px}
+.bg-points-notes{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 8px;font-size:12.5px;font-weight:700;color:var(--ink-2)}
+.bg-points-note{display:inline-flex;align-items:center;gap:3px;white-space:nowrap}
+/* r5: na telefonach suma i dopiski w jednym wierszu (w r4 dopisek pod sumą wychodził poza pasek 44 px pod ramę planszy). */
+.bg-phone .bg-points{flex-direction:row;flex-wrap:wrap;align-items:baseline;justify-content:flex-end;column-gap:8px;max-width:100%}
+.bg-phone .bg-points-notes{flex-wrap:nowrap}/* r5: zawartość paska wyśrodkowana w górnych 36 px (dolne 8 px zajmuje rama planszy wysunięta w górę), więc tabliczka punktów i seria nie wchodzą na ramę. */
+.bg-phone .bg-strip{padding-bottom:8px}
+
+/* component.icon-button */
+/* Kremowy przycisk z domkiem (obraz zawiera ikonę domu); ikona SVG w DOM zostaje niewidoczna (nazwa dostępna bez zmian). */
+.bg-icon-btn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border-radius:14px;border:0;background:url(img/icon-home.webp) center/100% 100% no-repeat;color:var(--ink);cursor:pointer;filter:drop-shadow(0 3px 4px rgba(20,12,4,.35))}
+.bg-icon-btn svg{visibility:hidden}
+.bg-icon-btn:hover,.bg-icon-btn[data-demo=hover]{filter:brightness(1.06) drop-shadow(0 3px 4px rgba(20,12,4,.35))}
+.bg-icon-btn:active,.bg-icon-btn[data-demo=pressed]{transform:translateY(1px);filter:brightness(.95)}
+
+/* component.mode-label */
+.bg-mode{display:flex;flex-direction:column;align-items:center;text-align:center;font-weight:800;font-size:16px;line-height:1.15;min-width:0}
+.bg-mode-sub{font-weight:700;font-size:12.5px;color:var(--ink-2)}
+/* component.level-label (r6): środek nagłówka gry klasycznej, ta sama budowa co nazwa trybu wyzwania (dwa wiersze), na kremowej tabliczce. */
+.bg-level{display:flex;flex-direction:column;align-items:center;text-align:center;line-height:1.15;min-width:0;text-wrap:balance}
+.bg-level-num{font-weight:800;font-size:16px;color:var(--ink)}
+.bg-level-name{font-weight:700;font-size:12.5px;color:var(--ink-2);white-space:nowrap}
+.bg-wide .bg-level-num{font-size:18px}
+.bg-wide .bg-level-name{font-size:14px}
+/* Wariant daily (Q108): śliwkowa wstęga ze złotymi lamówkami zamiast tabliczki; tekst kremowy, data złota.
+   Wstęga wystaje 5 px w górę, 16 px w dół (dolna lamówka pod datą, nie przez nią) i 22 px w bok (telefony 11 px, żeby na
+   mobile-compact nie zachodziła na tabliczkę rekordu) — bez wpływu na układ. */
+.bg-mode[data-variant=daily]{color:#FFF6E2;text-shadow:0 1px 0 rgba(40,6,24,.6)}
+.bg-mode[data-variant=daily] .bg-mode-sub{color:#FFD978}
+.bg-phone .bg-mode[data-variant=daily]::before{left:-9px;right:-9px}
+.bg-mode[data-variant=daily]::before{inset:-5px -22px -16px;border-radius:0;background:url(img/daily-ribbon.webp) center / 100% 100% no-repeat;box-shadow:none;filter:drop-shadow(0 3px 4px rgba(20,6,14,.4))}
+/* Q107: w grze klasycznej środek nagłówka jest pusty — rekord zostaje w prawej kolumnie siatki. */
+.bg-game-head > .bg-score[data-variant=record]{grid-column:3}
+
+/* component.menu-button */
+.bg-menu-btn{display:flex;align-items:center;gap:10px;width:100%;min-height:68px;padding:12px 18px;border-radius:20px;border:2px solid transparent;font:inherit;text-align:center;cursor:pointer}
+/* Przyciski z obrazów (pigułki: zielona główna, kremowa drugorzędna, kremowa z ceglaną obwódką ostrzegawcza), rozciągane border-image. */
+.bg-menu-btn,.bg-btn{border-image-slice:38 38 38 38 fill;border-image-repeat:stretch;filter:drop-shadow(0 4px 6px rgba(20,12,4,.35))}
+.bg-menu-btn{border-image-width:50% 34px}
+.bg-btn{border-image-width:50% 26px}
+.bg-menu-btn[data-variant=primary],.bg-btn[data-variant=primary]{border-image-source:url(img/btn-primary.webp)}
+.bg-menu-btn[data-variant=secondary],.bg-btn[data-variant=secondary]{border-image-source:url(img/btn-secondary.webp)}
+.bg-btn[data-variant=danger]{border-image-source:url(img/btn-danger.webp)}
+.bg-menu-btn[data-variant=primary]{background:none;color:var(--green-d)}
+.bg-menu-btn[data-variant=secondary]{background:none;color:var(--ink)}
+.bg-menu-btn-ic{flex:none;display:flex;width:36px;height:36px;align-items:center;justify-content:center;border-radius:12px;background:rgba(255,255,255,.4)}
+.bg-menu-btn[data-variant=secondary] .bg-menu-btn-ic{background:rgba(46,107,58,.14);color:var(--green)}
+/* r4 (Q111, Q115): ikona przy lewej krawędzi, blok tekstu wyśrodkowany w całym przycisku — prawy margines bloku równy ikonie z odstępem (36 + 10 px). */
+.bg-menu-btn-text{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;min-width:0;margin-right:46px;text-align:center}
+.bg-menu-btn-label{font-weight:800;font-size:19px;line-height:1.15}
+/* r4 (Q115): wiersz informacji 15 px (był 14 px z przezroczystością .88), pełne krycie. */
+.bg-menu-btn-meta{font-weight:600;font-size:15px;line-height:1.25;font-variant-numeric:tabular-nums}
+.bg-menu-btn:hover,.bg-menu-btn[data-demo=hover],.bg-btn:hover,.bg-btn[data-demo=hover]{filter:brightness(1.05) drop-shadow(0 5px 7px rgba(20,12,4,.35))}
+.bg-menu-btn:active,.bg-menu-btn[data-demo=pressed]{transform:translateY(3px);filter:brightness(.96) drop-shadow(0 1px 2px rgba(20,12,4,.35))}
+
+/* component.button */
+.bg-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:10px 20px;border-radius:16px;border-width:2px;border-style:solid;border-color:transparent;font:800 17px/1.2 var(--font);cursor:pointer;text-align:center}
+.bg-btn[data-variant=primary]{background:none;color:var(--green-d)}
+.bg-btn[data-variant=secondary]{background:none;color:var(--ink)}
+.bg-btn[data-variant=danger]{background:none;color:var(--danger)}
+.bg-btn:active,.bg-btn[data-demo=pressed]{transform:translateY(2px)}
+
+:is(.bg-btn,.bg-menu-btn,.bg-icon-btn):focus-visible,:is(.bg-btn,.bg-menu-btn,.bg-icon-btn)[data-demo=focus]{outline:3px solid var(--focus);outline-offset:3px}
+
+/* component.wordmark */
+.bg-wordmark{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.bg-wordmark-row{display:flex;align-items:center;gap:10px}
+.bg-wordmark-row img{display:block;width:var(--mark,44px);height:var(--mark,44px)}
+.bg-wordmark-name{font-weight:900;font-size:var(--wm-fs,34px);letter-spacing:-.015em;line-height:1;color:var(--ink)}
+.bg-wordmark-tag{font-weight:600;font-size:15px;color:var(--ink-2)}
+
+/* component.dialog i component.game-over-panel */
+.bg-scrim{position:absolute;inset:0;z-index:40;display:flex;align-items:safe center;justify-content:center;padding:16px;overflow-y:auto;background:rgba(28,22,14,.46)}
+.bg-card{width:min(100%,380px);padding:24px 22px 22px;border-radius:24px;background:none;border:0 solid transparent;border-image:url(img/card.webp) 40 fill / 28px stretch;filter:drop-shadow(0 18px 30px rgba(28,20,10,.45));display:flex;flex-direction:column;gap:14px}
+/* Wyzwanie dnia (Q108): dialog wyjścia i panel końca na karcie ze złotą listwą i słońcami w narożnikach. */
+[data-game-mode=daily] .bg-card{border-image:url(img/daily-card.webp) 42 fill / 22px / 6px stretch}
+/* r4 (Q111): tekst kart wyśrodkowany w poziomie, także wielowierszowy; wiersze wyrównane długością (text-wrap: balance). */
+.bg-card{text-align:center;text-wrap:balance}
+.bg-menu-btn-text,.bg-alert-text,.bg-daily-info{text-wrap:balance}
+.bg-card h2{margin:0;font-size:23px;font-weight:800;line-height:1.2}
+.bg-card p{margin:0;font-size:16px;line-height:1.4;color:var(--ink-2)}
+.bg-actions{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.bg-actions .bg-btn{width:100%}
+.bg-over{align-items:center;text-align:center;gap:10px}
+.bg-over-title{font-size:15px !important;font-weight:800;color:var(--ink-2);letter-spacing:.03em}
+.bg-over-score{font-size:54px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums}
+.bg-over-record{font-size:16px;font-weight:700;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.bg-newrec{display:inline-flex;align-items:center;gap:6px;padding:5px 12px 5px 9px;border-radius:999px;background:#FFF0B8;border:2px solid #C9A21A;color:#5A4300;font-weight:800;font-size:15px}
+.bg-daily-info{display:flex;align-items:flex-start;justify-content:center;gap:8px;padding:10px 40px 10px 12px;border-radius:14px;background:var(--green-l);color:var(--green-d);font-weight:700;font-size:14.5px;line-height:1.35;text-align:center}
+.bg-daily-info svg{flex:none;margin-top:1px}
+.bg-wide .bg-card{width:min(100%,460px)}
+.bg-btn{white-space:nowrap}
+.bg-wide .bg-actions,.bg-card.is-row .bg-actions{flex-direction:row}
+.bg-wide .bg-actions .bg-btn,.bg-card.is-row .bg-actions .bg-btn{flex:1}
+
+/* component.alert */
+.bg-alert{display:flex;align-items:center;gap:10px;padding:10px 10px 10px 12px;border-radius:16px;font-weight:700;font-size:15px;line-height:1.3;text-align:center}
+.bg-alert-ic{flex:none;display:flex}
+.bg-alert-text{flex:1;min-width:0;text-align:center}
+.bg-alert .bg-btn{flex:none;min-height:44px;padding:8px 14px;font-size:15px;border-radius:12px}
+.bg-alert[data-variant=save-error],.bg-alert[data-variant=read-error]{background:#FFF1E4;color:#7A3410;box-shadow:inset 0 0 0 2px #E2A47A}
+.bg-alert[data-variant=crash]{background:#5E1E10;color:#fff;box-shadow:0 8px 24px rgba(40,10,0,.35)}
+.bg-btn[data-variant=light]{background:#fff;color:#5E1E10}
+.bg-btn[data-variant=light]:hover,.bg-btn[data-variant=light][data-demo=hover]{background:#FFE9E0}
+.bg-crash{position:absolute;inset:0;z-index:45;background:rgba(28,22,14,.42)}
+.bg-phone .bg-crash .bg-alert{position:absolute;left:50%;top:var(--pad-t,59px);width:calc(min(100%,440px) - 32px);transform:translateX(-50%)}
+.bg-wide .bg-crash .bg-alert{position:absolute;left:50%;top:32px;width:560px;transform:translateX(-50%)}
+.bg-phone .bg-save-wrap{width:100%;margin-top:12px}
+.bg-wide .bg-save-wrap{width:100%}
+
+/* screen.home */
+.bg-home{align-items:center}
+.bg-home-top{display:flex;flex-direction:column;align-items:center;gap:18px;margin-top:24px;width:100%}
+.bg-home-hero{display:block;width:min(100%,320px);height:auto}
+.bg-home-actions{display:flex;flex-direction:column;gap:12px;width:100%;margin-top:auto}
+.bg-wide .bg-home-top{margin-top:40px;gap:24px}
+.bg-wide .bg-home-hero{width:380px}
+.bg-wide .bg-home-actions{width:400px;margin:auto 0}
+.bg-home-mid{display:flex;flex-direction:column;justify-content:center;align-items:center;flex:1;width:100%}
+.bg-over .bg-actions{align-self:stretch}
+
+/* screen.game — układ */
+.bg-game-head{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:8px;min-height:48px}
+.bg-game-head > :first-child{justify-self:start}
+.bg-game-head > :last-child{justify-self:end}
+/* r7: lewa grupa zawsze w pierwszej kolumnie przy lewej krawędzi, także gdy jest jedynym dzieckiem (telefon bez rekordu, np. nowy dzień wyzwania). */
+.bg-game-head > .bg-head-left{grid-column:1;justify-self:start}
+.bg-strip{display:flex;align-items:center;justify-content:space-between;gap:8px;height:var(--strip-h,44px)}
+.bg-phone .bg-game-main{display:flex;flex-direction:column;align-items:center;flex:1;min-height:0}
+.bg-phone .bg-score-wrap{margin-top:var(--score-gap,8px)}
+/* r6 (Q188): opakowanie wyniku jest miejscem plakietki awansu (środek plakietki = środek wyniku). */
+.bg-score-wrap{position:relative}
+.bg-phone .bg-strip{width:var(--board-w);margin-top:2px}
+.bg-phone .bg-play{margin:auto 0;display:flex;flex-direction:column;align-items:center;width:100%}
+.bg-phone .bg-tray-wrap{width:100%;margin-top:var(--tray-gap,16px)}
+
+/* r6 (Q199): niskie okno w pionie — seria i punkty ruchu w wierszu wyniku (po lewej i prawej od wyniku), pasek znika z układu;
+   plansza 12 px pod wierszem (rama wystaje 8 px). Plakietka serii skrócona do ikony i „×c”. */
+.bg-surface[data-layout=phone-merged] .bg-play{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;column-gap:24px;width:var(--board-w)}
+.bg-surface[data-layout=phone-merged] .bg-play > .bg-score-wrap{grid-column:2;grid-row:1}
+.bg-surface[data-layout=phone-merged] .bg-play > .bg-strip{display:contents}
+.bg-surface[data-layout=phone-merged] .bg-strip-left{grid-column:1;grid-row:1;justify-self:start;min-width:0}
+.bg-surface[data-layout=phone-merged] .bg-strip-right{grid-column:3;grid-row:1;justify-self:end;min-width:0}
+.bg-surface[data-layout=phone-merged] .bg-play > .bg-board{grid-column:1 / -1;grid-row:2;justify-self:center;margin-top:12px}
+.bg-surface[data-layout=phone-merged] .bg-strip-right{max-width:100%}
+.bg-surface[data-layout=phone-merged] .bg-points{flex-direction:column;align-items:flex-end;text-align:right;max-width:100%}
+.bg-surface[data-layout=phone-merged] .bg-points-notes{flex-direction:column;align-items:flex-end;gap:0;flex-wrap:nowrap;max-width:100%}
+.bg-surface[data-layout=phone-merged] .bg-points-note{white-space:normal;justify-content:flex-end;text-align:right;line-height:1.1}
+/* r7: dłuższe dopiski („kolorowa rabata +500”) w wierszu wyniku w najwyżej 2 wierszach: wiersz wyniku 12 px szerszy z każdej strony niż plansza
+   (seria i punkty wchodzą w boczny margines planszy, nie poza treść), dopisek bez ikony, 11,5 px. */
+.bg-surface[data-layout=phone-merged] .bg-play{width:min(calc(var(--board-w) + 24px),100%);justify-items:stretch}
+.bg-surface[data-layout=phone-merged] .bg-points-note{font-size:11.5px}
+.bg-surface[data-layout=phone-merged] .bg-points-note > .bg-ic{display:none !important}
+
+/* r6 (Q180, Q200): telefon w poziomie — plansza po lewej, kolumna 380 px po prawej (nagłówek na górze kolumny). */
+.bg-land .bg-screen{max-width:none;padding:var(--pad-t) 16px var(--pad-b)}
+.bg-land .bg-game-main{display:grid;grid-template-columns:var(--board-w) var(--side-w);justify-content:center;align-content:center;align-items:center;column-gap:32px;flex:1}
+.bg-land .bg-side{display:flex;flex-direction:column;gap:8px;width:var(--side-w)}
+.bg-land .bg-game-head{width:100%}
+.bg-land .bg-score-wrap{margin-top:0;align-self:center}
+.bg-land .bg-strip{width:100%;margin-top:0;padding-bottom:0}
+.bg-land .bg-tray-wrap{margin-top:0}
+
+/* r6 (Q201): komunikat błędu zapisu na wierszu wyniku (niskie okno) — jeden wiersz: ikona, krótki tekst, „Spróbuj ponownie”. */
+.bg-save-wrap.is-over{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:var(--content-w,var(--board-w));z-index:8;margin:0}
+.bg-land .bg-save-wrap.is-over{width:var(--side-w)}
+.bg-alert.is-line{padding:5px 6px 5px 10px;gap:8px;white-space:nowrap}
+.bg-alert.is-line .bg-btn{min-height:44px;padding:6px 12px}
+.bg-alert.is-line .bg-alert-text{white-space:nowrap;overflow:hidden;text-overflow:clip}
+
+/* r6 (Q177): ekran startowy dopasowany do wysokości — najpierw odstępy, potem obrazek (ozdoba) się zmniejsza; w poziomie (Q202)
+   dwie kolumny: znak z obrazkiem po lewej, menu po prawej. */
+.bg-phone .bg-home{height:100%;min-height:0}
+.bg-phone .bg-home .bg-home-top{flex:0 1 auto;min-height:0;margin-top:min(24px,var(--pad-t,59px))}
+.bg-phone .bg-home .bg-home-hero{flex:0 1 auto;min-height:48px;max-height:160px;width:auto;max-width:min(100%,320px);object-fit:contain}
+.bg-phone .bg-home .bg-home-actions{flex:none;margin-top:auto;padding-top:12px}
+.bg-land .bg-home{display:grid;grid-template-columns:1fr 1fr;align-items:center;column-gap:32px;max-width:900px}
+.bg-land .bg-home .bg-home-top{margin-top:0;height:100%;justify-content:center}
+.bg-land .bg-home .bg-home-actions{margin:0;padding-top:0}
+
+/* r6 (Q177): na niskich oknach panel końca i dialog mają mniejsze odstępy (karta mieści się w oknie bez przewijania). */
+.bg-surface[data-layout=landscape] .bg-card,.bg-surface[data-layout=phone-merged] .bg-card{padding:14px 18px 14px;gap:8px}
+.bg-surface[data-layout=landscape] .bg-scrim,.bg-surface[data-layout=phone-merged] .bg-scrim{padding:8px 16px}
+/* r4 (Q112): wspólna siatka mac-wide. Nagłówek ma szerokość planszy + odstępu + kolumny tacki (564 + 72 + 380 = 1016 px),
+   więc przycisk domu stoi na lewej krawędzi planszy, a rekord na prawej krawędzi kolumny tacki. */
+/* r6: siatka Q112 od szerokości planszy (laptop: plansza mniejsza od wysokości okna) — nagłówek = plansza + 72 + 380. */
+.bg-wide .bg-game-head{max-width:calc(var(--board-w,564px) + 452px);width:100%;margin:0 auto;min-height:56px}
+/* r4 (Q113): większy przycisk domu i rekord na mac-wide. */
+.bg-wide .bg-icon-btn{width:56px;height:56px;border-radius:18px}
+.bg-wide .bg-score[data-variant=record] .bg-score-label{font-size:14px}
+.bg-wide .bg-score[data-variant=record] .bg-score-value{font-size:22px}
+.bg-wide .bg-game-main{flex:1;display:grid;grid-template-columns:var(--board-w) 380px;justify-content:center;align-content:center;align-items:center;gap:72px}
+.bg-wide .bg-side{display:flex;flex-direction:column;gap:20px}
+/* r4 (Q112): wynik, seria i punkty ruchu jeden pod drugim na osi środkowego slotu tacki (środek kolumny 380 px).
+   Pasek ma stałą wysokość 96 px (seria 32 + odstęp 6 + punkty z dopiskami), więc kolumna nie skacze, gdy elementy znikają. */
+.bg-wide .bg-score{align-items:center}
+.bg-wide .bg-strip{flex-direction:column;justify-content:flex-start;align-items:center;gap:6px;height:96px}
+
+/* Pasek narzędzi podglądu (standard paczki) — narzędzie prototypu, nie UI produktu */
+.pt-bar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;flex-direction:column;gap:8px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:#141518;color:#fff;font:14px/1.3 system-ui,-apple-system,"Segoe UI",sans-serif;box-shadow:0 -4px 18px rgba(0,0,0,.2)}
+.pt-bar *{box-sizing:border-box}
+.pt-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;min-width:0}
+.pt-group{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px 8px;min-width:0}
+.pt-label{color:#fff;font-weight:600}
+.pt-link{color:#fff;font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.pt-link:hover{color:#C9D6FF}
+.pt-link[aria-current=page]{text-decoration:none}
+.pt-select{font:inherit;color:#fff;background:#25272B;border:1px solid rgba(255,255,255,.35);border-radius:8px;padding:5px 8px;max-width:100%}
+.pt-btn{font:inherit;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.4);border-radius:8px;padding:5px 10px;cursor:pointer;line-height:1.2}
+.pt-btn:hover{background:rgba(255,255,255,.1)}
+.pt-btn:focus-visible,.pt-select:focus-visible,.pt-notes:focus-visible,.pt-link:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.pt-arrow{min-width:34px;font-size:18px;padding:2px 10px}
+.pt-count{font-variant-numeric:tabular-nums;min-width:4.5em}
+.pt-profile{font-variant-numeric:tabular-nums}
+.pt-profile[aria-pressed=true]{background:#fff;color:#141518;border-color:#fff;font-weight:700}
+.pt-row-notes{flex-wrap:nowrap}
+.pt-row-notes .pt-group{flex-wrap:nowrap;flex:none}
+.pt-notes{flex:1;min-width:0;font:inherit;color:#fff;background:#25272B;border:1px solid rgba(255,255,255,.35);border-radius:8px;padding:6px 8px;resize:vertical;min-height:34px}
+.pt-notes::placeholder{color:rgba(255,255,255,.55)}
+@media (max-width:640px){.pt-row-notes{flex-wrap:wrap}.pt-row-notes .pt-notes{flex-basis:100%}}
+
+/* ===== r5: przełącznik dźwięku, krok końca gry, oznaczenie klocków, animacje ===== */
+
+/* component.sound-toggle (Q143): okrągły kremowy przycisk z zieloną obwódką (pigułka z zestawu UI), głośnik w zieleni. */
+.bg-sound-btn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border-radius:50%;background:none;border:0 solid transparent;border-image:url(img/btn-secondary.webp) 38 fill / 22px stretch;color:var(--green-d);cursor:pointer;filter:drop-shadow(0 3px 4px rgba(20,12,4,.35))}
+.bg-sound-btn[data-variant=muted]{color:#5A4630}
+.bg-sound-btn:hover,.bg-sound-btn[data-demo=hover]{filter:brightness(1.05) drop-shadow(0 3px 4px rgba(20,12,4,.35))}
+.bg-sound-btn:active,.bg-sound-btn[data-demo=pressed]{transform:translateY(1px);filter:brightness(.95)}
+.bg-sound-btn:focus-visible,.bg-sound-btn[data-demo=focus]{outline:3px solid var(--focus);outline-offset:3px}
+.bg-wide .bg-sound-btn{width:56px;height:56px;border-image-width:28px}
+.bg-wide .bg-sound-btn svg{width:28px;height:28px}
+.bg-head-left{display:flex;align-items:center;gap:4px}
+.bg-wide .bg-head-left{gap:12px}
+/* r7: para przełączników „Muzyka” i „Efekty” — ten sam odstęp co w lewej grupie nagłówka. */
+.bg-sound-pair{display:flex;align-items:center;gap:4px}
+.bg-wide .bg-sound-pair{gap:12px}
+/* r7 (Q232): wiersz 24 px pod nagłówkiem na telefonach — etykieta poziomu albo wstęga wyzwania w jednej linii, bez zawijania;
+   gdy brak miejsca, nazwa ogrodu (albo data) skraca się wielokropkiem. */
+.bg-level-row{display:flex;justify-content:center;align-items:center;height:24px;min-width:0;padding:0 12px}
+.bg-level-dot,.bg-mode-dot{display:none}
+.bg-level-row .bg-level,.bg-level-row .bg-mode{flex-direction:row;align-items:baseline;max-width:100%;white-space:nowrap;line-height:16px}
+.bg-level-row .bg-level-dot,.bg-level-row .bg-mode-dot{display:inline;white-space:pre}
+.bg-level-row .bg-level-num{font-size:14px;flex:none}
+.bg-level-row .bg-level-name,.bg-level-row .bg-mode-sub{font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.bg-level-row .bg-mode{font-size:14px}
+.bg-level-row .bg-mode > span:first-child{flex:none}
+/* Tabliczka (i wstęga) wiersza ma 20 px i stoi 2 px od dołu wiersza, więc z tabliczką wyniku (wystaje 4 px w górę, odstęp ≥ 4 px) zostaje ≥ 2 px przerwy. */
+.bg-level-row .bg-level,.bg-level-row .bg-mode{height:16px}
+.bg-level-row .bg-level::before,.bg-level-row .bg-mode::before{inset:-2px -12px}
+.bg-level-row .bg-mode[data-variant=daily]::before{inset:-2px -16px}
+.bg-land .bg-side{gap:4px}
+/* phone-merged: Podlewanie przy dolnej krawędzi wiersza wyniku (na wysokości cyfr), żeby roślina nie sięgała do wiersza poziomu. */
+.bg-surface[data-layout=phone-merged] .bg-strip-left{align-self:end;margin-bottom:4px}
+/* Zwarte Podlewanie (r7): w wierszu wyniku (phone-merged) i na wąskim pasku z dwoma dopiskami (is-tight) — krople w kolumnie, roślina 38 px szerokości. */
+.bg-surface[data-layout=phone-merged] .bg-combo,.bg-strip.is-tight .bg-combo{padding:0 7px 0 38px;gap:3px}
+.bg-surface[data-layout=phone-merged] .bg-plant,.bg-strip.is-tight .bg-plant{width:38px;height:42px}
+.bg-surface[data-layout=phone-merged] .bg-drops,.bg-strip.is-tight .bg-drops{flex-direction:column;gap:0}
+.bg-surface[data-layout=phone-merged] .bg-drop,.bg-strip.is-tight .bg-drop{width:7px;height:9px}
+/* Oś przełącznika: telefony — prawa krawędź treści (przycisków menu, 16 px); mac-wide — prawa krawędź siatki gry (rekord i kolumna trójki). */
+.bg-home-sound{position:absolute;top:var(--pad-t,59px);right:16px;z-index:2}
+/* r7: na telefonach w pionie para przełączników stoi w osobnym rzędzie nad znakiem — znak schodzi o 44 + 12 px. */
+.bg-phone:not(.bg-land) .bg-home .bg-home-top{margin-top:56px}
+.bg-phone .bg-wordmark::before{left:-6px;right:-6px}
+/* Znak z hasłem nie sięga pod przełącznik dźwięku (po 53 px z każdej strony); dłuższe hasło (EN na mobile-compact) zawija się w 2 wiersze. */
+.bg-phone .bg-wordmark{max-width:calc(100% - 106px)}
+.bg-phone .bg-wordmark-tag{text-wrap:balance}
+.bg-wide .bg-home-sound{top:32px;right:calc((100% - 1016px) / 2)}
+
+/* component.no-moves-step (Q128): warstwa na cały ekran (bez zasłony), komunikat nad trójką na kremowej tabliczce. */
+.bg-nomoves{position:absolute;inset:0;z-index:30;cursor:pointer}
+.bg-nomoves-msg{position:absolute;transform:translateY(-100%);display:flex;justify-content:center;pointer-events:none}
+.bg-nomoves-msg{font:800 17px/1.25 var(--font);color:#2A1C10;text-align:center;text-wrap:balance}
+.bg-nomoves-msg::before{content:"";position:absolute;z-index:-1;inset:-8px 6px;border-radius:16px;background:var(--plaque);box-shadow:0 0 0 2px rgba(122,30,14,.55),0 6px 16px rgba(20,12,4,.35)}
+.bg-nomoves-msg{isolation:isolate;padding:0 22px}
+/* mac-wide: komunikat leży w miejscu paska serii i punktów; w kroku pasek jest ukryty. */
+.bg-game-main.is-ending .bg-strip > *{visibility:hidden}
+/* Przygaszenie planszy w chwili końca (9): pola i ziemia ciemnieją, rama zostaje. */
+.bg-board.is-ended .bg-grid{filter:brightness(.62) saturate(.75)}
+.bg-anim .bg-board.is-ended .bg-grid{transition:filter .3s ease-out}
+
+/* Q129: klocek trójki, który się nie mieści — wyszarzony i przygaszony, slot z ukośnym kreskowaniem i znakiem „przekreślone koło” w rogu.
+   Rozróżnienie nie tylko kolorem: kształt znaku i kreskowanie. Tylko w chwili końca gry. */
+.bg-piece[data-variant=no-fit]{filter:grayscale(.85) brightness(.72);opacity:.9;cursor:default}
+.bg-slot[data-no-fit=true]::before{content:"";position:absolute;inset:6px;border-radius:12px;pointer-events:none;background:repeating-linear-gradient(135deg,rgba(90,70,48,.22) 0 3px,rgba(90,70,48,0) 3px 9px)}
+.bg-nofit-mark{position:absolute;top:6px;right:6px;display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#FFF6E2;color:#7A1E0E;box-shadow:0 0 0 1.5px #7A1E0E,0 2px 3px rgba(20,12,4,.3)}
+
+/* Panel końca (Q130): powód i różnica do rekordu. */
+.bg-over-reason{display:block;text-align:center;font-size:15px !important;font-weight:700;color:#7A1E0E !important;text-wrap:balance}
+.bg-over-reason .bg-ic{display:inline-flex !important;vertical-align:-3px;margin-right:6px}
+.bg-over-gap{font-size:16px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums}
+.bg-over-gap[data-variant=tied]{color:var(--green-d)}
+
+/* Q162: komunikat bez przycisku — tekst wyśrodkowany w całym komunikacie (prawy margines = ikona 20 + odstęp 10). */
+.bg-alert.is-plain .bg-alert-text{margin-right:30px}
+
+/* component.praise (Q139): nad środkiem planszy. */
+.bg-praise{position:absolute;left:50%;top:50%;z-index:5;transform:translate(-50%,-50%);padding:8px 24px 10px;border-radius:999px;font:900 26px/1.1 var(--font);color:#3A2405;white-space:nowrap;pointer-events:none;
+  background:linear-gradient(180deg,#FFE9A6 0%,#F7C95A 52%,#E9A93A 100%);box-shadow:inset 0 2px 0 rgba(255,255,255,.7),inset 0 -3px 0 rgba(150,90,20,.35),0 0 0 2.5px #6F460F,0 6px 14px rgba(20,12,4,.4)}
+.bg-wide .bg-praise{font-size:34px}
+/* r7 (Q233): drabina pochwał — każdy szczebel większy i z mocniejszym blaskiem; nigdy szerszy niż plansza − 24 px (zawija się wyśrodkowany). */
+.bg-praise{max-width:calc(100% - 24px);width:max-content;text-align:center;white-space:normal;text-wrap:balance}
+.bg-praise[data-variant=wonderful]{font-size:30px;box-shadow:inset 0 2px 0 rgba(255,255,255,.7),inset 0 -3px 0 rgba(150,90,20,.35),0 0 0 2.5px #6F460F,0 0 14px 3px rgba(255,214,90,.55),0 6px 14px rgba(20,12,4,.4)}
+.bg-praise[data-variant=amazing]{font-size:34px;padding:10px 28px 12px;background:linear-gradient(180deg,#FFF3C4 0%,#FFD45E 50%,#F0A52E 100%);box-shadow:inset 0 2px 0 rgba(255,255,255,.8),inset 0 -3px 0 rgba(150,90,20,.35),0 0 0 3px #6F460F,0 0 22px 6px rgba(255,214,90,.7),0 6px 14px rgba(20,12,4,.4)}
+.bg-praise[data-variant=paradise]{font-size:38px;padding:12px 30px 14px;background:linear-gradient(180deg,#FFF8DC 0%,#FFE070 45%,#FFB347 75%,#FF8FB8 100%);box-shadow:inset 0 2px 0 rgba(255,255,255,.9),inset 0 -3px 0 rgba(150,60,40,.35),0 0 0 3px #7A3A10,0 0 30px 10px rgba(255,220,110,.8),0 6px 16px rgba(20,12,4,.45)}
+.bg-praise[data-variant=flowerbed]{font-size:30px;background:linear-gradient(180deg,#FFE3F0 0%,#FFB3D2 45%,#F27AAE 100%);color:#4A0F2A;box-shadow:inset 0 2px 0 rgba(255,255,255,.75),inset 0 -3px 0 rgba(120,20,60,.3),0 0 0 2.5px #7A1E4A,0 0 16px 4px rgba(255,160,200,.6),0 6px 14px rgba(20,12,4,.4)}
+.bg-wide .bg-praise[data-variant=wonderful],.bg-wide .bg-praise[data-variant=flowerbed]{font-size:38px}
+.bg-wide .bg-praise[data-variant=amazing]{font-size:42px}
+.bg-wide .bg-praise[data-variant=paradise]{font-size:48px}
+/* Rozbłysk płatków (paradise) i płatki przez cały ekran (święto). */
+.fx-burst{position:absolute;left:50%;top:50%;width:0;height:0;z-index:6;pointer-events:none}
+.fx-burst-petal{position:absolute;left:-11px;top:-11px;width:22px;height:22px;animation:fx-burst .8s ease-out both}
+@keyframes fx-burst{0%{opacity:0;transform:translate(0,0) scale(.3) rotate(0)}20%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1) rotate(var(--rot))}}
+.fx-burst.is-static .fx-burst-petal{animation:none;transform:translate(var(--dx),var(--dy)) rotate(var(--rot))}
+.fx-screen-rain{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:9}
+.fx-screen-rain:not(.is-anim) .fx-screen-petal{width:20px;height:20px;opacity:.8}
+.fx-screen-petal{position:absolute;width:26px;height:26px;opacity:.95}
+.fx-screen-rain.is-anim .fx-screen-petal{animation:fx-screen-fall 1.6s linear both}
+@keyframes fx-screen-fall{0%{opacity:0;transform:translateY(0) rotate(0)}10%{opacity:1}85%{opacity:1}100%{opacity:0;transform:translateY(var(--fall,900px)) rotate(var(--rot))}}
+
+/* component.level-up-badge (r6, Q150): ta sama miodowa plakietka co pochwała, dwa wiersze: „Poziom N!” i nazwa motywu. */
+/* Q188: plakietka stoi na wyniku (środek plakietki = środek elementu wyniku), nie na planszy ani trójce; wysokość jak wynik (telefony 58 px, mac-wide 79 px). */
+.bg-levelup{position:absolute;left:50%;top:50%;z-index:6;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:max-content;padding:6px 22px 7px;border-radius:24px;color:#3A2405;text-align:center;pointer-events:none;box-sizing:border-box;
+  background:linear-gradient(180deg,#FFE9A6 0%,#F7C95A 52%,#E9A93A 100%);box-shadow:inset 0 2px 0 rgba(255,255,255,.7),inset 0 -3px 0 rgba(150,90,20,.35),0 0 0 2.5px #6F460F,0 6px 14px rgba(20,12,4,.4)}
+.bg-levelup-num{font:900 24px/1.1 var(--font);white-space:nowrap}
+.bg-levelup-name{font:800 15px/1.15 var(--font);white-space:nowrap}
+.bg-wide .bg-levelup{padding:9px 30px 10px;border-radius:30px}
+.bg-wide .bg-levelup-num{font-size:32px}
+.bg-wide .bg-levelup-name{font-size:17px}
+
+/* component.empty-garden (r6, Q189): plakietka jak pochwała, większa; rozkwit — płatki pięciu kolorów na polach całej planszy. */
+/* r7: święto Pustej grządki — największa pochwała w grze (32 px, mac-wide 48 px, złoto-różowy blask), 2,5 s. */
+.bg-empty-garden{font-size:32px;padding:12px 28px 14px;white-space:normal;width:max-content;max-width:calc(100% - 24px);text-align:center;text-wrap:balance;border-radius:30px;z-index:7;
+  background:linear-gradient(180deg,#FFF8DC 0%,#FFE070 45%,#FFB347 75%,#FF8FB8 100%);box-shadow:inset 0 2px 0 rgba(255,255,255,.9),inset 0 -3px 0 rgba(150,60,40,.35),0 0 0 3px #7A3A10,0 0 34px 12px rgba(255,220,110,.85),0 6px 16px rgba(20,12,4,.45)}
+.bg-wide .bg-empty-garden{font-size:48px}
+.bg-empty-bloom{position:absolute;inset:0;pointer-events:none}
+.bg-empty-petal{position:absolute;opacity:.92;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
+.fx-empty-petal{animation:fx-empty-petal 1.2s ease-out both}
+@keyframes fx-empty-petal{0%{opacity:0;scale:.2}25%{opacity:1;scale:1.15}35%{scale:1}80%{opacity:1}100%{opacity:0;scale:.9;translate:0 -6px}}
+.fx-empty{animation:fx-empty 2.5s ease-out forwards}
+.fx-empty-reduced{animation:fx-empty-reduced 2.5s linear forwards}
+@keyframes fx-empty{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}8%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}14%{transform:translate(-50%,-50%) scale(1)}88%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.04)}}
+@keyframes fx-empty-reduced{0%{opacity:0}6%{opacity:1}94%{opacity:1}100%{opacity:0}}
+.fx-levelup{animation:fx-levelup 1.5s ease-out forwards}
+.fx-levelup-reduced{animation:fx-levelup-reduced 1.5s linear forwards}
+@keyframes fx-levelup{0%{opacity:0;transform:translate(-50%,-50%) scale(.7)}14%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}22%{transform:translate(-50%,-50%) scale(1)}85%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(1)}}
+/* reduced-motion: tylko przezroczystość, wejście i wyjście po 150 ms (10% z 1,5 s). */
+@keyframes fx-levelup-reduced{0%{opacity:0}10%{opacity:1}90%{opacity:1}100%{opacity:0}}
+
+
+/* Poziom w panelu końca gry klasycznej (Q152). */
+.bg-over-level{text-align:center;font-size:15px;font-weight:700;color:var(--ink-2);text-wrap:balance}
+
+/* Warstwa efektów planszy. */
+.bg-fx{position:absolute;inset:0;pointer-events:none;z-index:4;overflow:visible}
+.bg-fx .fx-tile{position:absolute;margin:0}
+.fx-petal{position:absolute;transform:translate(-50%,-50%);will-change:transform,opacity;animation:fx-petal ease-out forwards}
+.fx-sweep{position:absolute;border-radius:8px;mix-blend-mode:screen;animation:fx-sweep ease-in-out forwards;background:linear-gradient(90deg,rgba(255,214,90,0) 0%,rgba(255,226,120,.9) 45%,rgba(255,250,215,.95) 50%,rgba(255,226,120,.9) 55%,rgba(255,214,90,0) 100%) no-repeat;background-size:40% 100%}
+.fx-sweep.is-col{background:linear-gradient(180deg,rgba(255,214,90,0) 0%,rgba(255,226,120,.9) 45%,rgba(255,250,215,.95) 50%,rgba(255,226,120,.9) 55%,rgba(255,214,90,0) 100%) no-repeat;background-size:100% 40%;animation-name:fx-sweep-col}
+.fx-tile.fx-bloom{animation:fx-bloom ease-in forwards}
+.fx-badge{animation:fx-badge ease-out forwards}
+.fx-fadeout{animation:fx-fadeout ease-out forwards}
+.fx-settle{animation:fx-settle .15s ease-out}
+.fx-pop{animation:fx-pop .25s ease-out}
+.fx-rise{animation:fx-rise .3s ease-out}
+.fx-deal{animation:fx-deal .24s cubic-bezier(.2,.8,.3,1.2) both}
+.fx-fade{animation:fx-fade .15s linear both}
+.fx-praise{animation:fx-praise .8s ease-out forwards}
+.fx-praise-reduced{animation:fx-praise-reduced .8s linear forwards}
+.fx-panel{animation:fx-panel .25s ease-out}
+.fx-msg{animation:fx-msg .3s ease-out}
+.fx-rain{position:absolute;inset:0;overflow:hidden;pointer-events:none;border-radius:24px}
+.fx-rain-petal{position:absolute;top:-24px;width:22px;height:22px;animation:fx-rain linear both}
+@keyframes fx-petal{0%{opacity:1;transform:translate(-50%,-50%) scale(.6) rotate(0)}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1) rotate(var(--rot))}}
+@keyframes fx-bloom{0%{transform:scale(1);opacity:1}30%{transform:scale(1.14);opacity:1}100%{transform:scale(.3) rotate(18deg);opacity:0}}
+@keyframes fx-sweep{0%{background-position:-60% 0;opacity:0}15%{opacity:1}85%{opacity:1}100%{background-position:160% 0;opacity:0}}
+@keyframes fx-sweep-col{0%{background-position:0 -60%;opacity:0}15%{opacity:1}85%{opacity:1}100%{background-position:0 160%;opacity:0}}
+@keyframes fx-badge{0%{transform:translate(0,-50%) scale(.4);opacity:0}25%{transform:translate(0,-50%) scale(1.3);opacity:1}45%{transform:translate(0,-50%) scale(1)}80%{opacity:1}100%{opacity:0}}
+.fx-badge.is-col{animation-name:fx-badge-col}
+@keyframes fx-badge-col{0%{transform:translate(-50%,-100%) scale(.4);opacity:0}25%{transform:translate(-50%,-100%) scale(1.3);opacity:1}45%{transform:translate(-50%,-100%) scale(1)}80%{opacity:1}100%{opacity:0}}
+@keyframes fx-fadeout{from{opacity:1}to{opacity:0}}
+@keyframes fx-settle{0%{transform:scale(.84)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
+@keyframes fx-pop{0%{transform:scale(1)}40%{transform:scale(1.22)}100%{transform:scale(1)}}
+@keyframes fx-rise{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:none}}
+@keyframes fx-deal{0%{opacity:0;transform:translateY(18px) scale(.7)}100%{opacity:1;transform:none}}
+@keyframes fx-fade{from{opacity:0}to{opacity:1}}
+@keyframes fx-praise{0%{opacity:0;transform:translate(-50%,-30%) scale(.7)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}30%{transform:translate(-50%,-50%) scale(1)}75%{opacity:1;transform:translate(-50%,-60%)}100%{opacity:0;transform:translate(-50%,-80%)}}
+@keyframes fx-praise-reduced{0%{opacity:0}18%{opacity:1}82%{opacity:1}100%{opacity:0}}
+@keyframes fx-panel{0%{opacity:0;transform:translateY(12px) scale(.96)}100%{opacity:1;transform:none}}
+@keyframes fx-msg{0%{opacity:0;transform:translateY(calc(-100% + 8px))}100%{opacity:1;transform:translateY(-100%)}}
+@keyframes fx-rain{0%{transform:translateY(0) rotate(0);opacity:0}10%{opacity:1}100%{transform:translateY(var(--fall,520px)) rotate(var(--rot));opacity:0}}
+
+/* reduced-motion (Q137): bez ruchu; zostają tylko zmiany przezroczystości ≤ 150 ms (fx-fade, fx-fadeout, pochwała). */
+@media (prefers-reduced-motion:reduce){
+  .bg-anim *:not(.fx-fade):not(.fx-fadeout):not(.fx-praise-reduced):not(.fx-levelup-reduced):not(.fx-bgfade):not(.fx-empty-reduced){animation:none !important;transition:none !important}  .fx-fadeout{animation-duration:.15s !important}
+}

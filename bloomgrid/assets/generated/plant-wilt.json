@@ -1,0 +1,19 @@
+{
+  "model": "google/gemini-3-pro-image",
+  "prompt": "The attached image is a flower tile from a cozy garden block-puzzle game. Create one small game icon in exactly the same art style: polished casual mobile game, glossy, juicy and candy-like, thick darker outline, bright soft highlights, crisp clean edges, readable at 48 pixels.\n\nThe icon is a small potted plant that is thirsty and starting to wilt, but still cute and not dead: a green stem bending to the right, four leaves drooping downward, slightly faded olive-green with soft yellowish edges, and on top one flower with five rounded pink petals hanging down, its colors a bit paler than fresh. Dry, lighter brown soil. Gentle, sympathetic look, no brown rot, no dead or broken parts.\n\nThe pot (identical in every stage of this set): a small round terracotta flower pot, front view, wider at the top rim than at the bottom, warm orange-brown with a lighter rim band, a glossy highlight stripe on the left side and a darker bevel at the bottom. The pot fills the lower third of the image; the drooping plant reaches about two thirds of the image height.\n\nOne single centered object, front view, no perspective, on a plain flat pure white background, no shadow on the background, nothing touching the image edges. No text, no letters, no numbers, no watermark, no tile, no square, no frame.\n",
+  "prompt_file": "/Users/tomab/Projects/ClosedLoopDevelopmentV4/Projects/Bloomgrid/prototype/assets/prompts/plant-wilt.txt",
+  "references": [
+    {
+      "path": "/Users/tomab/Projects/ClosedLoopDevelopmentV4/Projects/Bloomgrid/prototype/assets/img/tile-leaf.webp",
+      "sha256": "0b5c15a6a96511e0bcaa64bed4b367e8ffd54043ea1ce53818da3f712311ee99"
+    }
+  ],
+  "aspect": "4:5",
+  "seconds": 16.352,
+  "cost_usd": 0.139418,
+  "at": "2026-11-14T12:11:09+01:00",
+  "images": [
+    "tmp/image-gen/out/plant-wilt.png"
+  ],
+  "text": null
+}
