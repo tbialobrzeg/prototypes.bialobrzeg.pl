@@ -153,22 +153,16 @@ body.bg-capture{margin:0;background:#fff;overflow:hidden}
 /* r7: obraz z generatora 88×96 (2×); ramka stała, roślina rośnie w obrazie (doniczka tej samej szerokości we wszystkich stopniach). */
 .bg-plant img{display:block;width:100%;height:100%;object-fit:contain;object-position:50% 100%;-webkit-user-drag:none;user-select:none}
 .bg-combo[data-stage="5"]{box-shadow:inset 0 2px 0 rgba(255,255,255,.8),inset 0 -2px 0 rgba(150,90,20,.25),0 0 0 2px #B07A12,0 0 12px 2px rgba(255,210,74,.75),0 4px 8px rgba(20,12,4,.35)}
-.bg-combo-mult{min-width:20px}
 .bg-drops{display:inline-flex;gap:1px;align-items:center}
 .bg-drop{display:inline-flex;width:10px;height:13px}
 .bg-drop svg{width:100%;height:100%}
-/* Ostatnia kropla: pąk i kwiat mają obraz zwiędłej rośliny (plant-wilt); kiełek, listki i złoty kwiat — swój obraz przygaszony. */
-.bg-combo[data-wilt=true] .bg-plant:not([data-img=wilt]) img{filter:saturate(.5) brightness(.9) sepia(.2)}
+/* r7.3 (Q358): bez więdnięcia i obrazu zwiędłej rośliny (usunięte). */
 .bg-wide .bg-combo{height:34px;font-size:19px;padding-left:52px}
 .bg-wide .bg-plant{width:50px;height:56px}
 .fx-grow .bg-plant{animation:fx-grow .3s ease-out}
 .fx-grow{animation:fx-grow-glow .3s ease-out}
 @keyframes fx-grow{0%{transform:translateY(0) scale(.85)}45%{transform:translateY(-6px) scale(1.15)}100%{transform:translateY(0) scale(1)}}
 @keyframes fx-grow-glow{0%{filter:none}40%{filter:drop-shadow(0 0 8px rgba(255,220,90,.95))}100%{filter:none}}
-.fx-wither .bg-plant{animation:fx-wither-plant .4s ease-in forwards}
-.fx-wither{animation:fx-wither .4s ease-in forwards}
-@keyframes fx-wither-plant{0%{transform:rotate(0)}100%{transform:rotate(28deg) translateY(4px);filter:saturate(.2) brightness(.8)}}
-@keyframes fx-wither{0%{opacity:1;transform:translateY(0)}60%{opacity:1}100%{opacity:0;transform:translateY(10px)}}
 
 /* component.move-points */
 .bg-points{display:flex;flex-direction:column;align-items:center;text-align:center;line-height:1.1;font-variant-numeric:tabular-nums;color:var(--green-d)}
@@ -491,29 +485,8 @@ body.bg-capture{margin:0;background:#fff;overflow:hidden}
 .fx-screen-rain.is-anim .fx-screen-petal{animation:fx-screen-fall 1.6s linear both}
 @keyframes fx-screen-fall{0%{opacity:0;transform:translateY(0) rotate(0)}10%{opacity:1}85%{opacity:1}100%{opacity:0;transform:translateY(var(--fall,900px)) rotate(var(--rot))}}
 
-/* component.level-up-badge (r6, Q150): ta sama miodowa plakietka co pochwała, dwa wiersze: „Poziom N!” i nazwa motywu. */
-/* Q188: plakietka stoi na wyniku (środek plakietki = środek elementu wyniku), nie na planszy ani trójce; wysokość jak wynik (telefony 58 px, mac-wide 79 px). */
-.bg-levelup{position:absolute;left:50%;top:50%;z-index:6;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;width:max-content;padding:6px 22px 7px;border-radius:24px;color:#3A2405;text-align:center;pointer-events:none;box-sizing:border-box;
-  background:linear-gradient(180deg,#FFE9A6 0%,#F7C95A 52%,#E9A93A 100%);box-shadow:inset 0 2px 0 rgba(255,255,255,.7),inset 0 -3px 0 rgba(150,90,20,.35),0 0 0 2.5px #6F460F,0 6px 14px rgba(20,12,4,.4)}
-.bg-levelup-num{font:900 24px/1.1 var(--font);white-space:nowrap}
-.bg-levelup-name{font:800 15px/1.15 var(--font);white-space:nowrap}
-.bg-wide .bg-levelup{padding:9px 30px 10px;border-radius:30px}
-.bg-wide .bg-levelup-num{font-size:32px}
-.bg-wide .bg-levelup-name{font-size:17px}
+/* r7.3 (Q342): component.level-up-badge usunięty — awans jest wpisem karty ruchu (.bg-mcard-chip.is-level). */
 
-/* component.empty-garden (r6, Q189): plakietka jak pochwała, większa; rozkwit — płatki pięciu kolorów na polach całej planszy. */
-/* r7: święto Pustej grządki — największa pochwała w grze (32 px, mac-wide 48 px, złoto-różowy blask), 2,5 s. */
-.bg-empty-garden{font-size:32px;padding:12px 28px 14px;white-space:normal;width:max-content;max-width:calc(100% - 24px);text-align:center;text-wrap:balance;border-radius:30px;z-index:7;
-  background:linear-gradient(180deg,#FFF8DC 0%,#FFE070 45%,#FFB347 75%,#FF8FB8 100%);box-shadow:inset 0 2px 0 rgba(255,255,255,.9),inset 0 -3px 0 rgba(150,60,40,.35),0 0 0 3px #7A3A10,0 0 34px 12px rgba(255,220,110,.85),0 6px 16px rgba(20,12,4,.45)}
-.bg-wide .bg-empty-garden{font-size:48px}
-.bg-empty-bloom{position:absolute;inset:0;pointer-events:none}
-.bg-empty-petal{position:absolute;opacity:.92;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
-.fx-empty-petal{animation:fx-empty-petal 1.2s ease-out both}
-@keyframes fx-empty-petal{0%{opacity:0;scale:.2}25%{opacity:1;scale:1.15}35%{scale:1}80%{opacity:1}100%{opacity:0;scale:.9;translate:0 -6px}}
-.fx-empty{animation:fx-empty 2.5s ease-out forwards}
-.fx-empty-reduced{animation:fx-empty-reduced 2.5s linear forwards}
-@keyframes fx-empty{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}8%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}14%{transform:translate(-50%,-50%) scale(1)}88%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.04)}}
-@keyframes fx-empty-reduced{0%{opacity:0}6%{opacity:1}94%{opacity:1}100%{opacity:0}}
 .fx-levelup{animation:fx-levelup 1.5s ease-out forwards}
 .fx-levelup-reduced{animation:fx-levelup-reduced 1.5s linear forwards}
 @keyframes fx-levelup{0%{opacity:0;transform:translate(-50%,-50%) scale(.7)}14%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}22%{transform:translate(-50%,-50%) scale(1)}85%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(1)}}
@@ -531,7 +504,6 @@ body.bg-capture{margin:0;background:#fff;overflow:hidden}
 .fx-sweep{position:absolute;border-radius:8px;mix-blend-mode:screen;animation:fx-sweep ease-in-out forwards;background:linear-gradient(90deg,rgba(255,214,90,0) 0%,rgba(255,226,120,.9) 45%,rgba(255,250,215,.95) 50%,rgba(255,226,120,.9) 55%,rgba(255,214,90,0) 100%) no-repeat;background-size:40% 100%}
 .fx-sweep.is-col{background:linear-gradient(180deg,rgba(255,214,90,0) 0%,rgba(255,226,120,.9) 45%,rgba(255,250,215,.95) 50%,rgba(255,226,120,.9) 55%,rgba(255,214,90,0) 100%) no-repeat;background-size:100% 40%;animation-name:fx-sweep-col}
 .fx-tile.fx-bloom{animation:fx-bloom ease-in forwards}
-.fx-badge{animation:fx-badge ease-out forwards}
 .fx-fadeout{animation:fx-fadeout ease-out forwards}
 .fx-settle{animation:fx-settle .15s ease-out}
 .fx-pop{animation:fx-pop .25s ease-out}
@@ -548,9 +520,6 @@ body.bg-capture{margin:0;background:#fff;overflow:hidden}
 @keyframes fx-bloom{0%{transform:scale(1);opacity:1}30%{transform:scale(1.14);opacity:1}100%{transform:scale(.3) rotate(18deg);opacity:0}}
 @keyframes fx-sweep{0%{background-position:-60% 0;opacity:0}15%{opacity:1}85%{opacity:1}100%{background-position:160% 0;opacity:0}}
 @keyframes fx-sweep-col{0%{background-position:0 -60%;opacity:0}15%{opacity:1}85%{opacity:1}100%{background-position:0 160%;opacity:0}}
-@keyframes fx-badge{0%{transform:translate(0,-50%) scale(.4);opacity:0}25%{transform:translate(0,-50%) scale(1.3);opacity:1}45%{transform:translate(0,-50%) scale(1)}80%{opacity:1}100%{opacity:0}}
-.fx-badge.is-col{animation-name:fx-badge-col}
-@keyframes fx-badge-col{0%{transform:translate(-50%,-100%) scale(.4);opacity:0}25%{transform:translate(-50%,-100%) scale(1.3);opacity:1}45%{transform:translate(-50%,-100%) scale(1)}80%{opacity:1}100%{opacity:0}}
 @keyframes fx-fadeout{from{opacity:1}to{opacity:0}}
 @keyframes fx-settle{0%{transform:scale(.84)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
 @keyframes fx-pop{0%{transform:scale(1)}40%{transform:scale(1.22)}100%{transform:scale(1)}}
@@ -565,5 +534,252 @@ body.bg-capture{margin:0;background:#fff;overflow:hidden}
 
 /* reduced-motion (Q137): bez ruchu; zostają tylko zmiany przezroczystości ≤ 150 ms (fx-fade, fx-fadeout, pochwała). */
 @media (prefers-reduced-motion:reduce){
-  .bg-anim *:not(.fx-fade):not(.fx-fadeout):not(.fx-praise-reduced):not(.fx-levelup-reduced):not(.fx-bgfade):not(.fx-empty-reduced){animation:none !important;transition:none !important}  .fx-fadeout{animation-duration:.15s !important}
+  .bg-anim *:not(.fx-fade):not(.fx-fadeout):not(.fx-praise-reduced):not(.fx-bgfade):not(.fx-empty-reduced):not(.fx-card-in-reduced):not(.fx-card-out-reduced):not(.is-reduced):not(.is-skip){animation:none !important;transition:none !important}  .fx-fadeout{animation-duration:.15s !important}
 }
+
+/* ===== r7.3 (Q339–Q354): karta ruchu, święto pełnego podlania, większa roślina Podlewania, „+500” zamiast „×2” ===== */
+
+/* Plakietka linii jednego koloru „+500” (Q346; było „×2”): moneta wydłużona do 24 px (mac-wide 30 px), prawa krawędź jak w r7.2 + 2 px,
+   lewa krawędź na krawędzi pól (Q59: nie zasłania pola). */
+.bg-badge{width:24px;font-size:9px;letter-spacing:-.04em}
+.bg-wide .bg-badge{width:30px;font-size:11px}
+
+/* Podlewanie (Q345): roślina 56×61 na telefonach (pasek 54 px), 66×72 na mac-wide (było 44×48 i 50×56); obrazy 132×144 (2× ramki 66×72). */
+.bg-combo{height:32px;padding-left:58px}
+.bg-plant{width:56px;height:61px}
+/* Telefony: największa roślina, która przy wyniku 9 999 999 zostawia ≥ 2 px do tabliczki wyniku: 56×61, przy treści węższej niż 335 px
+   mniejsza (mobile-compact 49×53). */
+.bg-phone{--plant-w:min(56px, calc(var(--content-w, 361px) - 279px))}
+.bg-phone .bg-combo{padding-left:calc(var(--plant-w) + 2px)}
+.bg-phone .bg-plant{width:var(--plant-w);height:calc(var(--plant-w) * 1.0893)}
+.bg-phone .bg-strip{--strip-h:54px}
+.bg-wide .bg-combo{height:38px;font-size:21px;padding-left:70px}
+.bg-wide .bg-plant{width:66px;height:72px}
+/* landscape (tymczasowo, BLG-20): pasek 44 px jak w r7.2, roślina 44×48. */
+.bg-land .bg-strip{--strip-h:44px}
+.bg-land .bg-combo{height:30px;padding-left:46px}
+.bg-land .bg-plant{width:44px;height:48px}
+/* mac-wide (Q345): kolumna wynik | 24 px | Podlewanie 76 px (roślina 72 px nad dnem pigułki) | 24 px | gniazdo karty 216 px | 24 px | trójka
+   (razem 559 px przy planszy 564 px). Prześwit roślina–tabliczka wyniku 26 px (r7.2: roślina sięgała do wyniku), pigułka–karta 24 px (r7.2: 6 px). */
+.bg-wide .bg-side{gap:24px}
+.bg-wide .bg-strip{height:76px;justify-content:flex-end;gap:0}
+.bg-wide .bg-card-slot{position:relative;height:var(--card-slot-h,216px);display:flex;justify-content:center;align-items:flex-start}
+.bg-strip-right:empty{display:none}
+
+/* component.move-card (Q339–Q343): kremowa karta z brązowym obrysem; pochwała największa, pod nią suma i rozbicie, potem wpisy. */
+.bg-card-layer{position:absolute;inset:0;pointer-events:none;z-index:9}
+.bg-mcard{position:absolute;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:4px;width:max-content;max-width:361px;padding:8px 14px 10px;border-radius:20px;text-align:center;pointer-events:none;color:#2A1C10;
+  background:rgba(255,246,226,.97);box-shadow:0 0 0 2px #8A5A1E,0 3px 0 2px rgba(90,60,30,.22),0 8px 20px rgba(20,12,4,.35);transition:opacity .12s linear}
+.bg-card-slot > .bg-mcard{position:relative;max-width:380px;padding:12px 18px 14px;gap:6px;border-radius:24px}
+/* Oprawa karty rośnie ze szczeblem (Q2): 3 — złoty obrys i poświata, 4 — złoto-różowy obrys i mocna poświata. */
+.bg-mcard[data-rung="2"]{box-shadow:0 0 0 2px #8A5A1E,0 0 12px 2px rgba(255,214,90,.45),0 8px 20px rgba(20,12,4,.35)}
+.bg-mcard[data-rung="3"]{box-shadow:0 0 0 2.5px #B07A12,0 0 18px 4px rgba(255,214,90,.6),0 8px 20px rgba(20,12,4,.35)}
+.bg-mcard[data-rung="4"]{background:linear-gradient(180deg,rgba(255,250,232,.98),rgba(255,236,240,.98));box-shadow:0 0 0 3px #C2741C,0 0 26px 8px rgba(255,200,120,.7),0 8px 20px rgba(20,12,4,.4)}
+.bg-mcard[data-rung="flowerbed"]{box-shadow:0 0 0 2px #7A1E4A,0 0 14px 3px rgba(255,160,200,.5),0 8px 20px rgba(20,12,4,.35)}
+/* Na planszy (Q348): półprzezroczysta; nad przeciąganym klockiem wyraźnie przygasa. */
+.bg-mcard.is-dimmed{opacity:.18}
+.bg-mcard .bg-praise{position:relative;left:auto;top:auto;transform:none;max-width:100%;z-index:auto;white-space:nowrap}
+/* Pochwała w karcie (Q2): szczeble 24 / 27 / 30 / 33 px na telefonach, 30 / 34 / 37 / 40 px na mac-wide; „Kolorowa rabata!” jak szczebel 2.
+   Mieści się w jednym wierszu karty na każdym targecie (najwęższa treść 328 px). */
+.bg-mcard .bg-praise[data-variant=great]{font-size:24px;padding:6px 18px 8px}
+.bg-mcard .bg-praise[data-variant=wonderful],.bg-mcard .bg-praise[data-variant=flowerbed]{font-size:27px;padding:7px 20px 9px}
+.bg-mcard .bg-praise[data-variant=amazing]{font-size:30px;padding:8px 22px 10px}
+.bg-mcard .bg-praise[data-variant=paradise]{font-size:33px;padding:9px 22px 11px}
+.bg-wide .bg-mcard .bg-praise[data-variant=great]{font-size:30px}
+.bg-wide .bg-mcard .bg-praise[data-variant=wonderful],.bg-wide .bg-mcard .bg-praise[data-variant=flowerbed]{font-size:34px}
+.bg-wide .bg-mcard .bg-praise[data-variant=amazing]{font-size:37px}
+.bg-wide .bg-mcard .bg-praise[data-variant=paradise]{font-size:40px}
+.bg-mcard .bg-praise .fx-burst{z-index:1}
+.bg-mcard .bg-points{display:flex;flex-direction:column;align-items:center;justify-content:center;max-width:100%;color:var(--green-d)}
+.bg-mcard .bg-points::before{display:none}
+.bg-mcard .bg-points-total{font-size:24px;line-height:1.05}
+.bg-points-parts{display:flex;flex-wrap:wrap;justify-content:center;column-gap:5px;font:700 13px/1.3 var(--font);color:#5A4630;max-width:100%}
+.bg-points-part{white-space:nowrap}
+.bg-points-part:not(:last-child)::after{content:" ·"}
+.bg-mcard-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 6px;max-width:100%}
+.bg-mcard-chip{display:inline-flex;align-items:center;gap:4px;padding:2px 10px 3px;border-radius:999px;font:800 13px/1.25 var(--font);white-space:nowrap}
+.bg-mcard-chip.is-level{background:#2F6B2A;color:#FFF6E2;box-shadow:0 0 0 1.5px #1D4A1A}
+.bg-mcard-chip.is-record{background:linear-gradient(180deg,#FFE9A6,#F2B544);color:#3A2405;box-shadow:0 0 0 1.5px #6F460F}
+.bg-wide .bg-mcard .bg-points-total{font-size:30px}
+.bg-wide .bg-points-parts{font-size:15px}
+.bg-wide .bg-mcard-chip{font-size:15px;padding:3px 12px 4px}
+/* r7.3 (Q364): kropelki przechodzące do następnej gry klasycznej — wiersz panelu końca pod poziomem. */
+.bg-over-drops{display:flex;align-items:center;align-self:center;width:fit-content;max-width:100%;box-sizing:border-box;margin:0 auto;gap:8px;font:700 14px/1.3 var(--font);color:#145C9E;text-align:left;text-wrap:balance}
+.bg-over-drops .bg-drops{flex:none;gap:2px}
+.bg-over-drops .bg-drop{width:13px;height:17px}
+/* r7.3 (Q355–Q360): kroki kolejki w karcie — kropelki, rekord, poziom. Jeden krok naraz. */
+.bg-mcard-gain{display:inline-flex;align-items:center;gap:8px;font:900 26px/1.1 var(--font);color:#145C9E}
+.bg-mcard-drops{display:inline-flex;gap:3px}
+.bg-mcard-drops .bg-drop{width:20px;height:26px}
+.bg-mcard-hint{font:700 13px/1.3 var(--font);color:#5A4630}
+.bg-mcard-big{display:inline-flex;align-items:center;justify-content:center;gap:8px;max-width:100%;box-sizing:border-box;padding:6px 18px 8px;border-radius:24px;font:900 22px/1.15 var(--font);text-align:center;text-wrap:balance}
+.bg-mcard-big.is-record{background:linear-gradient(180deg,#FFE9A6,#F2B544);color:#3A2405;box-shadow:0 0 0 2px #6F460F,0 0 16px 4px rgba(255,214,90,.55)}
+.bg-mcard-big.is-level{background:#2F6B2A;color:#FFF6E2;box-shadow:0 0 0 2px #1D4A1A}
+.bg-wide .bg-mcard-gain{font-size:32px}
+.bg-wide .bg-mcard-drops .bg-drop{width:24px;height:31px}
+.bg-wide .bg-mcard-hint{font-size:15px}
+.bg-wide .bg-mcard-big{font-size:26px;padding:8px 22px 10px}
+/* Podlewanie r7.3: bez „×c”; trzy kropelki większe (telefony 13×17, mac-wide 15×19), zawsze widoczne. */
+.bg-combo{gap:3px;padding-right:12px}
+.bg-combo .bg-drop{width:13px;height:17px}
+.bg-wide .bg-combo .bg-drop{width:15px;height:19px}
+.fx-card-in{animation:fx-card-in .25s ease-out both}
+.fx-card-in .bg-praise{animation:fx-card-praise .35s ease-out both}
+.fx-card-out{animation:fx-card-out .3s ease-in forwards}
+.fx-card-in-reduced{animation:fx-fade .15s linear both}
+.fx-card-out-reduced{animation:fx-fadeout-k .15s linear forwards}
+@keyframes fx-card-in{0%{opacity:0;transform:translateY(8px) scale(.96)}100%{opacity:1;transform:none}}
+@keyframes fx-card-praise{0%{transform:scale(.7)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
+@keyframes fx-card-out{0%{opacity:1}100%{opacity:0;transform:translateY(-6px)}}
+@keyframes fx-fadeout-k{from{opacity:1}to{opacity:0}}
+
+.bg-screen{isolation:isolate}
+/* Poprawka r7.3: kwiatkiem święta jest roślina pigułki Podlewania (jedyny kwiatek na ekranie). Rośnie od dna doniczki do 2× (telefony)
+   albo 1,35× (mac-wide, do tabliczki wyniku), nad kartą ruchu i nagłówkiem (z-index w izolowanym ekranie); „×c” i krople zostają nad nią czytelne. */
+.bg-combo{--fw-s:2}
+.bg-wide .bg-combo{--fw-s:1.35}
+.bg-combo.is-fw .bg-plant{z-index:20}
+/* Telefony: środek wzrostu przesunięty w lewo (20% ramki), żeby powiększony kwiatek nie wychodził poza lewą krawędź ekranu. */
+.bg-phone .bg-combo.is-fw .bg-plant{transform-origin:20% 100%}
+.bg-combo.is-fw .bg-drops{position:relative;z-index:21}
+.bg-combo.is-fw-anim .bg-plant{animation:fw-plant 3s ease-out both}
+.bg-combo.is-fw-still .bg-plant{transform:scale(var(--fw-s));filter:drop-shadow(0 0 10px rgba(255,214,90,1)) drop-shadow(0 0 3px rgba(255,255,255,.9))}
+.bg-combo.is-fw-reduced .bg-plant{filter:drop-shadow(0 0 10px rgba(255,214,90,1))}
+.bg-combo.is-fw{animation:fw-pill 3s ease-out}
+@keyframes fw-plant{0%{transform:scale(1);filter:none}30%{transform:scale(var(--fw-s));filter:drop-shadow(0 0 14px rgba(255,214,90,1)) drop-shadow(0 0 4px #fff)}
+  45%{filter:drop-shadow(0 0 6px rgba(255,214,90,.8))}60%{filter:drop-shadow(0 0 14px rgba(255,214,90,1)) drop-shadow(0 0 4px #fff)}
+  80%{transform:scale(var(--fw-s));filter:drop-shadow(0 0 10px rgba(255,214,90,.9))}100%{transform:scale(1);filter:none}}
+@keyframes fw-pill{0%{box-shadow:inset 0 2px 0 rgba(255,255,255,.8),0 0 0 2px #B07A12}30%{box-shadow:inset 0 2px 0 rgba(255,255,255,.8),0 0 0 2px #B07A12,0 0 22px 8px rgba(255,214,90,.9)}100%{box-shadow:inset 0 2px 0 rgba(255,255,255,.8),0 0 0 2px #B07A12}}
+
+
+/* ===== r7.3, korekta Q366 (zaakceptowana przez Tomasza: „ładne, niech będą i użyjmy w grze”): osiem kart komunikatów chwilowych ===== */
+/* Wspólne: miejsce, jedna karta naraz, kremowa ramka z obrysem, cień, fonty i rozmiary (nagłówek 22 / 26 px, liczba 32 / 42 px, podpis 13 / 15 px).
+   Własne (data-art 1–8): ilustracja po lewej (.mcx-art, 76 / 100 px), kolor (--tint, obrys i poświata), wejście i efekt (.is-play), dźwięk (data-sound).
+   Bez .is-play każdy element ilustracji stoi w klatce szczytowej (capture i stała klatka stanu). */
+.bg-mcard{--art:76px;--tint:#FBE7B8;--tint2:#F3C873;--mc-bg:rgb(255,246,226);flex-direction:row;align-items:center;justify-content:flex-start;gap:12px;
+  box-sizing:border-box;width:100%;max-width:361px;min-width:0;min-height:104px;padding:10px 16px 10px 10px;border-radius:20px;text-align:left;
+  background:radial-gradient(120% 140% at 0% 50%,var(--tint) 0,rgba(255,246,226,0) 46%),var(--mc-bg);box-shadow:0 0 0 2px #8A5A1E,0 3px 0 2px rgba(90,60,30,.22),0 8px 20px rgba(20,12,4,.35)}
+.bg-wide .bg-mcard{--art:100px;max-width:380px;min-height:128px;gap:16px;padding:12px 20px 12px 12px;border-radius:24px}
+/* Telefony (poprawka po zrzutach r7.3): karta jest nieprzezroczysta nad nagłówkiem i wynikiem; półprzezroczysta (Q348) tylko część nad planszą —
+   --opaque-h (placeCard) to odległość od górnej krawędzi karty do górnej krawędzi ramy planszy. */
+.bg-mcard.is-over-board{--mc-bg:linear-gradient(180deg,rgb(255,246,226) 0 var(--opaque-h,0px),rgba(255,246,226,.82) var(--opaque-h,0px))}
+.bg-mcard-text{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0;flex:1;position:relative;z-index:2}
+.bg-mcard-head{display:block;max-width:100%;font:900 22px/1.15 var(--font);color:#3A2405;text-align:left;text-wrap:balance}
+.bg-mcard-num{display:block;font:900 32px/1.05 var(--font);color:var(--green-d);font-variant-numeric:tabular-nums;white-space:nowrap}
+.bg-mcard-sub{display:block;max-width:100%;font:700 13px/1.3 var(--font);color:#5A4630;text-align:left;text-wrap:balance}
+.bg-wide .bg-mcard-head{font-size:26px}.bg-wide .bg-mcard-num{font-size:42px}.bg-wide .bg-mcard-sub{font-size:15px}
+.mcx-art{position:relative;z-index:2;flex:none;width:var(--art);height:var(--art);border-radius:16px;background:radial-gradient(circle at 50% 45%,#fff 0,var(--tint) 55%,var(--tint2) 100%);box-shadow:inset 0 0 0 1.5px rgba(138,90,30,.35);overflow:hidden}
+.mcx-art img,.mcx-art svg,.mcx-art span,.mcx-art div{position:absolute}
+.mcx-spark{width:18%;height:18%;filter:drop-shadow(0 0 3px #FFE070)}
+.mcx-star{height:auto;filter:drop-shadow(0 1px 1px rgba(90,50,0,.4))}
+.mcx-glow{inset:8%;border-radius:50%;filter:blur(8px);opacity:.9}
+.mcx-glow.pink{background:#FF9CC4}.mcx-glow.gold{background:#FFE07A}.mcx-glow.blue{background:#9AD4FF}
+.mcx-rays{inset:-40%;background:repeating-conic-gradient(from 0deg,rgba(255,214,90,.75) 0 10deg,rgba(255,214,90,0) 10deg 30deg);border-radius:50%;-webkit-mask:radial-gradient(circle,#000 20%,transparent 70%);mask:radial-gradient(circle,#000 20%,transparent 70%)}
+.mcx-rays.gold{background:repeating-conic-gradient(from 6deg,rgba(255,196,40,.85) 0 9deg,rgba(255,240,170,0) 9deg 24deg)}
+.mcx-rays.soft{opacity:.7}
+.mcx-sweep{top:-20%;bottom:-20%;left:58%;width:22%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),transparent);transform:skewX(-18deg)}
+.mcx-sweep.gold{background:linear-gradient(90deg,transparent,rgba(255,232,140,.95),transparent)}
+.mcx-confetti{width:13%;height:13%;transform:rotate(var(--rot))}
+/* 1 · punkty — zieleń */
+.bg-mcard[data-art="1"]{--tint:#DDF2C4;--tint2:#9FD27A}
+.mcx-strip{left:4%;right:4%;top:30%;height:40%;display:flex;align-items:center;justify-content:space-between;padding:0 3%;border-radius:8px;background:linear-gradient(180deg,#9A6A3C,#6E4523);box-shadow:inset 0 -2px 0 rgba(0,0,0,.25);overflow:hidden}
+.mcx-strip .mcx-tile{position:relative;width:19%;height:auto}
+/* 2 · pochwała — złota rozeta; obrys i poświata rosną ze szczeblem (data-rung 1–4) */
+.bg-mcard[data-art="2"]{--tint:#FFF0B8;--tint2:#FFC94A;box-shadow:0 0 0 2px #8A5A1E,0 0 14px 3px rgba(255,214,90,.55),0 8px 20px rgba(20,12,4,.35)}
+.bg-mcard[data-art="2"][data-rung="3"]{box-shadow:0 0 0 2.5px #B07A12,0 0 18px 4px rgba(255,214,90,.65),0 8px 20px rgba(20,12,4,.35)}
+.bg-mcard[data-art="2"][data-rung="4"]{box-shadow:0 0 0 3px #C2741C,0 0 24px 7px rgba(255,200,120,.75),0 8px 20px rgba(20,12,4,.4)}
+.mcx-rosette{left:12%;top:8%;width:76%;height:auto;filter:drop-shadow(0 2px 2px rgba(90,50,0,.35))}
+.bg-mcard[data-art="2"] .bg-mcard-head{color:#8A4A06;text-shadow:0 1px 0 #FFE7A0}
+/* 3 · Kolorowa rabata — malina i złoto */
+.bg-mcard[data-art="3"]{--tint:#FFD6E6;--tint2:#F08CB4;box-shadow:0 0 0 2px #7A1E4A,0 0 16px 3px rgba(255,160,200,.55),0 8px 20px rgba(20,12,4,.35)}
+.mcx-arc{left:0;right:0;top:26%;height:48%;display:flex;align-items:center;justify-content:center;overflow:visible}
+.mcx-arc .mcx-tile{position:relative;width:21%;height:auto;margin:0 -1.5%;filter:drop-shadow(0 1px 1px rgba(80,0,40,.35))}
+.bg-mcard[data-art="3"] .bg-mcard-head{color:#8A1E52}
+/* 4 · Pusta grządka — złota poświata, rozkwit mini-planszy, opadające płatki, girlanda na ramce */
+.bg-mcard[data-art="4"]{--tint:#FFF3C8;--tint2:#FFD36A;--mc-bg:linear-gradient(180deg,#FFFBEE,#FFF0D8);box-shadow:0 0 0 2.5px #B07A12,0 0 24px 6px rgba(255,214,90,.65),0 8px 20px rgba(20,12,4,.35)}
+.bg-mcard[data-art="4"].is-over-board,.bg-mcard[data-art="6"].is-over-board{--mc-bg:linear-gradient(180deg,rgb(255,248,230) 0 var(--opaque-h,0px),rgba(255,248,230,.86) var(--opaque-h,0px))}
+.mcx-board{inset:12%;display:grid;grid-template-columns:repeat(4,1fr);gap:3%;padding:4%;border-radius:8px;background:#7A5230;box-shadow:0 0 0 2px #4A3018,inset 0 0 0 1px #A87A4A}
+.mcx-art .mcx-board .mcx-cell{position:relative;border-radius:3px;background:#E9DDBF}
+.mcx-bloom{inset:-10%;width:120%;height:120%}
+.mcx-garland{position:absolute;inset:0;pointer-events:none;z-index:3}
+.mcx-gpetal{position:absolute;width:16px;height:16px;transform:rotate(var(--rot));filter:drop-shadow(0 1px 1px rgba(80,40,0,.35))}
+.bg-wide .mcx-gpetal{width:20px;height:20px}
+.mcx-fall{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:inherit;z-index:1}
+.mcx-fpetal{position:absolute;width:12px;height:12px;opacity:.6;transform:rotate(var(--rot))}
+.bg-mcard[data-art="4"] .bg-mcard-head{color:#8A4A06}
+/* 5 · kropelki — błękit */
+.bg-mcard[data-art="5"]{--tint:#D8EEFF;--tint2:#7FC0F0}
+.bg-mcard[data-art="5"] .bg-mcard-head{color:#145C9E}
+.mcx-pot{left:30%;bottom:6%;width:62%;height:auto}
+.mcx-can{left:2%;top:4%;width:52%;height:auto;transform:rotate(18deg);filter:drop-shadow(0 1px 1px rgba(0,40,80,.3))}
+.mcx-drop{width:11%;height:auto}.mcx-drop svg{position:relative;width:100%;height:auto;display:block}
+.mcx-drop.d1{left:54%;top:34%}.mcx-drop.d2{left:62%;top:46%}
+.mcx-meter{left:0;right:0;bottom:2%;display:flex;justify-content:center;gap:2%}
+.mcx-art .mcx-meter .bg-drop{position:relative;width:15%;height:auto}.mcx-meter .bg-drop svg{position:relative;width:100%;height:auto}
+/* 6 · Pełne podlanie — złoty rozkwit, promienie, płatki, girlanda */
+.bg-mcard[data-art="6"]{--tint:#FFF2B0;--tint2:#FFC23A;--mc-bg:linear-gradient(180deg,#FFFBEA,#FFF1D2);box-shadow:0 0 0 2.5px #B07A12,0 0 24px 6px rgba(255,214,90,.65),0 8px 20px rgba(20,12,4,.35)}
+.mcx-plant{left:8%;bottom:0;width:84%;height:auto}
+.mcx-plant.p3,.mcx-plant.p4{opacity:0}
+.mcx-plant.p5{filter:drop-shadow(0 0 6px rgba(255,220,80,.95)) saturate(1.15)}
+.mcx-burst{inset:0}
+.mcx-bpetal{left:44%;top:40%;width:14%;height:14%;transform:translate(calc(var(--dx) * 1.6),calc(var(--dy) * 1.6)) rotate(var(--rot));opacity:.9}
+.bg-mcard[data-art="6"] .bg-mcard-head{color:#8A4A06}
+/* 7 · nowy rekord — złoto i wieniec */
+.bg-mcard[data-art="7"]{--tint:#FFEFC0;--tint2:#F2B544;box-shadow:0 0 0 2px #6F460F,0 0 14px 3px rgba(242,181,68,.55),0 8px 20px rgba(20,12,4,.35)}
+.mcx-cup{left:10%;top:8%;width:80%;height:auto;filter:drop-shadow(0 2px 2px rgba(80,40,0,.4))}
+.bg-mcard[data-art="7"] .bg-mcard-head{color:#6F460F}
+/* 8 · nowy poziom — okno na nowy ogród */
+.bg-mcard[data-art="8"]{--tint:#DCEFD2;--tint2:#7FB86A;box-shadow:0 0 0 2px #2F6B2A,0 0 14px 3px rgba(140,210,120,.5),0 8px 20px rgba(20,12,4,.35)}
+.mcx-window{left:14%;right:14%;top:8%;bottom:6%;border-radius:40% 40% 8px 8px / 30% 30% 8px 8px;overflow:hidden;box-shadow:0 0 0 3px #6E4523,0 0 0 5px #F3E2B8,0 3px 6px 4px rgba(40,20,0,.3)}
+.mcx-scene{inset:0;background-size:cover;background-position:50% 40%}
+.mcx-scene.old{opacity:0}
+.bg-mcard[data-art="8"] .bg-mcard-head{color:#2F6B2A}
+/* Przygaszenie nad niesionym klockiem (Q348) zostaje: .bg-mcard.is-dimmed{opacity:.18}. */
+/* Odtwarzanie (is-play): wejście karty (wspólne, 250 ms) i efekt (własny, do ok. 1,6 s). */
+@keyframes mcx-in{from{opacity:0;transform:translateY(10px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes mcx-pop{0%{transform:scale(.2) rotate(-30deg);opacity:0}60%{transform:scale(1.15) rotate(6deg);opacity:1}100%{transform:none}}
+@keyframes mcx-spin{from{transform:rotate(0)}to{transform:rotate(60deg)}}
+@keyframes mcx-sweep{from{left:-30%}to{left:58%}}
+@keyframes mcx-hop{0%,100%{transform:none}40%{transform:translateY(-22%) scale(1.08)}}
+@keyframes mcx-rise{from{opacity:0;transform:translateY(30%) scale(.6)}to{opacity:1}}
+@keyframes mcx-bloom{from{opacity:0;transform:scale(0) rotate(0)}to{opacity:1}}
+@keyframes mcx-fall{from{opacity:0;transform:translateY(-140%) rotate(0)}30%{opacity:.6}to{opacity:.6}}
+@keyframes mcx-glow{0%{opacity:0;transform:scale(.4)}60%{opacity:1;transform:scale(1.15)}100%{opacity:.9;transform:none}}
+@keyframes mcx-gpetal{from{opacity:0;transform:scale(0) rotate(0)}to{opacity:1}}
+@keyframes mcx-drop{from{transform:translate(-120%,-160%);opacity:0}30%{opacity:1}to{transform:none}}
+@keyframes mcx-pour{0%{transform:rotate(-8deg)}50%,100%{transform:rotate(18deg)}}
+@keyframes mcx-fade-out{0%,40%{opacity:1}100%{opacity:0}}
+@keyframes mcx-fade-in-mid{0%,30%{opacity:0}60%,100%{opacity:.55}}
+@keyframes mcx-p3{0%,25%{opacity:1}40%,100%{opacity:0}}
+@keyframes mcx-p4{0%,25%{opacity:0}40%,55%{opacity:1}70%,100%{opacity:0}}
+@keyframes mcx-p5{0%,55%{opacity:0;transform:scale(.9)}75%{opacity:1;transform:scale(1.08)}100%{opacity:1;transform:none}}
+@keyframes mcx-burst{from{opacity:0;transform:translate(0,0) rotate(0) scale(.3)}20%{opacity:1}to{opacity:.9}}
+@keyframes mcx-confetti{from{opacity:0;transform:translateY(-60%) rotate(0)}to{opacity:1}}
+@keyframes mcx-reveal{from{clip-path:inset(100% 0 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes mcx-twinkle{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.25);opacity:.6}}
+.bg-mcard.is-play{animation:mcx-in .25s ease-out both}
+.bg-mcard.is-play .bg-mcard-head{animation:mcx-in .35s .1s ease-out both}
+.bg-mcard.is-play .mcx-spark{animation:mcx-twinkle .9s ease-in-out 2}
+.bg-mcard.is-play .mcx-rays{animation:mcx-spin 2.5s linear both}
+.bg-mcard.is-play .mcx-glow{animation:mcx-glow .9s ease-out both}
+.bg-mcard.is-play .mcx-gpetal{animation:mcx-gpetal .4s .6s ease-out both}
+.bg-mcard.is-play .mcx-confetti{animation:mcx-confetti .8s .3s ease-out both}
+.bg-mcard[data-art="1"].is-play .mcx-tile{animation:mcx-hop .5s ease-out both}
+.bg-mcard[data-art="1"].is-play .mcx-sweep,.bg-mcard[data-art="3"].is-play .mcx-sweep{animation:mcx-sweep .8s .3s ease-in-out both}
+.bg-mcard[data-art="2"].is-play .mcx-rosette,.bg-mcard[data-art="7"].is-play .mcx-cup{animation:mcx-pop .55s .1s cubic-bezier(.3,1.5,.6,1) both}
+.bg-mcard[data-art="2"].is-play .mcx-star{animation:mcx-pop .45s .45s ease-out both}
+.bg-mcard[data-art="2"].is-play .mcx-star.s2{animation-delay:.6s}.bg-mcard[data-art="2"].is-play .mcx-star.s3{animation-delay:.75s}
+.bg-mcard[data-art="3"].is-play .mcx-tile{animation:mcx-rise .4s ease-out both}
+.bg-mcard[data-art="4"].is-play .mcx-bloom{animation:mcx-bloom .5s cubic-bezier(.3,1.5,.6,1) both}
+.bg-mcard[data-art="4"].is-play .mcx-fpetal{animation:mcx-fall 1.6s ease-in both}
+.bg-mcard[data-art="5"].is-play .mcx-can{animation:mcx-pour .6s ease-out both}
+.bg-mcard[data-art="5"].is-play .mcx-drop.d1{animation:mcx-drop .5s .4s ease-in both}.bg-mcard[data-art="5"].is-play .mcx-drop.d2{animation:mcx-drop .5s .6s ease-in both}
+.bg-mcard[data-art="5"].is-play .mcx-meter .is-new{animation:mcx-pop .4s .9s ease-out both}
+.bg-mcard[data-art="6"].is-play .mcx-plant.p3{animation:mcx-p3 1.6s both}.bg-mcard[data-art="6"].is-play .mcx-plant.p4{animation:mcx-p4 1.6s both}.bg-mcard[data-art="6"].is-play .mcx-plant.p5{animation:mcx-p5 1.6s both}
+.bg-mcard[data-art="6"].is-play .mcx-bpetal{animation:mcx-burst .7s ease-out both}
+.bg-mcard[data-art="6"].is-play .mcx-gpetal{animation-delay:1.1s}
+.bg-mcard[data-art="7"].is-play .mcx-shine{animation:mcx-fade-in-mid 1s both}
+.bg-mcard[data-art="8"].is-play .mcx-scene.old{animation:mcx-fade-out 1s both}
+.bg-mcard[data-art="8"].is-play .mcx-scene.new{animation:mcx-reveal .9s .3s ease-out both}
+@media (prefers-reduced-motion:reduce){.bg-mcard.is-play,.bg-mcard.is-play *{animation:none !important}}
+/* Rozkwit kwiatka wskaźnika w czasie karty 6 trwa tyle co karta (BG.fwPill ustawia animation-duration z data-duration-ms; domyślnie 3 s). */

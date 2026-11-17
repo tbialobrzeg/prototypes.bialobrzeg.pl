@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light">
-<title>Bloomgrid — prototyp r7.1</title>
+<title>Bloomgrid — prototyp r7.3</title>
 <link rel="stylesheet" href="assets/bloomgrid.css">
 <script src="assets/bloomgrid-rules.js"></script>
 <script src="assets/bloomgrid-ui.js"></script>
@@ -81,7 +81,7 @@
     'data-target-id': targetId,
     'data-fixture-id': st.fixture_id,
     style: { width: tg.width + 'px', height: tg.height + 'px', '--pad-t': geo.sp.t + 'px', '--pad-b': geo.sp.b + 'px', '--pad-x': geo.padX + 'px',
-      '--score-gap': (geo.sp.s || 0) + 'px', '--tray-gap': (geo.sp.g || 0) + 'px', '--min-h': geo.minH + 'px', '--board-w': geo.boardW + 'px', '--side-w': (geo.sideW || 380) + 'px', '--content-w': (geo.wide ? 380 : geo.colW - 2 * geo.padX) + 'px' }
+      '--score-gap': (geo.sp.s || 0) + 'px', '--tray-gap': (geo.sp.g || 0) + 'px', '--min-h': geo.minH + 'px', '--board-w': geo.boardW + 'px', '--side-w': (geo.sideW || 380) + 'px', '--content-w': (geo.wide ? 380 : geo.colW - 2 * geo.padX) + 'px', '--card-slot-h': (geo.cardSlotH || 216) + 'px' }
   });
 
   function urlFor(s, t) { var u = new URLSearchParams(); u.set('mode', 'user_preview'); u.set('state', s); u.set('target', t); return '?' + u.toString(); }
@@ -120,7 +120,7 @@
     var bar = BG.previewToolbar({
       catalogHref: 'catalog.html?target=' + encodeURIComponent(targetId),
       states: manifest.states.map(function (s) { return { state_id: s.state_id, screen_id: SCREEN[(fixtures.fixtures[s.fixture_id].scenarios[s.state_id.replace(/\.en$/, '')] || {}).screen] }; }),
-      stateId: stateId, targetId: targetId, noteStateId: stateId, targets: manifest.targets, replay: !!(sc.replay || sc.levelUp),
+      stateId: stateId, targetId: targetId, noteStateId: stateId, targets: manifest.targets, replay: !!sc.replay,
       onState: function (s) { location.search = urlFor(s, targetId); },
       onTarget: function (t) { location.search = urlFor(stateId, t); }
     });
@@ -206,7 +206,9 @@
       endMarks();
       overlay = BG.gameOverPanel({ elementId: 'element.game.over', prefix: 'element.game.over.', S: S, loc: loc, mode: sc.mode, score: o.score, record: o.record, recordBefore: recordBefore, newRecord: o.newRecord, dailyInfo: o.dailyInfo, row: geo.wide || geo.layout === 'landscape',
         level: daily ? null : BG.levelOf(o.score), motif: daily ? null : BG.motifOf(circleStart, BG.levelOf(o.score)),
-        onAgain: function () { ctx.nav.go(daily ? 'game.daily-start' : 'game.classic-start'); }, onHome: function () { ctx.nav.go('home.with-records'); } });
+        /* r7.3 (Q364, Q365): kropelki gry klasycznej przechodzą do następnej gry; wyzwanie dnia — bez przenoszenia. */
+        drops: daily ? 0 : (o.drops || 0),
+        onAgain: function () { ctx.nav.go(daily ? 'game.daily-start' : (o.drops > 0 ? 'game.classic-start-drops' : 'game.classic-start')); }, onHome: function () { ctx.nav.go('home.with-records'); } });
       surface.append(overlay);
       /* Nagłówek pod panelem zgadza się z panelem: po nowym rekordzie pokazuje nowy rekord (R-4.1, R-3.4);
          po podejściu zakończonym innego dnia nie pokazuje rekordu dnia (R-3.6). */
@@ -293,15 +295,20 @@
         onAction: function () { if (!ctx.nav.live) return; saveWrap.remove(); ctx.nav.say('Symulacja: ponowny zapis udany — komunikat znika (R-4.5)'); } }));
       if (geo.saveOver) { scoreWrap.append(saveWrap); saveWrap = null; }
     }
-    var main;
+    var main, side = null;
+    /* r7.3 (Q339, Q348): miejsce karty ruchu. mac-wide — stałe gniazdo 210 px w kolumnie pod Podlewaniem (nie zasłania planszy);
+       telefony — warstwa nad ekranem: karta stoi dolną krawędzią 6 px nad paskiem Podlewania i zachodzi na wynik i nagłówek,
+       a na górę planszy dopiero, gdy jest wyższa niż to miejsce (wtedy półprzezroczysta). phone-merged i landscape: tymczasowo ta sama reguła (BLG-20). */
+    var cardSlot = geo.wide ? h('div', { 'class': 'bg-card-slot' }) : null;
+    var cardLayer = geo.wide ? null : h('div', { 'class': 'bg-card-layer' });
     if (geo.wide) {
       screen.append(head);
       main = h('div', { 'class': 'bg-game-main', style: { '--board-w': geo.boardW + 'px' } },
-        board.el, h('div', { 'class': 'bg-side' }, scoreWrap, strip, tray.el, saveWrap));
+        board.el, side = h('div', { 'class': 'bg-side' }, scoreWrap, strip, cardSlot, tray.el, saveWrap));
     } else if (geo.layout === 'landscape') {
       /* Q180, Q200: telefon w poziomie — plansza po lewej, po prawej kolumna: nagłówek, wynik, pasek serii i punktów, trójka. */
       main = h('div', { 'class': 'bg-game-main', style: { '--board-w': geo.boardW + 'px' } },
-        board.el, h('div', { 'class': 'bg-side' }, head, levelRow, scoreWrap, strip, h('div', { 'class': 'bg-tray-wrap' }, tray.el), saveWrap));
+        board.el, side = h('div', { 'class': 'bg-side' }, head, levelRow, scoreWrap, strip, h('div', { 'class': 'bg-tray-wrap' }, tray.el), saveWrap));
     } else {
       screen.append(head, levelRow);
       main = h('div', { 'class': 'bg-game-main', style: { '--board-w': geo.boardW + 'px' } },
@@ -309,10 +316,46 @@
         saveWrap, h('div', { 'class': 'bg-tray-wrap' }, tray.el));
     }
     screen.append(main);
+    if (cardLayer) screen.append(cardLayer);
     ctx.root.append(screen);
+    var merged = geo.layout === 'phone-merged', land = geo.layout === 'landscape';
+    function placeCard(el) {
+      if (geo.wide || !el.isConnected) return;
+      var sr = screen.getBoundingClientRect(), k = sr.width / screen.offsetWidth || 1;
+      var rel = function (n) { var r = n.getBoundingClientRect(); return { top: (r.top - sr.top) / k, bottom: (r.bottom - sr.top) / k, left: (r.left - sr.left) / k, width: r.width / k }; };
+      var hd = rel(head), an = rel(merged ? scoreWrap : strip), bd = rel(board.el), col = rel(land ? side : board.el);
+      var cw = land ? col.width : geo.colW - 2 * geo.padX;
+      el.style.maxWidth = cw + 'px';
+      var hgt = el.offsetHeight, w = el.offsetWidth, bottom = an.top - 6;
+      var top = bottom - hd.top >= hgt ? bottom - hgt : hd.top;
+      el.style.left = Math.round(col.left + col.width / 2 - w / 2) + 'px';
+      el.style.top = Math.round(top) + 'px';
+      /* Na planszy (z ramą wysuniętą 8 px) karta jest półprzezroczysta — tylko część nad planszą (--opaque-h); nad nagłówkiem i wynikiem
+         jest nieprzezroczysta (poprawka po zrzutach r7.3). */
+      var overB = !land && top + hgt > bd.top - 8;
+      el.classList.toggle('is-over-board', overB);
+      el.style.setProperty('--opaque-h', Math.max(0, Math.round(bd.top - 8 - top)) + 'px');
+      /* Tabliczka wyniku pod kartą: całkiem zakryta albo na czas karty ukryta — nic nie wystaje spod karty ani nie prześwituje. */
+      var sc = rel(score.el), cardBottom = top + hgt, cardLeft = col.left + col.width / 2 - w / 2;
+      var overlap = sc.bottom > top && sc.top < cardBottom && sc.left < cardLeft + w && sc.left + sc.width > cardLeft;
+      var inside = sc.top >= top && sc.bottom <= cardBottom && sc.left >= cardLeft && sc.left + sc.width <= cardLeft + w;
+      score.el.style.visibility = overlap && !inside ? 'hidden' : '';
+    }
+    /* Karta zniknęła (koniec kroku kolejki, zastąpienie) — tabliczka wyniku wraca. */
+    if (cardLayer) new MutationObserver(function () { if (!cardLayer.querySelector('.bg-mcard')) score.el.style.visibility = ''; }).observe(cardLayer, { childList: true });
+    var recordShown = false;
+    /* Wpisy karty: awans (tylko gra klasyczna, Q342) i nowy rekord raz na grę, w ruchu, który przekracza rekord trybu sprzed gry;
+       przy rekordzie 0 sprzed gry wpisu nie ma (Q343, Q352). W wyzwaniu dnia tylko wtedy, gdy podejście liczy się do rekordu dnia
+       (data urządzenia bez zmiany od rozpoczęcia, R-3.6; w prototypie zawsze tak w grze na żywo). */
+    function milestones(after, beforeScore, live) {
+      var m = { score: after };
+      if (!daily && BG.levelOf(after) > BG.levelOf(beforeScore)) m.level = { n: BG.levelOf(after), motif: BG.motifOf(0, BG.levelOf(after)) };
+      if (!recordShown && recordBefore > 0 && after > recordBefore && beforeScore <= recordBefore) { m.record = true; if (live) recordShown = true; }
+      return m;
+    }
 
     /* Stan gry z fixture; klatka ruchu (move) liczona regułami z położenia przed ruchem. */
-    var state = { board: BGRules.parseBoard(sc.board), tray: sc.tray.slice(), score: sc.score, combo: sc.combo, dry: sc.dry };
+    var state = { board: BGRules.parseBoard(sc.board), tray: sc.tray.slice(), score: sc.score, drops: sc.drops || 0 };
     var view = {}, moveRes = null;
     /* r7: w user_preview stany z polem replay zaczynają się sprzed ruchu, a prototyp sam wykonuje ruch ze scenariusza po 0,7 s —
        widać jego animacje (pochwała, Podlewanie, Kolorowa rabata, święto, awans). „Odtwórz” w pasku narzędzi powtarza. */
@@ -323,18 +366,31 @@
       var res = BGRules.play(state, sc.move.slot, sc.move.row, sc.move.col, BGRules.rng(sc.seed));
       moveRes = res;
       state = res.state;
-      view.points = res.move.points;
-      /* r6 (Q189, Q203), r7: premia „Pusta grządka” z danych scenariusza (move.emptyBonus, r7: +2500) — w sumie punktów ruchu, bez osobnego
-         dopisku (premię pokazuje pochwała „Pusta grządka! +2500”); punktacji prototyp nie liczy. */
+      /* r6 (Q189, Q203), r7: premia „Pusta grządka” z danych scenariusza (move.emptyBonus) — w sumie punktów ruchu;
+         r7.3: w rozbiciu karty jako „Pusta grządka +N”; punktacji prototyp nie liczy. */
       if (sc.move.emptyBonus) {
-        view.points = Object.assign({}, res.move.points, { total: res.move.points.total + sc.move.emptyBonus });
+        res.move.points = Object.assign({}, res.move.points, { total: res.move.points.total + sc.move.emptyBonus });
         state.score += sc.move.emptyBonus;
+      }
+      /* r7.3 (Q356, Q360): stała klatka stanu po ruchu pokazuje jeden krok kolejki komunikatów tego ruchu — sc.step (points, drops,
+         full, record, level), domyślnie pierwszy. Kropelki w pigułce i poziom (tło, etykieta) odpowiadają chwili tego kroku:
+         przed krokiem kropelek/święta — stan sprzed ruchu, w święcie — 3 kropelki, przed krokiem poziomu — poprzedni poziom. */
+      var ms0 = milestones(state.score, sc.score, false); ms0.empty = sc.move.emptyBonus || 0;
+      var steps0 = BG.stepsFor(res.move, ms0), want = sc.step || (steps0[0] && steps0[0].step);
+      var idx = steps0.map(function (x) { return x.step; }).indexOf(want), cur = steps0[idx];
+      if (cur) {
+        view.card = cur;
+        var dropsIdx = steps0.map(function (x) { return x.step; }).indexOf(steps0.some(function (x) { return x.step === 'full'; }) ? 'full' : 'drops');
+        view.drops = cur.step === 'full' ? 3 : (dropsIdx >= 0 && idx < dropsIdx ? res.move.points.dropsBefore : state.drops);
+        if (cur.step === 'full') view.fullWatering = true;
+        var lvIdx = steps0.map(function (x) { return x.step; }).indexOf('level');
+        if (lvIdx > idx) view.levelBefore = BG.levelOf(sc.score);
       }
     }
     if (sc.drag) view.drag = sc.drag;
     /* Poziomy (Q147–Q153, tylko gra klasyczna): poziom z wyniku. r7.1 (Q219, Q237): motyw wynika wyłącznie z poziomu — początek kręgu 0,
        poziom 1 = Łąka o świcie (BG.CIRCLE); tło powierzchni = motyw poziomu (pole background w fixture musi mu odpowiadać, sprawdza motif71.cjs). */
-    var level = BG.levelOf(state.score), circleStart = 0;
+    var level = view.levelBefore || BG.levelOf(state.score), circleStart = 0;
     if (!daily) {
       surface.setAttribute('data-background', BG.motifOf(circleStart, level));
       levelApi.set(level, BG.motifOf(circleStart, level));
@@ -344,54 +400,38 @@
       var motif = BG.motifOf(circleStart, newLevel), red = BG.fx.reduced();
       levelApi.set(newLevel, motif);
       BG.fx.crossfade(surface, function () { surface.setAttribute('data-background', motif); }, red);                       /* (11) */
-      BG.fx.levelUp(score.el.parentElement, BG.levelUpBadge({ S: S, level: newLevel, motif: motif, elementId: 'element.game.level-up' }), red); /* (10) na wyniku */
+      /* r7.3 (Q342): bez plakietki na wyniku — awans jest wpisem karty ruchu. */
       if (red) BG.fx.fade(levelApi.el); else BG.fx.play(levelApi.el, 'fx-pop', BG.MOTION.pop);
     }
     var game = BG.play({
       /* Warstwą przeciąganego klocka jest ekran (przewija się razem z planszą), nie cała powierzchnia. */
       geo: geo, S: S, loc: loc, state: replay ? stateBefore : state, seed: sc.seed, surface: screen, interactive: true, view: replay ? {} : view,
       board: board, tray: tray, score: score, strip: strip,
-      ids: { piece: 'element.game.piece-', drag: 'interaction.game.drag-piece-', combo: 'element.game.combo', points: 'element.game.move-points', praise: 'element.game.praise' },
+      ids: { piece: 'element.game.piece-', drag: 'interaction.game.drag-piece-', combo: 'element.game.combo', points: 'element.game.move-points', praise: 'element.game.praise',
+        card: 'element.game.move-card', level: 'element.game.level-up', record: 'element.game.new-record' },
+      card: { host: cardSlot || cardLayer, place: placeCard },
+      milestones: function (s, before) { return milestones(s.score, before, true); },
       animate: ctx.nav.live, levels: !daily,
       blocked: function () { return !ctx.nav.live || !!overlay || !!crash || !!step; },
-      onMove: function (s, before, x) {
-        if (daily || BG.levelOf(s.score) <= BG.levelOf(before)) return;
-        /* r7: po Pustej grządce plakietka awansu przychodzi ok. 1,5 s później (po napisie święta). */
-        if (x && x.emptyGarden) setTimeout(function () { onLevelChange(BG.levelOf(s.score)); }, BG.MOTION.emptyLevelDelay);
-        else onLevelChange(BG.levelOf(s.score));
-      },
+      /* r7.3 (Q360): nowy poziom (przenikanie tła, etykieta) zaczyna się razem z ostatnim krokiem kolejki — kartą „Nowy poziom”. */
+      onLevelStep: function (n) { if (!daily) onLevelChange(n); },
       onOver: function (s) {
-        openNoMoves({ score: s.score, record: Math.max(recordBefore, s.score), newRecord: s.score > recordBefore, dailyInfo: 'until-midnight' }, true);
+        openNoMoves({ score: s.score, record: Math.max(recordBefore, s.score), newRecord: s.score > recordBefore, dailyInfo: 'until-midnight', drops: s.drops || 0 }, true);
       }
     });
     if (sc.overlay === 'confirm') openConfirm(false);
-    if (sc.over) openOver({ score: sc.score, record: sc.over.record, newRecord: sc.over.newRecord, dailyInfo: sc.over.dailyInfo }, false, false);
-    /* game.level-up, game.level-up-praise: stała klatka awansu — nowe tło, etykieta poziomu i plakietka na wyniku (Q188: nie na planszy
-       ani trójce); na żywo plakietka znika po 1,5 s. */
-    if (sc.levelUp && !replay) {
-      var lub = BG.levelUpBadge({ S: S, level: level, motif: BG.motifOf(circleStart, level), elementId: 'element.game.level-up' });
-      score.el.parentElement.append(lub);
-      if (ctx.nav.live) setTimeout(function () { lub.remove(); }, BG.MOTION.levelUp);
-    }
-    /* r7 (Q233, Q234): stany z pochwałą — stała klatka pochwały z ruchu scenariusza (pierwszeństwo: Pusta grządka, Kolorowa rabata,
-       drabina według siły ruchu); „Rajski ogród!” z rozbłyskiem płatków. Inne miejsce niż plakietka awansu (na wyniku). */
-    if (sc.showPraise && moveRes && !replay) {
-      var pv = BG.praiseFor(moveRes.move, state.combo, !!sc.emptyGarden);
-      if (pv && pv !== 'empty-garden') {
-        board.el.append(BG.praise({ S: S, variant: pv, elementId: 'element.game.praise' }));
-        if (pv === 'paradise') { var bst = BG.petalBurst(16); bst.classList.add('is-static'); board.el.append(bst); }
-      }
-    }
+    if (sc.over) openOver({ score: sc.score, record: sc.over.record, newRecord: sc.over.newRecord, dailyInfo: sc.over.dailyInfo, drops: sc.drops || 0 }, false, false);
+    /* r7.3: plakietka awansu na wyniku i osobna pochwała nad planszą usunięte — stałą klatkę ruchu pokazuje karta ruchu (view.card). */
     /* game.empty-garden* (Q189, Q203, r7): stan po ruchu, który opróżnił planszę — rozkwit na całej planszy i pochwała „Pusta grządka! +2500”;
        capture: stała klatka (bez lotu płatków przez ekran — to tylko ruch); user_preview: święto (12) z ruchu scenariusza. */
-    if (sc.emptyGarden && !replay) {
-      var eg = BG.emptyGarden({ S: S, loc: loc, n: sc.move && sc.move.emptyBonus, elementId: 'element.game.praise' });
-      board.fx.append(BG.emptyBloomFrame(board)); board.el.append(eg);
-    }
+    /* r7.3 (Q366, Q367): bez napisu „Pusta grządka! +N” na planszy — komunikat to karta 4; zostaje rozkwit pól planszy. */
+    /* Korekta Q366 (r7.3): bez płatków na polach planszy — efekt Pustej grządki jest tylko w karcie 4. Stała klatka game.empty-garden
+       to chwila karty 4 w pauzie trójki (Q241: nowa trójka po 1900 ms) — miejsca trójki są puste (klocki ukryte, układ bez zmian). */
+    if (sc.emptyGarden && !replay && view.card && view.card.step === 'points') tray.pieces.filter(Boolean).forEach(function (pe) { pe.style.visibility = 'hidden'; });
     /* Ruch odtwarzany 0,7 s po gotowości strony (obrazy wczytane), żeby było widać stan sprzed ruchu. */
     var startReplay = replay ? function () { setTimeout(function () { game.playMove(sc.move, { emptyGarden: sc.emptyGarden ? sc.move.emptyBonus : 0 }); }, 700); } : null;
     /* Stany game.no-moves-*: krok końca; w user_preview po 1,5 s (albo po stuknięciu) panel końca. */
-    if (sc.noMoves) openNoMoves({ score: sc.score, record: Math.max(recordBefore, sc.score), newRecord: sc.score > recordBefore, dailyInfo: 'until-midnight' }, ctx.nav.live);
+    if (sc.noMoves) openNoMoves({ score: sc.score, record: Math.max(recordBefore, sc.score), newRecord: sc.score > recordBefore, dailyInfo: 'until-midnight', drops: sc.drops || 0 }, ctx.nav.live);
     if (sc.alert === 'crash') {
       crash = h('div', { 'class': 'bg-crash' }, BG.alert({ variant: 'crash', S: S, elementId: 'element.app.crash', interactionId: 'interaction.app.crash-restart',
         onAction: function () { ctx.nav.go('home.resume-available'); } }));

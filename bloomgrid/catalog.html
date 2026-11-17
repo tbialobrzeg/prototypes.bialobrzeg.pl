@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light">
-<title>Bloomgrid — katalog komponentów r7</title>
+<title>Bloomgrid — katalog komponentów r7.3</title>
 <link rel="stylesheet" href="assets/bloomgrid.css">
 <script src="assets/bloomgrid-rules.js"></script>
 <script src="assets/bloomgrid-ui.js"></script>
@@ -61,6 +61,19 @@ body.cat-body{margin:0;background:#E4E2DA;font-family:var(--font);color:var(--in
 .cat-strip{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;width:100%}
 .cat-cardbox{position:relative;width:100%;display:flex;justify-content:center}
 .cat-note{font-size:13.5px;color:var(--ink-2);margin:8px 0 0}
+.cat-spec{grid-template-columns:minmax(0,1fr)}
+.cat-mc{display:grid;grid-template-columns:minmax(0,361px) minmax(0,380px);gap:24px 40px;align-items:start;justify-content:start}
+.bg-cat.is-narrow .cat-mc{grid-template-columns:minmax(0,1fr)}
+.cat-mc-col{display:flex;flex-direction:column;gap:14px;min-width:0}
+.cat-mc-title{font:700 12px var(--mono);color:var(--ink-2)}
+.cat-mc-row{display:flex;flex-direction:column;gap:6px;padding:14px;border-radius:14px;background:linear-gradient(180deg,#F3EAD3,#E2D6B8);min-width:0}
+.cat-mc-label{font:11.5px var(--mono);color:var(--ink-2)}
+.cat-mc-box{display:flex;justify-content:center;width:100%}
+.cat-mc-box .bg-mcard{max-width:100%}
+.cat-mc-play{margin-left:6px;font:700 11px var(--mono);padding:1px 8px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.cat-mc-box .bg-mcard{position:relative}
+.cat-spm-box .bg-mcard{max-width:100%}
+.cat-spm-box .bg-mcard .bg-praise{white-space:normal}
 </style>
 </head>
 <body class="cat-body">
@@ -123,11 +136,54 @@ body.cat-body{margin:0;background:#E4E2DA;font-family:var(--font);color:var(--in
     root.replaceChildren();
     root.append(h('header', { 'class': 'cat-head' },
       h('div', {}, h('h1', {}, 'Bloomgrid — katalog komponentów'),
-        h('p', {}, 'Rewizja r7 (Q232–Q234): przełączniki „Muzyka” i „Efekty”; na telefonach etykieta poziomu w wierszu pod nagłówkiem; drabina czterech pochwał według siły ruchu; Podlewanie (roślina i krople) zamiast „Seria ×c”; Kolorowa rabata; święto Pustej grządki +2500 (sekcje component.sound-toggle, component.combo-badge, foundation.motion z „Odtwórz”). Z r6 (Q147–Q153, Q175, Q176, Q184, Q185): poziomy gry klasycznej — krąg sześciu motywów tła, etykieta poziomu w nagłówku, plakietka awansu i przenikanie tła, poziom w panelu końca; bez stuknij-stuknij (Q185); przycisk „' + S.to_home + '” w panelu końca (Q184); stany po ruchu bez ramki czyszczenia; deszcz płatków przez całą wysokość karty. Z r5 (Q128–Q143, Q162): krok końca gry z komunikatem i oznaczeniem trójki, panel końca z powodem i różnicą do rekordu, przełącznik dźwięku, animacje z przyciskami „Odtwórz” (foundation.motion). Z r4 (Q111–Q114): tekst wyśrodkowany w poziomie wszędzie; na mac-wide wspólna siatka (przycisk domu i rekord na krawędziach planszy i tacki, wynik, seria i punkty na osi środkowego slotu), większy przycisk domu i rekord; sloty tacki bez szwów. Z r3: nowy wygląd z grafik rastrowych (Q96, Q102–Q106) — kafle z kwiatami, drewniana skrzynia planszy, przyciski i panele z obrazów, trzy ilustrowane tła sceny. Zachowanie, układ, stany, komponenty i publiczne ID bez zmian względem r2. Każdy komponent pokazuje przeznaczenie, warianty, konfiguracje, stany interakcji, rolę i nazwę dostępną, kontrakt akcji (action → expected_effect) w każdym kontekście oraz różnice responsywne. Okazy renderuje ten sam runtime co index.html (assets/bloomgrid-ui.js, reguły w assets/bloomgrid-rules.js). Teksty z fixture „' + lang + '”.')),
+        h('p', {}, 'Rewizja r7.3 (Q339–Q362): Podlewanie to kropelki za zbicie kilku linii naraz (3 kropelki = „Pełne podlanie!” i +500); komunikaty ruchu w kolejce, jedna karta naraz (punkty → kropelki albo Pełne podlanie → rekord → poziom); korekta Q366: osiem kart z własną ilustracją, kolorem, animacją, dźwiękiem i czasem 2–3,4 s, bez efektów poza kartą; drabina pochwał z liczby linii naraz. Wcześniej w r7.3 (Q339–Q354): jeden sposób komunikatów chwilowych — karta ruchu (component.move-card: pochwała, punkty z pełnym rozbiciem, nowy poziom, nowy rekord) zamiast osobnej pochwały nad planszą, dopisków punktów i plakietki awansu na wyniku; święto pełnego podlania (component.full-watering) przy Podlewaniu ×6; większa roślina Podlewania i większe odstępy wynik–Podlewanie–karta; „+500” zamiast „×2” na linii jednego koloru. ' +
+          'Rewizja r7 (Q232–Q234): przełączniki „Muzyka” i „Efekty”; na telefonach etykieta poziomu w wierszu pod nagłówkiem; drabina czterech pochwał według siły ruchu; Podlewanie (roślina i krople) zamiast „Seria ×c”; Kolorowa rabata; święto Pustej grządki +2500 (sekcje component.sound-toggle, component.combo-badge, foundation.motion z „Odtwórz”). Z r6 (Q147–Q153, Q175, Q176, Q184, Q185): poziomy gry klasycznej — krąg sześciu motywów tła, etykieta poziomu w nagłówku, plakietka awansu i przenikanie tła, poziom w panelu końca; bez stuknij-stuknij (Q185); przycisk „' + S.to_home + '” w panelu końca (Q184); stany po ruchu bez ramki czyszczenia; deszcz płatków przez całą wysokość karty. Z r5 (Q128–Q143, Q162): krok końca gry z komunikatem i oznaczeniem trójki, panel końca z powodem i różnicą do rekordu, przełącznik dźwięku, animacje z przyciskami „Odtwórz” (foundation.motion). Z r4 (Q111–Q114): tekst wyśrodkowany w poziomie wszędzie; na mac-wide wspólna siatka (przycisk domu i rekord na krawędziach planszy i tacki, wynik, seria i punkty na osi środkowego slotu), większy przycisk domu i rekord; sloty tacki bez szwów. Z r3: nowy wygląd z grafik rastrowych (Q96, Q102–Q106) — kafle z kwiatami, drewniana skrzynia planszy, przyciski i panele z obrazów, trzy ilustrowane tła sceny. Zachowanie, układ, stany, komponenty i publiczne ID bez zmian względem r2. Każdy komponent pokazuje przeznaczenie, warianty, konfiguracje, stany interakcji, rolę i nazwę dostępną, kontrakt akcji (action → expected_effect) w każdym kontekście oraz różnice responsywne. Okazy renderuje ten sam runtime co index.html (assets/bloomgrid-ui.js, reguły w assets/bloomgrid-rules.js). Teksty z fixture „' + lang + '”.')),
       h('div', { 'class': 'cat-tools', 'data-prototype-tool': 'catalog-fixture' }, 'fixture:',
         ['default', 'english'].map(function (f) { return h('button', { type: 'button', 'aria-pressed': f === lang ? 'true' : 'false', onclick: function () { lang = f; render(); } }, f); }))));
-    var ids = ['foundation.palette', 'component.board-cell', 'component.board', 'component.piece', 'component.piece-tray', 'component.score-display', 'component.combo-badge', 'component.move-points', 'component.mode-label', 'component.level-label', 'component.level-up-badge', 'component.icon-button', 'component.menu-button', 'component.button', 'component.wordmark', 'component.dialog', 'component.game-over-panel', 'component.alert', 'component.sound-toggle', 'component.no-moves-step', 'foundation.motion', 'responsive', 'states-plan'];
+    var ids = ['komunikaty', 'foundation.palette', 'component.board-cell', 'component.board', 'component.piece', 'component.piece-tray', 'component.score-display', 'component.combo-badge', 'component.move-card', 'component.move-points', 'component.mode-label', 'component.level-label', 'component.icon-button', 'component.menu-button', 'component.button', 'component.wordmark', 'component.dialog', 'component.game-over-panel', 'component.alert', 'component.sound-toggle', 'component.no-moves-step', 'foundation.motion', 'responsive', 'states-plan'];
     root.append(h('nav', { 'class': 'cat-toc' }, ids.map(function (i) { return h('a', { href: '#' + i }, i); })));
+
+    /* r7.3 (Q366–Q368): Komunikaty chwilowe — osiem treści jednej karty (component.move-card) w dwóch rozmiarach, obok siebie,
+       bez reszty ekranu. Do pokazania Tomaszowi; capture: data-element-id="specimen.move-cards", karty specimen.move-card.<nr>-<rozmiar>. */
+    (function () {
+      var Pk = function (place, k, mono, empty) { var lines = 80 * k * k; return { place: place, cleared: k, lines: lines, full: 0, mono: mono || 0, empty: empty || 0, total: place + lines + (mono || 0) + (empty || 0) }; };
+      var items = [
+        /* Liczby jak w przykładach Tomasza (Q366); okaz nie liczy punktacji. */
+        ['1', 'punkty', { points: { place: 163, cleared: 1, lines: 80, full: 0, mono: 0, empty: 0, total: 243 } }],
+        ['2', 'punkty z pochwałą', { praise: 'wonderful', points: Pk(3, 3) }],
+        ['3', 'Kolorowa rabata', { praise: 'flowerbed', points: { place: 163, cleared: 1, lines: 80, full: 0, mono: 500, empty: 0, total: 743 } }],
+        ['4', 'Pusta grządka', { points: { place: 3, cleared: 2, lines: 320, full: 0, mono: 0, empty: 1000, total: 1243 } }],
+        ['5', 'kropelki', { step: 'drops', gain: 2 }],
+        ['6', 'Pełne podlanie', { step: 'full', count: 1 }],
+        ['7', 'nowy rekord', { step: 'record', score: 18421 }],
+        ['8', 'nowy poziom', { step: 'level', level: { n: 4, motif: 'hedge' } }]];
+      /* Korekta Q366 (zaakceptowana: „ładne, niech będą i użyjmy w grze”): karty z runtime gry (BG.moveCard) — ten sam wygląd co w stanach gry.
+         Domyślnie klatka szczytowa (do zrzutu); „▶” odtwarza wejście i efekt karty (klasa is-play przez data-duration-ms). */
+      var card = function (it, size) {
+        var nr = it[0], o = it[2], id = 'specimen.move-card.' + nr + '-' + size;
+        return BG.moveCard({ S: S, loc: loc, step: o.step || 'points', praise: o.praise || null, points: o.points, gain: o.gain, dropsAfter: o.dropsAfter, count: o.count, score: o.score, level: o.level,
+          ids: { card: id, praise: id + '.head', points: id + '.num', drops: id + '.head', full: id + '.head', level: id + '.head', record: id + '.head' } });
+      };
+      var play = function (el) { el.classList.remove('is-play'); void el.offsetWidth; el.classList.add('is-play'); clearTimeout(el._t); el._t = setTimeout(function () { el.classList.remove('is-play'); }, +el.getAttribute('data-duration-ms')); };
+      var col = function (size) {
+        var wide = size === 'mac-wide';
+        return h('div', { 'class': 'cat-mc-col ' + (wide ? 'bg-wide' : 'bg-phone') },
+          h('div', { 'class': 'cat-mc-title' }, wide ? 'mac-wide (gniazdo 380 px)' : 'telefon (do 361 px)'),
+          items.map(function (it) {
+            var el = card(it, size);
+            return h('div', { 'class': 'cat-mc-row' },
+              h('span', { 'class': 'cat-mc-label' }, it[0] + ' · ' + it[1] + ' · ' + el.getAttribute('data-sound') + ' · ' + (+el.getAttribute('data-duration-ms') / 1000).toLocaleString('pl-PL') + ' s ',
+                h('button', { type: 'button', 'class': 'cat-mc-play', 'data-prototype-tool': 'catalog-replay', 'aria-label': 'Odtwórz kartę ' + it[0], onclick: function () { play(el); } }, '▶')),
+              h('div', { 'class': 'cat-mc-box', style: { maxWidth: (wide ? 380 : 361) + 'px' } }, el));
+          }));
+      };
+      var cols = h('div', { 'class': 'cat-mc', 'data-element-id': 'specimen.move-cards' }, col('phone'), col('mac-wide'));
+      root.append(h('section', { 'class': 'cat-sec', id: 'komunikaty', 'data-catalog-component': 'komunikaty' },
+        h('h2', {}, 'komunikaty'), h('h3', {}, 'Komunikaty chwilowe — osiem kart (r7.3, korekta Q366)'),
+        h('p', { 'class': 'cat-sem', html: 'Zaakceptowane przez Tomasza („ładne, niech będą i użyjmy w grze”) i użyte w stanach gry — te same karty rysuje runtime gry (<a href="#component.move-card">component.move-card</a>). Wspólne: jedno miejsce nad planszą (mac-wide: gniazdo w kolumnie), jedna karta naraz w kolejce, czas na przeczytanie, ta sama ramka (kremowa karta, obrys 2 px, cień) i te same fonty i rozmiary (nagłówek 22 / 26 px, liczba 32 / 42 px, podpis 13 / 15 px). Własne: ilustracja obok tekstu, kolor, animacja wejścia i efekt, dźwięk z R-6.1. Karty 1–4 to warianty karty punktów ruchu — ruch pokazuje dokładnie jedną (R-2.9: Pusta grządka, Kolorowa rabata, pochwała z liczby linii, zwykłe punkty). Ilustracje to własne SVG i istniejące obrazy (kafle, płatki, rośliny, tła), bez nowych wywołań generatora. Domyślnie stała klatka szczytowa; „▶” odtwarza kartę. W etykiecie: dźwięk i czas karty.' }),
+        h('div', { 'class': 'cat-tools', 'data-prototype-tool': 'catalog-replay-all', style: { margin: '0 0 14px' } }, h('button', { type: 'button', onclick: function () { [].forEach.call(cols.querySelectorAll('.bg-mcard'), play); } }, '▶ Odtwórz wszystkie')),
+        cols));
+    })();
 
     /* Podstawy: kolory i symbole */
     var colorRows = [['poppy', 'mak — 4 szerokie okrągłe płatki, ciemny środek', '#D44624', '3,84', '#D91D08', 'tile-poppy'], ['sun', 'słonecznik — wieniec wąskich płatków, duży brązowy środek', '#F4BB3D', '9,81', '#D89F2E', 'tile-sun'], ['leaf', 'koniczyna — 4 liście w kształcie serca', '#22A663', '5,47', '#0DA86F', 'tile-leaf'], ['drop', 'chaber — kolczasta gwiazda płatków', '#3C74C3', '3,65', '#4770C4', 'tile-drop'], ['berry', 'kwiat wiśni — kwiaty o 5 płatkach z wcięciem', '#E1339C', '4,21', '#B743A7', 'tile-berry']];
@@ -182,7 +238,7 @@ body.cat-body{margin:0;background:#E4E2DA;font-family:var(--font);color:var(--in
     }
     var dragP = C.tray[C.drag.slot], dragSh = BGRules.shape(dragP.shape);
     var an = BGRules.analyze(demoBoard, dragSh, dragP.color, C.drag.row, C.drag.col);
-    var cleared = BGRules.play({ board: demoBoard, tray: C.tray, score: C.score, combo: C.combo, dry: C.dry }, C.drag.slot, C.drag.row, C.drag.col, BGRules.rng(C.seed));
+    var cleared = BGRules.play({ board: demoBoard, tray: C.tray, score: C.score, drops: C.drops }, C.drag.slot, C.drag.row, C.drag.col, BGRules.rng(C.seed));
     function dragSpecimen(touch) {
       var b = boardSpm('catalog.board.drag-' + (touch ? 'touch' : 'mouse'), { preview: an, previewColor: dragP.color });
       var pitch = g1.cell + g1.gap, ox = g1.pad + g1.gap, lift = touch ? Math.max(44, g1.cell + 8) : 0;
@@ -282,47 +338,79 @@ body.cat-body{margin:0;background:#E4E2DA;font-family:var(--font);color:var(--in
        spm('record', 'wyzwanie dnia', scoreSpm('catalog.record.daily', 'record', S.record_daily, C.records.daily))]));
 
     /* component.combo-badge */
-    root.append(section('component.combo-badge', 'Podlewanie (r7, zamiast „Seria ×c”)',
-      'Pokazuje stopień serii c, gdy c ≥ 2 (R-2.7), jako roślinę w doniczce, która rośnie z kolejnymi ruchami z czyszczeniem, oraz zapas wody: trzy krople = ruchy bez czyszczenia, które zostały do utraty serii (3 − ruchy bez czyszczenia, R-2.3). Stopień i zapas czytelne bez koloru: kształt rośliny i liczba pełnych kropli (puste krople mają przerywany obrys).',
-      [['Stopnie (data-stage)', '<ul><li>1 — kiełek: dwa listki (×2)</li><li>2 — listki: cztery liście (×3)</li><li>3 — pąk (×4)</li><li>4 — kwiat: pięć płatków (×5)</li><li>5 — złoty kwiat z promieniami blasku, pigułka ze złotą poświatą (×6 i więcej)</li></ul>Obok „×c” (17 px / 900, <code>#3A2405</code>) i trzy krople (<code>data-drops</code> 3 / 2 / 1). Przy ostatniej kropli (<code>data-wilt</code>) roślina więdnie: pąk i kwiat (×4, ×5) zmieniają się w obraz zwiędłej rośliny (<code>plant-wilt.webp</code>), a kiełek, listki i złoty kwiat zostają swoim obrazem, przygaszonym.'],
-       ['Wygląd', 'Kremowa pigułka 30 px (mac-wide 34 px) z brązowym obrysem; roślina w terakotowej doniczce wystaje nad pigułkę, w stałej ramce 44×48 px (mac-wide 50×56, zwarty 38×42), zawsze nad paskiem, nigdy nad planszą. Roślina rośnie w obrazie, doniczka ma tę samą szerokość we wszystkich stopniach. Grafika z generatora (r7): <code>assets/img/plant-1…5.webp</code> i <code>plant-wilt.webp</code>, 88×96 px (2×), w stylu kafli.'],
-       ['Zachowanie', 'Nowy stopień: skok i rozbłysk (300 ms). Wzrost c bez nowego stopnia (c ≥ 6): podbicie (250 ms). Utrata serii: roślina więdnie i opada (400 ms), potem znika. reduced-motion: tylko przezroczystość.'],
+    root.append(section('component.combo-badge', 'Podlewanie — kwiatek i kropelki (r7.3, Q355–Q359)',
+      'Kwiatek rośnie za zbicie kilku linii naraz: ruch, który czyści L linii, daje L − 1 kropelek (1 linia: 0, 2: 1, 3: 2, 4: 3…). Kropelki zbierają się między ruchami i nigdy nie znikają; w grze klasycznej przechodzą też do następnej gry (Q364, stan <code>game.classic-start-drops</code>, wiersz na panelu końca), a wyzwanie dnia ma własny kwiatek od zera w każdym podejściu (Q365) — puste ruchy nic nie zabierają, kwiatek nie więdnie. 3 kropelki = nagroda: święto „' + S.full_watering + '” (<a href="#component.full-watering">component.full-watering</a>) i premia +500; potem kwiatek startuje od nowa, a nadmiar przechodzi dalej (2 + 3 = nagroda i 2 zostają). Usunięte (Q362): licznik ×2…×6, kropelki jako „życia”, więdnięcie po 3 pustych ruchach, premia serii 50·c. Widoczny zawsze w grze, także przy 0 kropelek.',
+      [['Stopnie (data-drops / data-stage)', '<ul><li>0 kropelek — kiełek (<code>plant-1</code>), trzy puste krople</li><li>1 kropelka — pąk (<code>plant-3</code>), jedna pełna</li><li>2 kropelki — kwiat (<code>plant-4</code>), dwie pełne</li><li>3 — tylko w święcie: trzy pełne, kwiat rozkwita w złoty</li></ul>Stan czytelny bez koloru: liczba pełnych kropli (puste mają przerywany obrys) i kształt kwiatka. Bez „×c”.'],
+       ['Wygląd', 'r7.3 (Q345): kremowa pigułka 32 px (mac-wide 38 px) z brązowym obrysem; roślina w terakotowej doniczce wystaje nad pigułkę, w stałej ramce 56×61 px na telefonach (r7.2: 44×48; przy treści węższej niż 335 px szerokość = treść − 279 px, mobile-compact 49×53, żeby przy wyniku 9 999 999 zostały ≥ 2 px do tabliczki wyniku), 66×72 na mac-wide (r7.2: 50×56, +32% wysokości), zwarty 38×42 (<code>phone-merged</code>), 44×48 w <code>landscape</code> (tymczasowo, BLG-20); zawsze nad paskiem, nigdy nad planszą. Roślina rośnie w obrazie, doniczka ma tę samą szerokość we wszystkich stopniach. Kropelki 13×17 px (mac-wide 15×19). Grafika z generatora (r7), wycinki r7.3: <code>assets/img/plant-1.webp</code>, <code>plant-3.webp</code>, <code>plant-4.webp</code>, 132×144 px (2× ramki 66×72), w stylu kafli.'],
+       ['Zachowanie', 'Kropelki zmieniają się, gdy w kolejce komunikatów zaczyna się krok kwiatka (karta „' + BG.dropsLabel(S, 1) + '” albo „' + S.full_watering + '”): nowy stopień — skok i rozbłysk (300 ms). Przy 3 kropelkach, przez czas karty 6 „' + S.full_watering + '” (3000 ms), ten kwiatek rośnie od dna doniczki (telefony 2×, mac-wide 1,35×), rozkwita (pąk → kwiat → złoty kwiat, obrazy <code>plant-3…5-big.webp</code>) i świeci, potem wraca do kiełka (albo stopnia nadmiaru); zachodzi na kartę i nagłówek, „×c” nie ma (Q366, Q367: bez osobnych warstw święta). reduced-motion: tylko przezroczystość.'],
        ['Stany interakcji', 'Brak.'],
-       ['Rola i nazwa dostępna', 'Tekst dla czytnika: „' + BG.fmt(S.combo, { c: 3 }) + ', ' + BG.fmt(S.combo_drops_sr, { d: 2 }) + '”; zmianę ogłasza region <code>component.move-points</code>.'],
-       ['Responsywność', 'Po lewej w pasku nad planszą (telefony), w wierszu wyniku na niskim oknie (Q199), pod wynikiem (mac-wide). r7: wariant zwarty (krople w kolumnie, roślina 38 px szerokości, pigułka ok. 78 zamiast ok. 113 px) — zawsze w wierszu wyniku (<code>phone-merged</code>, pigułka przy dolnej krawędzi wyniku), a na pasku telefonu wtedy, gdy suma i oba dopiski punktów nie mieszczą się obok pełnej pigułki (przed regułą Q203).']],
-      [spm('stopnie', 'c = 2, 3, 4, 5, 7 (3 krople)', h('div', { 'class': 'cat-cellrow', style: { gap: '18px', alignItems: 'flex-end', paddingTop: '18px' } }, [2, 3, 4, 5, 7].map(function (c) { return BG.comboBadge({ c: c, S: S, dry: 0, elementId: 'catalog.combo.' + c }); }))),
-       spm('zapas', 'c = 4: krople 3 / 2 / 1 (więdnie)', h('div', { 'class': 'cat-cellrow', style: { gap: '18px', alignItems: 'flex-end', paddingTop: '18px' } }, [0, 1, 2].map(function (d) { return BG.comboBadge({ c: 4, S: S, dry: d, elementId: 'catalog.combo.dry' + d }); }))),
-       spm('hidden', 'c = 1', h('span', { style: { font: '12px var(--mono)', color: 'var(--ink-2)' } }, '(brak elementu)')),
-       spm('Odtwórz', 'rośnięcie ×2 → ×7, potem usychanie: krople 3 → 2 → 1 i utrata', (function () {
-         var host = h('div', { style: { height: '64px', display: 'flex', alignItems: 'flex-end', paddingLeft: '8px' } });
-         var seq = [[2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0], [7, 1], [7, 2], [0, 0]];
-         function show(c, dry, anim, prevStage) {
-           var old = host.firstChild;
-           if (c < 2) { if (old) BG.fx.wither(old, BG.fx.reduced()); return; }
-           var cb = BG.comboBadge({ c: c, S: S, dry: dry, elementId: 'catalog.combo.play' });
-           host.replaceChildren(cb);
-           if (anim) { if (+cb.getAttribute('data-stage') > prevStage) BG.fx.grow(cb, BG.fx.reduced()); else BG.fx.pop(cb, BG.fx.reduced()); }
-         }
-         show(2, 0, false, 0);
+       ['Rola i nazwa dostępna', 'Tekst dla czytnika: „' + BG.fmt(S.watering_sr, { d: 1 }) + '”; przyrost ogłasza karta ruchu (<code>component.move-card</code>, krok kropelek).'],
+       ['Responsywność', 'Telefony: po lewej w pasku 54 px nad planszą (r7.3; było 44 px), prawa część paska jest pusta (punkty są w karcie ruchu); mac-wide: w kolumnie pod wynikiem, 24 px pod nim (prześwit roślina–wynik 28 px), 24 px nad gniazdem karty ruchu. <code>phone-merged</code>: wariant zwarty w wierszu wyniku jak w r7 (tymczasowo, BLG-20). r7.3: wariant zwarty na pasku telefonu (<code>is-tight</code>) usunięty — nie ma już dopisków obok pigułki.']],
+      [spm('stopnie', '0, 1, 2 kropelki, rozmiar targetu ' + ctg.target_id, h('div', { 'class': 'cat-cellrow ' + (ctg.width >= 1024 ? 'bg-wide' : 'bg-phone'), style: { gap: '18px', alignItems: 'flex-end', paddingTop: '30px' } }, [0, 1, 2].map(function (d) { return BG.comboBadge({ drops: d, S: S, elementId: 'catalog.combo.' + d }); }))),
+       spm('Odtwórz', 'kiełek → pąk → kwiat → (3 kropelki) święto w miniaturze → znowu kiełek', (function () {
+         var host = h('div', { 'class': ctg.width >= 1024 ? 'bg-wide' : 'bg-phone', style: { height: '120px', display: 'flex', alignItems: 'flex-end', paddingLeft: '40px' } });
+         var cur = null, show = function (d, anim) { var old = host.firstChild, os = old ? old.getAttribute('data-stage') : null; cur = BG.comboBadge({ drops: d, S: S, elementId: 'catalog.combo.play' }); host.replaceChildren(cur); if (anim && os !== cur.getAttribute('data-stage')) BG.fx.grow(cur, BG.fx.reduced()); };
+         show(0, false);
          return h('div', {}, host, replayBtn(function () {
-           seq.forEach(function (s, i) { setTimeout(function () { var st = host.firstChild ? +host.firstChild.getAttribute('data-stage') : 0; show(s[0], s[1], s[1] === 0, st); }, i * 700); });
+           show(0, false);
+           setTimeout(function () { show(1, true); }, 600); setTimeout(function () { show(2, true); }, 1300);
+           setTimeout(function () { show(3, false); var t = []; var rs = BG.fwPill(cur, BG.fx.reduced() ? 'reduced' : 'anim', t, 3000); setTimeout(function () { rs(); show(0, true); }, 3000); }, 2000);
          }, 'Odtwórz Podlewanie'));
        })())]));
 
-    /* component.move-points */
-    function mp(id, p) { return BG.movePoints({ points: p, S: S, loc: loc, elementId: id }); }
-    root.append(section('component.move-points', 'Punkty ruchu',
-      'Po ruchu, który czyści co najmniej jedną linię, przez chwilę pokazuje przy planszy punkty zdobyte w tym ruchu, z osobnym dopiskiem premii serii i premii za linię jednego koloru, gdy ruch je dał (R-2.6). Położenie bez czyszczenia nie pokazuje punktów ruchu.',
-      [['Warianty', '<ul><li><code>lines</code> — tylko suma</li><li><code>lines+combo</code> — dopisek „' + BG.fmt(S.move_combo, { n: 'n' }) + '”</li><li><code>lines+mono</code> — dopisek „' + BG.fmt(S.move_mono, { n: 'n' }) + '” z gwiazdką</li><li><code>lines+combo+mono</code></li></ul>'],
-       ['Konfiguracje', 'Suma = pola + linie + premia jednego koloru + premia serii (R-2.1–R-2.4); premia jednego koloru = dodatkowe 80·k za każdą linię jednego koloru.'],
-       ['Zachowanie', 'Pojawia się po puszczeniu, znika po 1,4 s; kolejny ruch z czyszczeniem zastępuje go od razu. Ruch bez czyszczenia usuwa poprzedni.'],
-       ['Stany interakcji', 'Brak; nie przechwytuje wskaźnika.'],
-       ['Rola i nazwa dostępna', '<code>role="status"</code>, <code>aria-live="polite"</code>: „' + BG.fmt(S.move_points_sr, { n: BG.num(632, loc) }) + '” + dopiski.'],
-       ['Responsywność', 'Telefony: po prawej w pasku 44 px nad planszą, wyrównanie do prawej, jeden wiersz. mac-wide: pasek pod wynikiem w prawej kolumnie. r6 (Q199): niskie okno w pionie — po prawej stronie wyniku, w jego wierszu, suma nad dopiskami. r6 (Q203): suma i dopiski serii i koloru, gdy się mieszczą; gdy nie (tabliczka wychodzi poza pasek albo wiersz, wchodzi na wskaźnik serii albo wynik), zostaje jeden dopisek — ten o większej wartości (przy równych: seria); na szerszych ekranach oba (stan <code>game.combo-color</code>). Premii „pusta grządka” tabliczka nie pokazuje osobno (jest w sumie i w pochwale).']],
-      [spm('lines', '1 linia', mp('catalog.points.lines', { cleared: 1, total: 83, combo: 0, mono: 0 })),
-       spm('lines+combo', '', mp('catalog.points.combo', { cleared: 2, total: 474, combo: 150, mono: 0 })),
-       spm('lines+mono', '', mp('catalog.points.mono', { cleared: 1, total: 163, combo: 0, mono: 80 })),
-       spm('lines+combo+mono', 'okaz z fixture', mp('catalog.points.all', cleared.move.points))]));
+    /* r7.3: component.move-card (Q339–Q343, Q347, Q348, Q352, Q353) */
+    var wideCat = ctg.width >= 1024;
+    function cardSpm(id, o) {
+      var c = BG.moveCard({ S: S, loc: loc, step: o.step || 'points', praise: o.praise || null, points: o.points, gain: o.gain, count: o.count, score: o.score, level: o.level || null,
+        ids: { card: id, praise: id + '.praise', points: id + '.points', drops: id + '.drops', full: id + '.full', level: id + '.level', record: id + '.record' } });
+      c.style.position = 'relative';
+      if (o.cls) c.classList.add(o.cls);
+      return h('div', { 'class': wideCat ? 'bg-wide' : 'bg-phone', style: { display: 'flex', justifyContent: 'center', width: '100%', maxWidth: (wideCat ? 380 : 361) + 'px' } }, c);
+    }
+    var P = function (place, k, full, mono, empty) { var lines = 80 * k * k; return { place: place, cleared: k, lines: lines, full: full || 0, mono: mono || 0, empty: empty || 0, total: place + lines + (full || 0) + (mono || 0) + (empty || 0) }; };
+    root.append(section('component.move-card', 'Karta komunikatu chwilowego (r7.3)',
+      'Jedyny komponent komunikatów chwilowych (Q366, korekta Q366): jedno miejsce nad planszą (mac-wide: gniazdo w kolumnie), wspólna ramka i typografia, po lewej ilustracja, po prawej trzy wiersze — nagłówek, duża liczba, podpis drobnym drukiem; pusty wiersz się nie pokazuje. Osiem kart (<code>data-art</code> 1–8) ma własną ilustrację, kolor, wejście i efekt, dźwięk (<code>data-sound</code>) i czas (<code>data-duration-ms</code>) — okazy w sekcji <a href="#komunikaty">Komunikaty chwilowe</a>. Komunikaty ruchu idą po kolei, jedna karta naraz (Q356, Q360), najwyżej 4 na ruch: (1) jedna karta punktów — 1 punkty, 2 pochwała, 3 Kolorowa rabata albo 4 Pusta grządka (pierwszeństwo R-2.9); (2) 5 „' + BG.dropsLabel(S, 1) + '” / „' + BG.dropsLabel(S, 2) + '” albo 6 „' + S.full_watering + '”; (3) 7 „' + S.new_record + '”; (4) 8 „' + S.card_level_head + '” — zawsze na końcu. Gra się nie zatrzymuje (wyjątek: pauza trójki przy Pustej grządce, Q241); komunikaty następnego ruchu dołączają na koniec kolejki. Poza kartą nie ma efektów komunikatów: usunięte osobny napis i warstwy święta pełnego podlania, napis „Pusta grządka! +N” i płatki na planszy i przez cały ekran; zostaje rozkwit kwiatka wskaźnika w czasie karty 6.',
+      [['Wiersze', '<ul><li>ilustracja (<code>.mcx-art</code>, dekoracja <code>aria-hidden</code>): kwadrat 76 px (mac-wide 100 px) po lewej, zaokrąglenie 16 px, tło w kolorze karty</li><li>nagłówek (<code>.bg-mcard-head</code>): 22 px / 900 (mac-wide 26 px) w kolorze karty, do lewej, zawija się w wyrównane wiersze; publiczne ID zależnie od treści: <code>element.game.praise</code> (pochwała, Kolorowa rabata, Pusta grządka; <code>component.praise</code>, <code>data-variant</code>), <code>element.game.drops-gain</code>, <code>element.game.full-watering</code>, <code>element.game.new-record</code>, <code>element.game.level-up</code></li><li>duża liczba (<code>.bg-mcard-num</code>): 32 px / 900 <code>var(--green-d)</code> (mac-wide 42 px); przy punktach <code>element.game.move-points</code> (<code>component.move-points</code>) — przyrost wyniku bez premii „Pełne podlanie” (ta ma własną kartę „+500”, Q366)</li><li>podpis (<code>.bg-mcard-sub</code>): 13 px / 700 <code>#5A4630</code> (mac-wide 15 px) — co gracz zrobił, bez rachunku pól (Q368)</li></ul>'],
+       ['Karty (korekta Q366)', '<div class="cat-table-wrap"><table class="cat-table"><tr><th>nr</th><th>treść</th><th>ilustracja · kolor</th><th>wejście i efekt (is-play)</th><th>dźwięk (R-6.1)</th><th>czas w przykładzie</th></tr>'
+         + [['1', 'punkty', 'pięć kafli kwiatów na pasie ziemi · zieleń', 'kafle podskakują po kolei, świetlny błysk wzdłuż pasa', 'line (bez czyszczenia: place)', '2,0 s'],
+            ['2', 'pochwała', 'złota rozeta ze wstążkami na promieniach, gwiazdki według szczebla (1–3; Rajski ogród także płatki) · złoto, obwódka rośnie ze szczeblem', 'rozeta wskakuje z obrotem, promienie się obracają, gwiazdki po kolei', 'praise-great / -wonderful / -amazing / -paradise', '2,4 s'],
+            ['3', 'Kolorowa rabata', 'łuk pięciu kwiatów wiśni w różowej poświacie · malina', 'kwiaty wyrastają po kolei, złota smuga, iskry', 'flower-bed', '3,3 s'],
+            ['4', 'Pusta grządka', 'mini-plansza w ramie, płatki na polach; girlanda na ramce karty, płatki opadają przez kartę · złoto, mocna poświata', 'płatki rozkwitają falą od środka, płatki spadają, girlanda rozkwita', 'empty-garden', '3,4 s'],
+            ['5', 'kropelki', 'konewka nad pąkiem w doniczce, licznik kropelek po ruchu (z 3) · błękit', 'konewka się przechyla, dwie krople lecą, nowa kropla w liczniku wskakuje', 'watering-drop', '2,8 s'],
+            ['6', 'Pełne podlanie', 'złoty kwiat na złotych promieniach, rozbłysk płatków, girlanda na ramce · złoto', 'pąk → kwiat → złoty kwiat, rozbłysk płatków, girlanda', 'watering-grow', '3,0 s'],
+            ['7', 'nowy rekord', 'złoty puchar z gwiazdą w wieńcu laurowym, konfetti z płatków · złoto i brąz', 'puchar wskakuje, błysk przez puchar, konfetti opada', 'new-record', '2,0 s'],
+            ['8', 'nowy poziom', 'okno w łuku z miniaturą tła nowego poziomu · zieleń', 'ogród poprzedniego poziomu przechodzi w nowy (odsłanianie od dołu), iskry', 'level-up', '3,0 s']].map(function (r) { return '<tr><td>' + r.join('</td><td>') + '</td></tr>'; }).join('') + '</table></div>'],
+       ['Oprawa', 'Wspólna: kremowa karta, obrys 2 px (Pusta grządka i Pełne podlanie 2,5 px złoty), cień, zaokrąglenie 20 px (mac-wide 24 px), ilustracja po lewej, tekst do lewej. Kolor karty: tło pod ilustracją, obrys i poświata (tabela wyżej). Telefony: padding 10 / 16 px, min. wysokość 104 px, szerokość treści do 361 px; mac-wide: 12 / 20 px, min. 128 px, do 380 px.'],
+       ['Kiedy', '<ul><li>punkty — ruch z czyszczeniem; ruch bez czyszczenia tylko wtedy, gdy ma rekord albo poziom (Q347): „+4” / „' + S.card_place + '”</li><li>kropelki — ruch czyści 2+ linie (L − 1 kropelek); przy 3 zebranych kropelkach „' + S.full_watering + '” / „+500” / „' + S.card_full_sub + '” zamiast kart kropelek, a kwiatek wskaźnika w tym czasie rozkwita</li><li>„' + S.new_record + '” raz na grę, w ruchu przekroczenia rekordu trybu sprzed gry; przy rekordzie 0 — bez (Q352); w wyzwaniu dnia tylko, gdy podejście liczy się do rekordu dnia (R-3.6)</li><li>„' + S.card_level_head + '” — tylko gra klasyczna; razem z kartą przenika tło i zmienia się etykieta poziomu</li></ul>'],
+       ['Zachowanie', 'Czas karty (korekta Q366): tyle, ile trzeba na przeczytanie — max(2000, 1200 + 40 ms × liczba znaków treści), zaokrąglony do 100 ms; karty 4, 6 i 8 co najmniej 3000 ms (w przykładach 2,0–3,4 s; <code>data-duration-ms</code>). Wejście 250 ms (10 px w górę, skala 0,94 → 1; nagłówek wchodzi 350 ms od 100 ms), efekt ilustracji do ok. 1,6 s, postój w klatce szczytowej, zanik w ostatnich 300 ms, potem następna karta. Kropelki w pigułce zmieniają się z początkiem karty kropelek; w czasie karty 6 kwiatek wskaźnika rozkwita (tyle co karta). Pusta grządka: nowa trójka dopiero po 1900 ms (Q241, wyjątek od Q136; także przy reduced-motion); stuknięcie albo klik w ekran gry po 600 ms (<code>interaction.game.empty-garden-skip</code>) zdejmuje kartę 4, trójka wjeżdża od razu, rusza następna karta. Na telefonach nieprzezroczysta nad nagłówkiem i wynikiem, a tabliczka wyniku, na którą karta zachodzi, na czas karty znika (poprawka po zrzutach r7.3); półprzezroczysta (82%) tylko część nad planszą; gdy przeciągany albo niesiony klocek jest nad kartą, karta przygasa do 18% (Q348). reduced-motion: bez wejścia i efektu ilustracji (klatka szczytowa), wejście i zanik tylko przezroczystością po 150 ms, ten sam czas.'],
+       ['Stany interakcji', 'Brak; <code>pointer-events: none</code> — dotyk i klik przechodzą do tego, co pod kartą (przyciski nagłówka, klocek).'],
+       ['Interakcje', table(['Element', 'action', 'expected_effect'], [
+         ['ekran gry (<code>interaction.game.empty-garden-skip</code>, tylko w pauzie Pustej grządki: od ruchu do 1900 ms)', 'tap / klik w ekran gry po 600 ms', 'kończy pauzę: karta 4 „' + S.card_empty_head + '” znika, nowa trójka wjeżdża od razu, rusza następna karta kolejki; stuknięcie przed 600 ms nic nie robi (Q241, Q254)']])],
+       ['Rola i nazwa dostępna', '<code>role="status"</code>, <code>aria-live="polite"</code> na karcie; czytnik czyta trzy wiersze po kolei, np. „' + S.praise_3 + ' +723 ' + BG.lineLabel(S, 3) + '”, potem „' + BG.dropsLabel(S, 2) + ' ' + S.card_drops_hint + '”.'],
+       ['Responsywność', 'mac-wide: stałe gniazdo 216 px w kolumnie trójki (na niższym oknie szerokim mniej, najmniej 150 px), 24 px pod pigułką Podlewania; karta do 380 px, wyśrodkowana, przy górnej krawędzi gniazda; planszy nie zasłania. Telefony (Q348): warstwa nad ekranem, karta do szerokości treści, wyśrodkowana nad planszą; dolna krawędź 6 px nad paskiem Podlewania, więc zachodzi na wynik, wiersz poziomu i nagłówek; gdy jest wyższa niż miejsce od góry nagłówka do paska, stoi od góry nagłówka i schodzi na pasek, a dopiero potem na górę planszy (tam półprzezroczysta); plansza nie maleje. Karta ma 104–117 px wysokości (mac-wide 128–171 px); na niskich telefonach może zachodzić na górę planszy (wtedy półprzezroczysta). <code>phone-merged</code> i <code>landscape</code>: ta sama reguła tymczasowo (BLG-20).']],
+      [spm('drabina', '2, 4, 5 linii naraz (3 linie: sekcja Komunikaty chwilowe)', h('div', { style: { display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' } },
+         cardSpm('catalog.card.great', { praise: 'great', points: P(2, 2) }), cardSpm('catalog.card.amazing', { praise: 'amazing', points: P(4, 4) }), cardSpm('catalog.card.paradise', { praise: 'paradise', points: P(9, 5) }))),
+       spm('bez czyszczenia', 'tylko gdy ruch ma rekord albo poziom (Q347)', cardSpm('catalog.card.noclear', { points: { place: 4, cleared: 0, lines: 0, mono: 0, total: 4 } })),
+       spm('+1 kropelka', '', cardSpm('catalog.card.drops1', { step: 'drops', gain: 1 })),
+       spm('na planszy / przygaszona', 'półprzezroczysta na planszy; nad klockiem 18%', h('div', { style: { display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' } },
+         cardSpm('catalog.card.over', { praise: 'great', points: P(2, 2), cls: 'is-over-board' }), cardSpm('catalog.card.dim', { praise: 'great', points: P(2, 2), cls: 'is-dimmed' }))),
+       spm('Odtwórz', 'kolejka ruchu 3 linie z awansem: karta 2 → karta 5 → karta 8 (każda w swoim czasie)', (function () {
+         var box = h('div', { 'class': wideCat ? 'bg-wide' : 'bg-phone', style: { position: 'relative', width: '100%', minHeight: '150px', display: 'flex', justifyContent: 'center' } });
+         var steps = [{ step: 'points', praise: 'wonderful', points: P(3, 3) }, { step: 'drops', gain: 2 }, { step: 'level', level: { n: 4, motif: 'hedge' } }];
+         var run = function (i) { if (i >= steps.length) return; var s = steps[i], id = 'catalog.card.play' + i;
+           var c = BG.moveCard({ S: S, loc: loc, step: s.step, praise: s.praise, points: s.points, gain: s.gain, level: s.level, ids: { card: id, praise: id + '.praise', points: id + '.points', drops: id + '.drops', full: id + '.full', level: id + '.level', record: id + '.record' } });
+           c.style.position = 'relative'; BG.fx.card(box, c, BG.fx.reduced(), null, function () { run(i + 1); }); };
+         return h('div', {}, box, replayBtn(function () { box.replaceChildren(); run(0); }, 'Odtwórz kolejkę'));
+       })())]));
+
+    /* r7.3 (Q366): component.move-points to duża liczba karty punktów (opis: component.move-card); poniżej opis wersji sprzed Q366
+       nie jest już renderowany. Sekcja component.full-watering usunięta (Q367). */
+    root.append(section('component.move-points', 'Punkty ruchu (duża liczba karty)',
+      'r7.3 (Q366, Q368): przyrost wyniku ruchu jako duża liczba karty komunikatu („+723”), bez rozbicia na pola i linie; podpis karty mówi tylko, co gracz zrobił („' + BG.lineLabel(S, 3) + '”, „' + BG.lineLabel(S, 1) + ' · ' + BG.fmt(S.card_flowerbed, { n: 500 }) + '”). Premia „Pełne podlanie” nie wchodzi do tej liczby — ma własną kartę „+500”, więc suma kart = przyrost wyniku. Usunięte: rozbicie „pola · linie · …” (Q341) i dopiski w pasku (r5–r7.2).',
+      [['Wygląd', 'Jak duża liczba każdej karty: 36 px / 900 <code>var(--green-d)</code>, mac-wide 46 px (<a href="#component.move-card">component.move-card</a>).'],
+       ['Stany interakcji', 'Brak.']],
+      [spm('karta punktów', '', cardSpm('catalog.points.one', { points: P(3, 1) }))]));
+    /* Rozkwit kwiatka wskaźnika w czasie karty „Pełne podlanie!” — okaz w sekcji component.combo-badge. */
 
     /* component.mode-label */
     root.append(section('component.mode-label', 'Nazwa trybu',
@@ -338,29 +426,15 @@ body.cat-body{margin:0;background:#E4E2DA;font-family:var(--font);color:var(--in
       'Środek nagłówka gry klasycznej (to samo miejsce i ta sama budowa w dwóch wierszach co nazwa trybu wyzwania dnia): „' + BG.fmt(S.level, { n: 3 }) + '” i nazwa motywu tła poziomu. Poziom wynika z wyniku, nie jest osobno zapisywany (Q153): poziom = 1 + liczba osiągniętych progów 300, 800, 2000, 3500, 6000, 9000, dalej co 4000 (13&nbsp;000, 17&nbsp;000, …) — Q197. Wyzwanie dnia nie ma poziomów i tej etykiety.',
       [['Warianty', 'Jeden. Treść: <code>level</code> (liczba) i <code>motif</code> (klucz z kręgu, <code>data-level</code>, <code>data-motif</code>).'],
        ['Wygląd', 'Kremowa tabliczka jak wynik i rekord (<code>rgba(255,246,226,.92)</code>, wystaje 4 px w pionie i 12 px w bok); „Poziom n” 16 px / 800 <code>#2A1C10</code>, nazwa motywu 12,5 px / 700 <code>#5A4630</code> w jednym wierszu (nazwy motywów mają do 14 znaków, żeby zmieściły się na mobile-compact); interlinia 1,15. mac-wide: 18 / 14 px. Kontrast ≥ 6,9:1 na każdym tle.'],
-       ['Zmiana poziomu', 'Przy awansie etykieta od razu pokazuje nowy poziom i motyw z animacją <code>fx-pop</code> 250 ms (reduced-motion: przezroczystość 150 ms); równocześnie plakietka awansu i przenikanie tła (<a href="#foundation.motion">foundation.motion</a> 10 i 11).'],
+       ['Zmiana poziomu', 'Przy awansie etykieta od razu pokazuje nowy poziom i motyw z animacją <code>fx-pop</code> 250 ms (reduced-motion: przezroczystość 150 ms); równocześnie przenikanie tła (<a href="#foundation.motion">foundation.motion</a> 11) i wpis „' + BG.fmt(S.card_level, { n: 3, name: S.motifs['lily-pond'] }) + '” w karcie ruchu (r7.3, zamiast plakietki awansu).'],
        ['Stany interakcji', 'Brak.'],
-       ['Rola i nazwa dostępna', 'Zwykły tekst czytany „' + BG.fmt(S.level, { n: 3 }) + ': ' + S.motifs['dawn-meadow'] + '” (dwukropek tylko dla czytnika). Awans ogłasza plakietka awansu (<code>role="status"</code>); etykieta nie ogłasza drugi raz.'],
+       ['Rola i nazwa dostępna', 'Zwykły tekst czytany „' + BG.fmt(S.level, { n: 3 }) + ': ' + S.motifs['dawn-meadow'] + '” (dwukropek tylko dla czytnika). Awans ogłasza karta ruchu (<code>role="status"</code>); etykieta nie ogłasza drugi raz.'],
        ['Responsywność', 'mac-wide: środek nagłówka, dwa wiersze jak w r6. r7 (Q232): telefony (także w poziomie) — wiersz 24 px pod nagłówkiem, jedna linia „' + BG.fmt(S.level, { n: 2504 }) + ' · ' + S.motifs['garden-dusk'] + '” (14 / 13 px) na tabliczce 20 px (≥ 2 px od tabliczki wyniku), wyśrodkowana; nie zawija się, a gdy brak miejsca, nazwa ogrodu skraca się wielokropkiem. Wstęga wyzwania dnia w tym samym wierszu: „' + S.mode_daily + ' · ' + S.daily_date + '”.']],
       [spm('poziom 1', 'motyw ' + S.motifs['garden-dusk'] + ' — najszersza nazwa (PL)', h('div', { style: { padding: '8px 24px' } }, BG.levelLabel({ S: S, elementId: 'catalog.level.1', level: 1, motif: 'garden-dusk' }).el)),
        spm('poziom 6', 'motyw ' + S.motifs['firefly-night'], h('div', { style: { padding: '8px 24px' } }, BG.levelLabel({ S: S, elementId: 'catalog.level.6', level: 6, motif: 'firefly-night' }).el)),
        spm('poziom 12', 'po szóstym motywie krąg wraca do pierwszego', h('div', { style: { padding: '8px 24px' } }, BG.levelLabel({ S: S, elementId: 'catalog.level.12', level: 12, motif: 'hedge' }).el))]));
 
-    /* r6: component.level-up-badge (Q150) */
-    root.append(section('component.level-up-badge', 'Plakietka awansu',
-      'Pokazuje awans na kolejny poziom gry klasycznej: „' + BG.fmt(S.level_up, { n: 3 }) + '” i nazwa nowego motywu, na wyniku przez 1,5 s (r6, Q188: awans przychodzi często, więc plakietka nie zasłania planszy ani trójki). Pochwała „' + S.praise_2 + '” / „' + S.praise_3 + '” z tego samego ruchu stoi nad środkiem planszy — oba elementy naraz, w różnych miejscach, nigdy jeden na drugim (stan <code>game.level-up-praise</code>). Punkty ruchu, seria i rozkwit bez zmian.',
-      [['Warianty', 'Jeden. W <code>mode=capture</code> stany <code>game.level-up</code> i <code>game.level-up-praise</code> pokazują ją jako stałą klatkę.'],
-       ['Wygląd', 'Miodowa pigułka jak pochwała (gradient <code>#FFE9A6 → #F7C95A → #E9A93A</code>, obrys <code>#6F460F</code> 2,5 px), dwa wiersze: „Poziom n!” 24 px / 900 i nazwa motywu 15 px / 800, tekst <code>#3A2405</code> (≥ 7,1:1); mac-wide 32 / 17 px. Wysokość jak element wyniku (telefony ok. 58 px, mac-wide ok. 79 px), środek plakietki = środek wyniku; wynik pod nią dolicza się i jest widoczny po 1,5 s. Nie zasłania nic na stałe: <code>pointer-events: none</code>, gra przyjmuje ruchy w trakcie.'],
-       ['Ruch', 'Pojawienie ze skalą 0,7 → 1,06 → 1 (0–330 ms), postój, zanik od 1275 ms; razem 1500 ms. reduced-motion: tylko przezroczystość, pojawienie i zanik po 150 ms.'],
-       ['Stany interakcji', 'Brak.'],
-       ['Rola i nazwa dostępna', '<code>role="status"</code>, <code>aria-live="polite"</code>, nazwa „' + BG.fmt(S.level_up_sr, { n: 3, name: S.motifs['dawn-meadow'] }) + '”.'],
-       ['Responsywność', 'Na wyniku: telefony — w wierszu wyniku nad paskiem serii i punktów; mac-wide — na wyniku w kolumnie trójki. Nie nachodzi na planszę (z ramą) ani na trójkę na żadnym targecie (pomiar w README).']],
-      [spm('awans', 'poziom 3, motyw ' + S.motifs['dawn-meadow'], (function () {
-         var box = h('div', { style: { position: 'relative', width: '300px', height: '130px' } });
-         function show(anim) { box.replaceChildren(); var b = BG.levelUpBadge({ S: S, level: 3, motif: 'dawn-meadow', elementId: 'catalog.level-up' }); if (anim) BG.fx.levelUp(box, b, BG.fx.reduced()); else box.append(b); }
-         show(false);
-         return h('div', {}, box, replayBtn(function () { show(true); }));
-       })())]));
+    /* r7.3 (Q342): component.level-up-badge usunięty — awans jest wpisem karty ruchu (component.move-card). */
 
 
     /* component.icon-button */
@@ -447,10 +521,11 @@ body.cat-body{margin:0;background:#E4E2DA;font-family:var(--font);color:var(--in
          ['<code>newRecord</code>', 'true | false', 'visible: plakietka z gwiazdką „' + S.new_record + '” nad wynikiem; hidden: brak. Na żywo przy nowym rekordzie deszcz płatków na karcie, 1 s (animacja 8)'],
          ['<code>recordBefore</code> (r5, Q130)', 'rekord trybu sprzed gry', 'wynik &lt; rekord: „' + BG.fmt(S.record_gap, { n: BG.num(11578, loc) }) + '” (<code>element.game.over.record-gap</code>, <code>data-variant="gap"</code>, grupowanie cyfr jak R-2.5); wynik = rekord: „' + S.record_tied + '” (<code>data-variant="tied"</code>); nowy rekord: bez tej linii (jest „' + S.new_record + '”); podejście innego dnia (<code>new-available</code>, R-3.6): bez tej linii'],
          ['<code>level</code>, <code>motif</code> (r6, Q152)', 'tylko classic', '„' + BG.fmt(S.over_level, { n: 3, name: S.motifs.hedge }) + '” (<code>element.game.over.level</code>, 15 px / 700 <code>#5A4630</code>, 7,7:1) pod rekordem i różnicą do rekordu, nad przyciskami: osiągnięty poziom i jego motyw; wyzwanie dnia bez tej linii'],
+         ['<code>drops</code> (r7.3, Q364, Q365)', '0–2, tylko classic', 'gdy &gt; 0: „' + BG.fmt(S.over_drops, { d: 2 }) + '” z trzema kroplami (pełne = zebrane), <code>element.game.over.drops</code>, 14 px / 700 <code>#145C9E</code>, pod poziomem; kropelki gry klasycznej przechodzą do następnej gry; wyzwanie dnia ma własny kwiatek od zera w każdym podejściu — bez wiersza'],
          ['powód końca (r5, Q130)', 'stały', '„' + S.over_reason + '” (<code>element.game.over.reason</code>, z ikoną przekreślonego koła) pod tytułem, we wszystkich wariantach, także po podejściu innego dnia; opis dostępny panelu (<code>aria-describedby</code>)'],
          ['<code>dailyInfo</code>', 'until-midnight | new-available (tylko daily)', '„' + S.daily_until_midnight + '” albo, gdy data zmieniła się od rozpoczęcia podejścia, „' + S.daily_new_available + '”. Przy <code>new-available</code> panel nie pokazuje wiersza rekordu ani „' + S.new_record + '” — podejście zakończone innego dnia nie zmienia rekordu (R-3.6, Q44)']])],
        ['Interakcje', table(['Element', 'action', 'expected_effect'], [
-         ['„' + S.play_again + '” (<code>element.game.over.play-again</code>, <code>interaction.game.over.play-again</code>), classic', 'tap / klik', 'navigate <code>game.classic-start</code> (nowa gra klasyczna)'],
+         ['„' + S.play_again + '” (<code>element.game.over.play-again</code>, <code>interaction.game.over.play-again</code>), classic', 'tap / klik', 'navigate <code>game.classic-start</code> (nowa gra klasyczna; r7.3, Q364: kwiatek zachowuje kropelki — przy kropelkach <code>game.classic-start-drops</code>)'],
          ['jw., daily', 'tap / klik', 'navigate <code>game.daily-start</code>: nowe podejście od pierwszej trójki ciągu bieżącej daty'],
          ['„' + S.to_home + '” (<code>element.game.over.to-home</code>, <code>interaction.game.over.to-home</code>)', 'tap / klik', 'navigate <code>screen.home</code> (z aktualnymi rekordami)']])],
        ['Stany interakcji', 'Fokus startuje na „' + S.play_again + '”. Escape i zasłona: brak efektu (gra się skończyła, trzeba wybrać akcję).'],
@@ -541,11 +616,12 @@ body.cat-body{margin:0;background:#E4E2DA;font-family:var(--font);color:var(--in
       return b;
     }
     function moveDemo(id, rows, slotPiece, r, c, label) {
-      var b = miniBoard(id, rows), st0 = { board: BGRules.parseBoard(rows), tray: [slotPiece, null, null], score: 4210, combo: 1, dry: 0 };
+      var b = miniBoard(id, rows), st0 = { board: BGRules.parseBoard(rows), tray: [slotPiece, null, null], score: 4210, drops: 0 };
       var sc = BG.scoreDisplay({ variant: 'score', label: S.score, value: 4210, loc: loc, elementId: id + '.score' });
       sc.el.style.setProperty('--score-fs', '30px');
       var strip = h('div', { 'class': 'cat-strip' });
-      var praiseHost = b.el;
+      /* r7.3: karta ruchu zamiast pochwały nad planszą i punktów w pasku. */
+      var cardBox = h('div', { 'class': wideCat ? 'bg-wide' : 'bg-phone', style: { position: 'relative', width: '100%', minHeight: '128px', display: 'flex', justifyContent: 'center' } }), cardNow = null;
       var play = function () {
         var res = BGRules.play(st0, 0, r, c, BGRules.rng(7)), mv = res.move, red = BG.fx.reduced();
         b.render(BGRules.parseBoard(rows), {});
@@ -556,15 +632,14 @@ body.cat-body{margin:0;background:#E4E2DA;font-family:var(--font);color:var(--in
           var mono = mv.lines.filter(function (l) { return l.mono; });
           if (mv.clearedCells.length) BG.fx.bloom(b, mv.clearedCells, function (i) { return mv.placedBoard[i]; }, red, mono.length ? BG.MOTION.mono : BG.MOTION.bloom);
           mono.forEach(function (l) { BG.fx.sweep(b, l, S, red); });
-          var pv = mv.points.cleared > 0 ? BG.praiseFor(mv, res.state.combo, false) : null;
-          if (pv) BG.fx.praise(praiseHost, BG.praise({ S: S, variant: pv, elementId: id + '.praise' }), red);
           BG.fx.countUp(sc, 4210, 4210 + mv.points.total, red);
           strip.replaceChildren();
-          var cb = BG.comboBadge({ c: 2, S: S, elementId: id + '.combo' }); if (cb) { strip.append(cb); BG.fx.pop(cb, red); }
-          var mp = BG.movePoints({ points: mv.points, S: S, loc: loc, elementId: id + '.points' }); if (mp) { strip.append(mp); if (red) BG.fx.fade(mp); else BG.fx.play(mp, 'fx-rise', 300); }
+          var cb = BG.comboBadge({ drops: res.state.drops, S: S, elementId: id + '.combo' }); strip.append(cb); BG.fx.pop(cb, red);
+          var spec = BG.stepsFor(mv, {})[0];
+          if (spec) { if (cardNow) cardNow.stop(); var c = BG.moveCard({ S: S, loc: loc, step: 'points', praise: spec.praise, points: spec.points, ids: { card: id + '.card', praise: id + '.praise', points: id + '.points' } }); c.style.position = 'relative'; cardNow = BG.fx.card(cardBox, c, red, null); }
         }, 250);
       };
-      return h('div', {}, h('div', { 'class': 'cat-stack', style: { alignItems: 'center' } }, sc.el, strip, b.el), replayBtn(play, label));
+      return h('div', {}, h('div', { 'class': 'cat-stack', style: { alignItems: 'center' } }, cardBox, sc.el, strip, b.el), replayBtn(play, label));
     }
     function dealDemo() {
       var sp = narrow ? 84 : 104, pcD = narrow ? 12 : 14;
@@ -577,50 +652,56 @@ body.cat-body{margin:0;background:#E4E2DA;font-family:var(--font);color:var(--in
       return h('div', {}, tr.el, replayBtn(function () { tr.render(deal, mk); BG.fx.deal(tr.pieces, BG.fx.reduced()); }, 'Odtwórz nową trójkę'));
     }
     var M = BG.MOTION;
-    root.append(section('foundation.motion', 'Animacje (r5, r6)',
+    root.append(section('foundation.motion', 'Animacje (r5–r7.3)',
       'Animacje gracza (Q135–Q139). Nie blokują gry: stan po ruchu jest od razu końcowy, a efekty grają na warstwie nad planszą (Q136). Bez wstrząsu ekranu, bez błysków częstszych niż 3 na sekundę, bez efektów kasynowych. W <code>mode=capture</code> animacji nie ma — każdy stan pokazuje stały stan końcowy. Czasy i krzywe: <code>responsive-spec.md</code>, sekcja „Ruch”. Przyciski „Odtwórz” są narzędziem katalogu.',
       [['Lista', table(['#', 'animacja', 'czas', 'reduced-motion'], [
          ['1', 'osadzenie położonego klocka (pola sprężynują 0,84 → 1,06 → 1)', M.settle + ' ms', 'przezroczystość 150 ms'],
          ['2', 'czyszczenie linii jako rozkwit: kafel rozchyla się (1 → 1,14 → 0,3, obrót 18°) i znika, 3 płatki w kolorze kafla opadają i gasną', M.bloom + ' ms', 'zanikanie 150 ms, bez płatków'],
-         ['3', 'linia jednego koloru: rozkwit + jeden złoty błysk wzdłuż linii + „×2” podskakuje', M.mono + ' ms', 'zanikanie 150 ms, „×2” bez ruchu'],
+         ['3', 'linia jednego koloru: rozkwit + jeden złoty błysk wzdłuż linii; korekta Q366: bez plakietki „' + S.bonus_badge + '” po ruchu (premię pokazuje karta 3; plakietka zostaje tylko w podglądzie przeciągania, R-1.4)', M.mono + ' ms', 'zanikanie 150 ms, bez błysku'],
          ['4', 'Podlewanie (r7): przy wzroście licznika bez nowego stopnia rośliny podbicie (1 → 1,22 → 1); nowy stopień — 13', M.pop + ' ms', 'przezroczystość 150 ms'],
-         ['5', 'punkty ruchu unoszą się (10 px w górę, pojawienie) i zostają do następnego położenia', '300 ms', 'przezroczystość 150 ms'],
+         ['5', '<s>punkty ruchu w pasku</s> — r7.3: zastąpione przez 14 (karta ruchu)', '—', '—'],
          ['6', 'wynik dolicza się do nowej wartości (ease-out cubic)', '≤ ' + M.countUp + ' ms', 'od razu nowa wartość'],
          ['7', 'nowa trójka wjeżdża do slotów kolejno (start co ' + M.dealStep + ' ms, każdy wjazd ' + M.deal + ' ms, z dołu)', '3 × ' + M.dealStep + ' ms', 'przezroczystość 150 ms'],
          ['8', 'nowy rekord: deszcz płatków na karcie panelu; r6 (Q176): droga spadku = wysokość karty + 48 px (płatek startuje 24 px nad kartą i kończy 24 px pod nią), więc płatki są na karcie przez całą sekundę na każdym targecie', M.rain + ' ms', 'brak'],
          ['9', 'krok końca gry: łagodne przygaszenie planszy (300 ms), komunikat wsuwa się (300 ms), potem panel', M.step + ' ms', 'ten sam czas, bez ruchu'],
-         ['10', 'r6 (Q150, Q188): awans — plakietka „Poziom n!” z nazwą motywu na wyniku, nie na planszy ani trójce (pojawienie ze skalą, postój, zanik; <a href="#component.level-up-badge">component.level-up-badge</a>); etykieta poziomu wyskakuje (jak 4); pochwała z tego samego ruchu równocześnie nad planszą', M.levelUp + ' ms', 'tylko przezroczystość, pojawienie i zanik po 150 ms'],
+         ['10', 'awans — r7.3 (Q342, Q366): karta „' + S.card_level_head + '” / n / ogród (14) zamiast plakietki na wyniku; etykieta poziomu wyskakuje (jak 4)', M.pop + ' ms (etykieta)', 'przezroczystość 150 ms'],
          ['11', 'r6 (Q150): przenikanie tła przy awansie — nowe tło od razu pod spodem, stare na warstwie nad nim gaśnie liniowo', M.crossfade + ' ms', 'przezroczystość 150 ms'],
-         ['12', 'r7: święto Pustej grządki — największe w grze: plansza rozkwita falą od środka (płatki na polach, pierścień co ' + M.emptyWave + ' ms, płatek 1,2 s), płatki lecą przez cały ekran (28, każdy 1,6 s, start rozłożony do 0,9 s), pochwała „' + BG.fmt(S.praise_empty, { n: BG.num(2500, loc) }) + '” (32 px, mac-wide 48 px; premia w grze klasycznej max(1000, 500 × poziom ruchu), w wyzwaniu dnia 2000; okaz: poziom 5) z doliczaniem wyniku (' + M.emptyCount + ' ms); nowa trójka wjeżdża po napisie (od ' + M.emptyDeal + ' ms); awans w tym samym ruchu: plakietka ' + M.emptyLevelDelay + ' ms później', M.emptyGarden + ' ms', 'bez fali, skali i lotu płatków: płatki na planszy i pochwała tylko przezroczystość (pojawienie i zanik po 150 ms), wynik od razu, trójka wjeżdża po ' + M.emptyDeal + ' ms także przy ograniczeniu ruchu (pauza święta jest regułą produktu, a nie animacją; pominięcie działa po 600 ms, Q254)'],
-         ['13', 'r7: Podlewanie — nowy stopień rośliny: skok (do −6 px, skala 1,15) i złoty rozbłysk; utrata serii: roślina pochyla się, blednie, opada i znika (<a href="#component.combo-badge">component.combo-badge</a>)', M.grow + ' / ' + M.wither + ' ms', 'przezroczystość 150 ms'],
-         ['—', 'r7 (Q233, Q234): jedna pochwała na ruch, pierwszeństwo: „' + BG.fmt(S.praise_empty, { n: BG.num(2500, loc) }) + '”, potem „' + S.praise_flowerbed + '” (linia jednego koloru, ze złotym błyskiem 3), potem drabina według siły ruchu S = L + max(0, c − 1): S 2–3 „' + S.praise_2 + '”, 4–5 „' + S.praise_3 + '”, 6 „' + S.praise_4 + '”, ≥ 7 „' + S.praise_5 + '” (z rozbłyskiem płatków); S = 1 bez pochwały', M.praise + ' ms (pusta grządka ' + M.emptyGarden + ' ms)', 'przezroczystość (pojawienie i zanik po 144 ms), bez płatków']])],
-       ['component.praise', 'Pochwała (<code>element.game.praise</code>, <code>role="status"</code>, <code>aria-live="polite"</code>): miodowa pigułka nad środkiem planszy — nigdy na trójce, szerokość do planszy − 24 px (zawija się wyśrodkowana). Drabina (r7): <code>great</code> 26 px, <code>wonderful</code> 30 px z ciepłym blaskiem, <code>amazing</code> 34 px, jaśniejsza, z mocnym blaskiem, <code>paradise</code> 38 px, złoto-różowa, z najmocniejszym blaskiem i rozbłyskiem 16 płatków; mac-wide 34 / 38 / 42 / 48 px. <code>flowerbed</code> „' + S.praise_flowerbed + '” — różowa pigułka 30 px (mac-wide 38 px); w punktach ruchu dopisek „' + BG.fmt(S.move_mono, { n: 500 }) + '” za każdą linię jednego koloru. <code>empty-garden</code> — święto (12). Stany: <code>game.praise-great</code>, <code>-wonderful</code>, <code>-amazing</code>, <code>-paradise</code>, <code>game.flower-bed</code>, <code>game.empty-garden</code>, <code>game.empty-garden-level-up</code>, <code>game.level-up-praise</code>; w <code>user_preview</code> każdy odtwarza ruch z animacją, a „▶ Odtwórz animację” w pasku narzędzi powtarza.']],
-      [spm('1 + 2 + 4 + 5 + 6', 'jedna linia: osadzenie, rozkwit, seria, punkty, wynik', moveDemo('catalog.motion.clear', ['........', '........', '........', '........', '........', '........', 'pdsbl..p', '........'], { shape: 'line2-h', color: 'drop' }, 6, 5, 'Odtwórz rozkwit')),
-       spm('3 + Kolorowa rabata', 'linia jednego koloru i kolumna: złoty błysk, „×2”, „' + S.praise_flowerbed + '”, „' + BG.fmt(S.move_mono, { n: 500 }) + '”', moveDemo('catalog.motion.mono', ['.......l', '.......l', '.......l', '.......l', '.......l', 'lllllll.', '.......l', '.......l'], { shape: 'single', color: 'leaf' }, 5, 7, 'Odtwórz Kolorową rabatę')),
-       spm('drabina pochwał', 'szczebel po szczeblu: „' + S.praise_2 + '”, „' + S.praise_3 + '”, „' + S.praise_4 + '”, „' + S.praise_5 + '”', (function () {
-         var gL = BG.geometry(narrow ? { width: Math.min(393, ctg.width - 40), height: 800 } : { width: 393, height: 852 });
-         var bL = BG.board({ geo: gL, S: S, elementId: 'catalog.motion.ladder', elementPrefix: 'catalog.motion.ladder.' });
-         bL.render(BGRules.parseBoard(['........', '........', '........', '........', '........', '........', '........', '........']), {});
-         bL.el.append(BG.praise({ S: S, variant: 'paradise', elementId: 'catalog.motion.ladder.praise' }));
-         return h('div', {}, bL.el, replayBtn(function () {
-           [].forEach.call(bL.el.querySelectorAll('.bg-praise'), function (x) { x.remove(); });
-           ['great', 'wonderful', 'amazing', 'paradise'].forEach(function (v, i) { setTimeout(function () { BG.fx.praise(bL.el, BG.praise({ S: S, variant: v, elementId: 'catalog.motion.ladder.' + v }), BG.fx.reduced()); }, i * 1000); });
+         ['12', 'Pusta grządka — korekta Q366: efekt tylko w karcie 4 (kolejka od razu); na planszy zwykły rozkwit czyszczonych linii (jak 2), wynik dolicza się (' + M.emptyCount + ' ms), nowa trójka pojawia się po ' + M.emptyDeal + ' ms (Q241, wyjątek od Q136); stuknięcie albo klik w ekran gry po ' + M.emptySkip + ' ms zdejmuje kartę 4 i trójka wjeżdża od razu. Usunięte: płatki na polach planszy, napis „' + BG.fmt(S.praise_empty, { n: 'N' }) + '” na planszy i płatki przez cały ekran', M.emptyDeal + ' ms (pauza trójki)', 'rozkwit linii tylko przezroczystością, wynik od razu, trójka po ' + M.emptyDeal + ' ms także przy ograniczeniu ruchu (pauza jest regułą produktu, Q254); pominięcie po ' + M.emptySkip + ' ms'],
+         ['13', 'Podlewanie — nowy stopień kwiatka (z początkiem kroku kropelek w kolejce): skok (do −6 px, skala 1,15) i złoty rozbłysk; r7.3: więdnięcie usunięte (Q358) (<a href="#component.combo-badge">component.combo-badge</a>)', M.grow + ' ms', 'przezroczystość 150 ms'],
+         ['—', '<s>pochwała nad planszą 800 ms</s> — r7.3: pochwała jest w karcie ruchu (14); pierwszeństwo bez zmian (R-2.9): Pusta grządka (święto 12), „' + S.praise_flowerbed + '”, drabina S = L + max(0, c − 1): S 2–3 „' + S.praise_2 + '”, 4–5 „' + S.praise_3 + '”, 6 „' + S.praise_4 + '”, ≥ 7 „' + S.praise_5 + '”; S = 1 bez pochwały', '—', '—'],
+         ['14', 'r7.3, korekta Q366: karta komunikatu — wejście 250 ms (10 px w górę, skala 0,94 → 1), własny efekt ilustracji (do ok. 1,6 s; tabela kart w <a href="#component.move-card">component.move-card</a>), postój w klatce szczytowej, zanik ' + M.cardOut + ' ms; jedna karta naraz w kolejce; nad niesionym klockiem przygasa do 18%', 'max(2000, 1200 + 40 ms × znaki); karty 4, 6, 8 ≥ 3000 ms', 'bez wejścia i efektu ilustracji; wejście i zanik tylko przezroczystością po 150 ms, ten sam czas'],
+         ['15', 'r7.3 (Q357, Q366, Q367): rozkwit kwiatka wskaźnika w czasie karty 6 „' + S.full_watering + '” (tyle co karta, 3000 ms) — rośnie (0–30% czasu), rozkwita pąk → kwiat → złoty kwiat (0 / 300 / 600 ms), świeci dwoma pulsami, od 80% czasu wraca; promienie, poświata, płatki i girlanda są tylko w karcie 6', 'czas karty 6', 'bez wzrostu i zmiany obrazu, stała złota poświata']])],
+       ['component.praise', 'Pochwała (<code>element.game.praise</code>): r7.3 — pierwsza i największa część karty ruchu (<a href="#component.move-card">component.move-card</a>), bez własnego regionu <code>role="status"</code>; warianty <code>great</code>, <code>wonderful</code>, <code>amazing</code>, <code>paradise</code>, <code>flowerbed</code> z tą samą oprawą co w r7 (miodowa, złota, złoto-różowa, różowa pigułka), w karcie 24 / 27 / 30 / 33 px (mac-wide 30 / 34 / 37 / 40 px). <code>empty-garden</code> — nagłówek karty 4 „Pusta grządka!” (korekta Q366: bez napisu na planszy), z tym samym <code>element.game.praise</code>. Wygląd nagłówka w karcie: <a href="#component.move-card">component.move-card</a> (warianty pochwały różnią się ilustracją i obwódką, nie pigułką). Stany: <code>game.praise-great</code>, <code>-wonderful</code>, <code>-amazing</code>, <code>-paradise</code>, <code>game.flower-bed</code>, <code>game.level-up</code>, <code>game.level-up-praise</code>, <code>game.move-card-record</code>; w <code>user_preview</code> każdy odtwarza ruch z animacją, a „▶ Odtwórz animację” w pasku narzędzi powtarza.']],
+      [spm('1 + 2 + 6 + 14', 'jedna linia: osadzenie, rozkwit, karta ruchu, wynik', moveDemo('catalog.motion.clear', ['........', '........', '........', '........', '........', '........', 'pdsbl..p', '........'], { shape: 'line2-h', color: 'drop' }, 6, 5, 'Odtwórz rozkwit')),
+       spm('3 + Kolorowa rabata', 'linia jednego koloru i kolumna: złoty błysk, karta z „' + S.praise_flowerbed + '” i „' + BG.fmt(S.card_flowerbed, { n: 1000 }) + '”', moveDemo('catalog.motion.mono', ['.......l', '.......l', '.......l', '.......l', '.......l', 'lllllll.', '.......l', '.......l'], { shape: 'single', color: 'leaf' }, 5, 7, 'Odtwórz Kolorową rabatę')),
+       spm('drabina pochwał w karcie', 'szczebel po szczeblu co 1 s (2, 3, 4, 5 linii naraz): „' + S.praise_2 + '”, „' + S.praise_3 + '”, „' + S.praise_4 + '”, „' + S.praise_5 + '”', (function () {
+         var box = h('div', { 'class': wideCat ? 'bg-wide' : 'bg-phone', style: { position: 'relative', width: '100%', minHeight: '150px', display: 'flex', justifyContent: 'center' } }), now = null;
+         var pts = [P(2, 2), P(3, 3), P(4, 4, 500), P(9, 5, 500)];
+         return h('div', {}, box, replayBtn(function () {
+           ['great', 'wonderful', 'amazing', 'paradise'].forEach(function (v, i) { setTimeout(function () {
+             if (now) now.stop();
+             var c = BG.moveCard({ S: S, loc: loc, praise: v, points: pts[i], ids: { card: 'catalog.motion.ladder.' + v, praise: 'catalog.motion.ladder.' + v + '.praise', points: 'catalog.motion.ladder.' + v + '.points' } });
+             c.style.position = 'relative'; now = BG.fx.card(box, c, BG.fx.reduced(), null);
+           }, i * 1000); });
          }, 'Odtwórz drabinę'));
        })()),
        spm('7', 'nowa trójka', dealDemo()),
-       spm('10 + 11', 'awans: przenikanie tła ' + S.motifs['garden-dusk'] + ' → ' + S.motifs['dawn-meadow'] + ' i plakietka poziomu', (function () {
-         var sf = h('div', { 'class': 'bg-surface is-landscape', 'data-background': 'garden-dusk', style: { width: '300px', height: '170px', borderRadius: '12px' } });
-         var host = h('div', { style: { position: 'absolute', inset: '0' } });
+       spm('10 + 11 + 14', 'awans: przenikanie tła po kręgu i karta ruchu z wpisem poziomu', (function () {
+         var sf = h('div', { 'class': 'bg-surface is-landscape', 'data-background': 'garden-dusk', style: { width: narrow ? '300px' : '340px', height: '190px', borderRadius: '12px' } });
+         var host = h('div', { style: { position: 'absolute', inset: '0', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' } });
          sf.append(host);
          /* Krąg od blossom-wall (start 0): poziom 3 = garden-dusk; każde „Odtwórz” to kolejny awans po kręgu. */
          var lvl = 3;
          return h('div', {}, sf, replayBtn(function () {
            var red = BG.fx.reduced(); lvl++; var motif = BG.motifOf(0, lvl);
            BG.fx.crossfade(sf, function () { sf.setAttribute('data-background', motif); }, red);
-           BG.fx.levelUp(host, BG.levelUpBadge({ S: S, level: lvl, motif: motif, elementId: 'catalog.motion.level-up' }), red);
+           host.replaceChildren();
+           var c = BG.moveCard({ S: S, loc: loc, praise: 'great', points: P(4, 1, 150), level: { n: lvl, motif: motif }, ids: { card: 'catalog.motion.level-card', praise: 'catalog.motion.level-card.praise', points: 'catalog.motion.level-card.points', level: 'catalog.motion.level-card.level' } });
+           c.style.position = 'relative'; c.style.margin = '20px auto 0'; c.style.maxWidth = 'calc(100% - 16px)';
+           BG.fx.card(host, c, red, null);
          }, 'Odtwórz awans'));
        })()),
-       spm('12', 'święto Pustej grządki: rozkwit, płatki przez cały okaz, „' + BG.fmt(S.praise_empty, { n: BG.num(2500, loc) }) + '”, doliczanie wyniku, nowa trójka po napisie', (function () {
+       spm('12', 'Pusta grządka: karta 4, doliczanie wyniku, nowa trójka po 1,9 s (stuknięcie po 0,6 s pomija)', (function () {
          var gE = BG.geometry(narrow ? { width: Math.min(393, ctg.width - 40), height: 800 } : { width: 393, height: 852 });
          var bE = BG.board({ geo: gE, S: S, elementId: 'catalog.motion.empty', elementPrefix: 'catalog.motion.empty.' });
          var scE = BG.scoreDisplay({ variant: 'score', label: S.score, value: 8681, loc: loc, elementId: 'catalog.motion.empty.score' });
@@ -630,14 +711,17 @@ body.cat-body{margin:0;background:#E4E2DA;font-family:var(--font);color:var(--in
          var mk = function (p, i) { return BG.piece({ piece: p, cell: gE.pc, gap: gE.pg, S: S, elementId: 'catalog.motion.empty.piece-' + (i + 1), variant: 'static' }); };
          tE.render(deal, mk);
          bE.render(BGRules.parseBoard(['........', '........', '........', '........', '........', '........', '........', '........']), {});
-         bE.fx.append(BG.emptyBloomFrame(bE)); bE.el.append(BG.emptyGarden({ S: S, loc: loc, n: 2500, elementId: 'catalog.motion.empty-garden' }));
-         var box = h('div', { style: { position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', overflow: 'hidden', padding: '8px' } }, scE.el, bE.el, tE.el);
+         var cE = h('div', { 'class': gE.wide ? 'bg-wide' : 'bg-phone', style: { position: 'relative', width: '100%', maxWidth: '361px', minHeight: '110px', display: 'flex', justifyContent: 'center' } });
+         var box = h('div', { style: { position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', overflow: 'hidden', padding: '8px' } }, cE, scE.el, bE.el, tE.el);
          return h('div', {}, box, replayBtn(function () {
-           bE.fx.replaceChildren(); [].forEach.call(bE.el.querySelectorAll('.bg-empty-garden'), function (x) { x.remove(); });
+           bE.fx.replaceChildren(); cE.replaceChildren();
            tE.render([null, null, null], mk);
-           BG.fx.emptyGarden(bE, BG.emptyGarden({ S: S, loc: loc, n: 2500, elementId: 'catalog.motion.empty-garden' }), BG.fx.reduced(),
-             { screen: box, score: scE, from: 6181, to: 8681, after: function () { tE.render(deal, mk); BG.fx.deal(tE.pieces, BG.fx.reduced()); } });
-         }, 'Odtwórz święto'));
+           var c4 = BG.moveCard({ S: S, loc: loc, step: 'points', points: { place: 3, cleared: 2, lines: 320, full: 0, mono: 0, empty: 2500, total: 2823 }, ids: { card: 'catalog.motion.empty.card', praise: 'catalog.motion.empty.card.head', points: 'catalog.motion.empty.card.num' } });
+           c4.style.position = 'relative';
+           var h4 = BG.fx.card(cE, c4, BG.fx.reduced(), null);
+           BG.fx.emptyGarden(bE, [], null, BG.fx.reduced(),
+             { screen: box, score: scE, from: 6181, to: 8681, after: function () { tE.render(deal, mk); BG.fx.deal(tE.pieces, BG.fx.reduced()); }, skip: function () { h4.skip(); } });
+         }, 'Odtwórz Pustą grządkę'));
        })())]));
 
     /* Responsywność */
@@ -659,19 +743,20 @@ body.cat-body{margin:0;background:#E4E2DA;font-family:var(--font);color:var(--in
       ['home.with-records', 'screen.home', 'rekord klasyczny i rekord dnia &gt; 0, bez zapisu'],
       ['home.resume-available', 'screen.home', 'zapisana gra: „' + S.continue + '” primary, „' + S.new_game + '”, „' + S.daily + '”'],
       ['home.read-error', 'screen.home', '„' + S.read_error + '”, rekordy zostają, bez „' + S.continue + '” (R-4.6)'],
-      ['game.classic-start', 'screen.game', 'pusta plansza, pierwsza trójka, wynik 0'],
+      ['game.classic-start', 'screen.game', 'pusta plansza, pierwsza trójka, wynik 0; kwiatek bez kropelek'],
+      ['game.classic-start-drops', 'screen.game', 'r7.3 (Q364): start nowej gry klasycznej, kwiatek z 2 kropelkami z poprzedniej gry (widoczne od pierwszego ruchu); wyzwanie dnia zawsze od zera (Q365)'],
       ['game.classic-start.en', 'screen.game', 'jw. po angielsku'],
-      ['game.classic-resumed', 'screen.game', 'wznowiona gra: plansza z kolorami, 2 klocki w trójce, wynik, „' + BG.fmt(S.combo, { c: 2 }) + '”'],
+      ['game.classic-resumed', 'screen.game', 'wznowiona gra: plansza z kolorami, 2 klocki w trójce, wynik, Podlewanie z 1 kropelką'],
       ['game.daily-start', 'screen.game', 'wyzwanie dnia: nazwa trybu z datą, rekord dnia'],
       ['game.dragging-fits', 'screen.game', 'klocek nad miejscem, w którym się mieści, bez linii'],
       ['game.dragging-line-preview', 'screen.game', 'klocek nad miejscem, które wyczyści linię zwykłą i linię jednego koloru'],
-      ['game.line-clear', 'screen.game', 'r6 (Q175): stan po ruchu czyszczącym zwykłą linię — plansza po czyszczeniu, wynik po ruchu, punkty ruchu; rozkwit tylko w foundation.motion'],
-      ['game.color-bonus', 'screen.game', 'r6 (Q175): stan po ruchu z linią jednego koloru — plansza po czyszczeniu, punkty ruchu z dopiskiem premii'],
-      ['game.combo', 'screen.game', 'r6 (Q175): stan po ruchu w serii — „' + BG.fmt(S.combo, { c: 3 }) + '”, plansza po czyszczeniu, punkty ruchu z dopiskiem serii'],
+      ['game.line-clear', 'screen.game', 'r6 (Q175): stan po ruchu czyszczącym zwykłą linię — plansza po czyszczeniu, wynik po ruchu; r7.3: karta ruchu z sumą i rozbiciem (1 linia: bez pochwały, bez kropelki); rozkwit tylko w foundation.motion'],
+      ['game.color-bonus', 'screen.game', 'r6 (Q175): stan po ruchu z linią jednego koloru — plansza po czyszczeniu; r7.3: karta „' + S.praise_flowerbed + '” z „' + BG.fmt(S.card_flowerbed, { n: 500 }) + '”'],
+      ['game.combo', 'screen.game', 'r6 (Q175): stan po ruchu z czyszczeniem przy Podlewaniu z 1 kropelką; r7.3 (Q362): seria usunięta — karta punktów bez „Podlewanie +N” (ID stanu bez zmian)'],
       ['game.daily-exit-confirm', 'screen.game', 'dialog „' + S.confirm_title + '”'],
       ['game.save-error', 'screen.game', 'wznowiona gra z komunikatem „' + S.save_error + '” (R-4.5)'],
       ['game.crash', 'screen.game', 'pasek „' + S.crash + '” na zasłonie (R-5.3)'],
-      ['game.over-classic', 'screen.game', 'panel końca gry, classic; r5: powód końca i „' + BG.fmt(S.record_gap, { n: BG.num(11578, loc) }) + '”, pod panelem przygaszona plansza i oznaczona trójka'],
+      ['game.over-classic', 'screen.game', 'panel końca gry, classic; r5: powód końca i „' + BG.fmt(S.record_gap, { n: BG.num(11578, loc) }) + '”, pod panelem przygaszona plansza i oznaczona trójka; r7.3 (Q364): „' + BG.fmt(S.over_drops, { d: 2 }) + '”'],
       ['game.over-classic.en', 'screen.game', 'jw. po angielsku'],
       ['game.over-classic-new-record', 'screen.game', 'classic, „' + S.new_record + '”'],
       ['game.over-daily', 'screen.game', 'daily, until-midnight; r5: powód końca i „' + BG.fmt(S.record_gap, { n: BG.num(840, loc) }) + '”'],
@@ -683,24 +768,31 @@ body.cat-body{margin:0;background:#E4E2DA;font-family:var(--font);color:var(--in
       ['game.no-moves-classic.en', 'screen.game', 'r5: jw. po angielsku'],
       ['game.no-moves-daily', 'screen.game', 'r5: krok końca wyzwania dnia, jeden slot pusty'],
       ['game.over-classic-tied', 'screen.game', 'r5: panel końca z „' + S.record_tied + '” (wynik równy rekordowi, Q130)'],
-      ['game.level-up', 'screen.game', 'r6 (Q150, Q188): chwila awansu na poziom 3 (wynik 860) — nowe tło <code>dawn-meadow</code>, etykieta „' + BG.fmt(S.level, { n: 3 }) + '”, plakietka „' + BG.fmt(S.level_up, { n: 3 }) + '” na wyniku (w user_preview znika po 1,5 s)'],
+      ['game.level-up', 'screen.game', 'r7.3: ruch z czyszczeniem (1 linia) i awansem na poziom 3 (780 → 864) — ostatni krok kolejki: karta „' + S.card_level_head + '” / 3 / „' + S.motifs['lily-pond'] + '”, nowe tło <code>lily-pond</code> i etykieta (r6: plakietka na wyniku)'],
       ['game.level-5', 'screen.game', 'r6: poziom 5, tło <code>lily-pond</code>, wynik 5940 — w user_preview kwadrat 2×2 przeciągnięty w lewy górny róg daje awans na poziom 6 z przenikaniem tła'],
       ['game.level-6', 'screen.game', 'r6: poziom 6, tło <code>firefly-night</code>, wynik 6480 (inna gra: inny początek kręgu)'],
-      ['game.level-up-praise', 'screen.game', 'r6 (Q188): stan po ruchu, który czyści 2 linie i daje awans na poziom 4 (1580 → 2062): plakietka „' + BG.fmt(S.level_up, { n: 4 }) + '” na wyniku i „' + S.praise_2 + '” nad planszą — w różnych miejscach'],
-      ['game.empty-garden', 'screen.game', 'r6 (Q189, Q203): stan po ruchu, który opróżnia planszę: rozkwit na całej planszy, pochwała „' + BG.fmt(S.praise_empty, { n: 300 }) + '”, punkty ruchu z sumą (bez dopisku premii). r7: poziom 7, wynik 9100 → 12 681, „' + BG.fmt(S.praise_empty, { n: BG.num(3500, loc) }) + '” (max(1000, 500 × 7)), bez awansu'],
-      ['game.combo-color', 'screen.game', 'r6 (Q203): ruch w serii czyszczący linię jednego koloru — dwa dopiski punktów; gdzie się nie mieszczą (mobile-compact, niskie okno), zostaje dopisek o większej wartości'],
+      ['game.level-up-praise', 'screen.game', 'stan po ruchu z linią jednego koloru i awansem na poziom 4: r7.3 — ostatni krok kolejki, karta „' + S.card_level_head + '” / 4 / „' + S.motifs.hedge + '” (wcześniej „' + S.praise_flowerbed + '”)'],
+      ['game.empty-garden', 'screen.game', 'r6 (Q189, Q203), r7: poziom 7, wynik 9100 → 12 681, rozkwit na całej planszy i „' + BG.fmt(S.praise_empty, { n: BG.num(3500, loc) }) + '” (max(1000, 500 × 7)), bez awansu. r7.3: święto bez zmian; karta ruchu (1500 ms po ruchu) z „' + BG.fmt(S.card_empty, { n: BG.num(3500, loc) }) + '” w rozbiciu'],
+      ['game.combo-color', 'screen.game', 'ruch czyszczący linię jednego koloru przy 1 kropelce — r7.3: karta „' + S.praise_flowerbed + '” z rozbiciem zamiast dwóch dopisków i reguły Q203'],
       ['game.music-muted', 'screen.game', 'r7: gra z wyciszoną muzyką (efekty włączone)'],
-      ['game.praise-great', 'screen.game', 'r7 (Q233): ruch 2 linie bez serii (S = 2) — „' + S.praise_2 + '”'],
-      ['game.praise-wonderful', 'screen.game', 'r7: 2 linie, podlewanie ×3 (S = 4) — „' + S.praise_3 + '”'],
-      ['game.praise-amazing', 'screen.game', 'r7: 2 linie, podlewanie ×5 (S = 6) — „' + S.praise_4 + '”'],
-      ['game.praise-paradise', 'screen.game', 'r7: 2 linie, podlewanie ×6 (S = 7) — „' + S.praise_5 + '” z rozbłyskiem płatków, złota roślina'],
-      ['game.flower-bed', 'screen.game', 'r7 (Q234): linia jednego koloru — „' + S.praise_flowerbed + '”, „' + BG.fmt(S.move_mono, { n: 500 }) + '”'],
-      ['game.watering-wilt', 'screen.game', 'r7: podlewanie ×4 (pąk), jedna kropla — roślina lekko więdnie'],
-      ['game.watering-gold', 'screen.game', 'r7: podlewanie ×7 — złoty kwiat'],
-      ['game.empty-garden-level-up', 'screen.game', 'r7: święto Pustej grządki i awans w tym samym ruchu — ruch na poziomie 4, „' + BG.fmt(S.praise_empty, { n: BG.num(2000, loc) }) + '” (max(1000, 500 × 4)), wynik 2100 → 4181, awans na poziom 5; plakietka awansu na wyniku (w user_preview 1,5 s po napisie)']];
+      ['game.praise-great', 'screen.game', 'r7.3 (Q361): 2 linie naraz — „' + S.praise_2 + '”, potem „' + BG.dropsLabel(S, 1) + '”'],
+      ['game.praise-wonderful', 'screen.game', 'r7.3: 3 linie naraz — „' + S.praise_3 + '”, potem „' + BG.dropsLabel(S, 2) + '”'],
+      ['game.praise-amazing', 'screen.game', 'r7.3: 4 linie naraz — „' + S.praise_4 + '” / „' + BG.lineLabel(S, 4) + '”, potem karta „' + S.full_watering + '” (3 kropelki)'],
+      ['game.praise-paradise', 'screen.game', 'r7.3: 5 linii naraz (kwadrat 3×3) — „' + S.praise_5 + '” / „' + BG.lineLabel(S, 5) + '”, potem karta „' + S.full_watering + '” i 1 kropelka nadmiaru'],
+      ['game.flower-bed', 'screen.game', 'r7 (Q234), r7.3: linia jednego koloru — karta „' + S.praise_flowerbed + '” z „' + BG.fmt(S.card_flowerbed, { n: 500 }) + '” (Q346)'],
+      ['game.empty-garden-level-up', 'screen.game', 'r7: święto Pustej grządki i awans w tym samym ruchu — ruch na poziomie 4, „' + BG.fmt(S.praise_empty, { n: BG.num(2000, loc) }) + '” (max(1000, 500 × 4)), wynik 2100 → 4181, awans na poziom 5; r7.3 (Q366, Q367): bez napisu na planszy i płatków przez ekran; kolejka od razu: „' + S.card_empty_head + '” / „+N” / „… · ' + BG.fmt(S.card_empty, { n: BG.num(2000, loc) }) + '”, potem „' + S.card_level_head + '” / 5 / „' + S.motifs['garden-dusk'] + '” z przenikaniem tła (ta klatka)'],
+      ['game.watering-bud', 'screen.game', 'r7.3 (Q355): Podlewanie z 1 kropelką — pąk, jedna pełna kropla (ID stanu bez zmian; wcześniej ×4)'],
+      ['game.watering-flower', 'screen.game', 'r7.3 (Q355): Podlewanie z 2 kropelkami — kwiat, dwie pełne krople'],
+      ['game.queue-points', 'screen.game', 'r7.3 (Q356, Q360): kolejka jednego ruchu (3 linie, awans 3 → 4), krok 1 — „' + S.praise_3 + '”, „+723”, rozbicie; tło i etykieta jeszcze poziomu 3'],
+      ['game.queue-drops', 'screen.game', 'r7.3: ten sam ruch, krok 2 — „' + BG.dropsLabel(S, 2) + '” i „' + S.card_drops_hint + '”; kwiatek przechodzi na 2 kropelki'],
+      ['game.queue-level', 'screen.game', 'r7.3: ten sam ruch, krok 4 (ostatni) — „' + S.card_level_head + '” / 4 / „' + S.motifs.hedge + '”, nowe tło i etykieta'],
+      ['game.move-card-record', 'screen.game', 'r7.3 (Q343): ruch przekracza rekord sprzed gry (4700; 4600 → 4922) — krok 3: „' + S.new_record + '”'],
+      ['game.level-up-no-clear', 'screen.game', 'r7.3 (Q347): ruch bez czyszczenia z awansem na poziom 4 (1996 → 2000) — kolejka „+4” / „' + S.card_place + '”, potem ta klatka: „' + S.card_level_head + '” / 4 / „' + S.motifs.hedge + '”'],
+      ['game.full-watering', 'screen.game', 'r7.3 (Q357, Q366, Q367): ruch 2 linie przy 2 kropelkach — 3. kropelka; klatka kroku 2: karta „' + S.full_watering + '” / „+500” / „' + S.card_full_sub + '” i kwiatek wskaźnika w szczycie rozkwitu; w user_preview cała kolejka'],
+      ['game.dragging-under-card', 'screen.game', 'r7.3 (Q348), tylko iphone-se: karta punktów („' + S.praise_flowerbed + '”, rozbicie w 2 wierszach) zachodzi na nagłówek i wynik; klocek niesiony nad kartą — karta przygasa do 18%']];
     root.append(h('section', { 'class': 'cat-sec', id: 'states-plan' },
-      h('h2', {}, 'states-plan'), h('h3', {}, 'Stany rewizji r7'),
-      h('p', { 'class': 'cat-sem', html: 'Stany z manifestu r7 (44: 33 z r6 bez <code>home.sound-muted</code> i 11 nowych; 8 targetów), otwierane w <code>index.html</code>. Stany z animacją w <code>user_preview</code> odtwarzają ruch, „▶ Odtwórz animację” w pasku narzędzi powtarza. Bez <code>game.dragging-blocked</code> (Q24). Tło sceny każdego stanu: README.md, sekcja „Tła stanów”.' }),
+      h('h2', {}, 'states-plan'), h('h3', {}, 'Stany rewizji r7.3'),
+      h('p', { 'class': 'cat-sem', html: 'Stany z manifestu r7.3 (52: 44 z r7 bez <code>game.watering-wilt</code> i <code>game.watering-gold</code>, 10 nowych; 8 targetów, <code>game.dragging-under-card</code> tylko iphone-se), otwierane w <code>index.html</code>. Stany z animacją w <code>user_preview</code> odtwarzają ruch, „▶ Odtwórz animację” w pasku narzędzi powtarza. Bez <code>game.dragging-blocked</code> (Q24). Tło sceny każdego stanu: README.md, sekcja „Tła stanów”.' }),
       h('div', { html: table(['state_id', 'screen_id', 'opis'], plan.map(function (r) { return ['<code>' + r[0] + '</code>', '<code>' + r[1] + '</code>', r[2]]; })) })));
 
     /* Demo na żywo w sekcji planszy */
@@ -714,16 +806,19 @@ body.cat-body{margin:0;background:#E4E2DA;font-family:var(--font);color:var(--in
     var dBoard = BG.board({ geo: gD, S: S, elementId: 'catalog.demo.board', elementPrefix: 'catalog.demo.board.' });
     var dTray = BG.tray({ geo: gD, S: S, elementId: 'catalog.demo.tray' });
     var reset = h('button', { type: 'button', 'class': 'pt-btn', 'data-prototype-tool': 'catalog-demo-reset', style: { color: 'var(--ink)', borderColor: 'var(--line)', background: '#fff' }, onclick: function () { render(); } }, 'Od nowa');
-    demo.append(dScore.el, dStrip, dBoard.el, dTray.el);
+    /* r7.3: karta ruchu dema nad wynikiem (w grze: nad planszą, na wyniku i nagłówku). */
+    var dCard = h('div', { 'class': 'bg-phone', style: { position: 'relative', width: '100%', minHeight: '128px', display: 'flex', justifyContent: 'center', alignItems: 'flex-end' } });
+    demo.append(dCard, dScore.el, dStrip, dBoard.el, dTray.el);
     BG.play({
       geo: gD, S: S, loc: loc, seed: C.seed, surface: demo, interactive: true, board: dBoard, tray: dTray, score: dScore, strip: dStrip,
-      state: { board: BGRules.parseBoard(C.board), tray: C.tray.slice(), score: C.score, combo: C.combo, dry: C.dry },
-      ids: { piece: 'catalog.demo.piece-', drag: 'catalog.demo.drag-piece-', combo: 'catalog.demo.combo', points: 'catalog.demo.move-points' },
+      state: { board: BGRules.parseBoard(C.board), tray: C.tray.slice(), score: C.score, drops: C.drops },
+      card: { host: dCard, place: function (el) { el.style.position = 'relative'; } },
+      ids: { piece: 'catalog.demo.piece-', drag: 'catalog.demo.drag-piece-', combo: 'catalog.demo.combo', points: 'catalog.demo.move-points', card: 'catalog.demo.move-card', praise: 'catalog.demo.praise', level: 'catalog.demo.level-up', record: 'catalog.demo.new-record' },
       onOver: function () { reset.textContent = 'Koniec gry — od nowa'; }
     });
     boardSec.append(h('div', { 'class': 'cat-spm cat-wide', 'data-catalog-variant': 'na żywo' },
       h('div', { 'class': 'cat-spm-box bg-anim', style: { flexDirection: 'column', gap: '10px' } }, demo, reset),
-      h('div', { 'class': 'cat-spm-label' }, h('b', {}, 'na żywo'), 'przeciągnij „' + S.colors.leaf + '” 1×2 na prawy koniec rzędów 6–7: premia jednego koloru i seria ×3')));
+      h('div', { 'class': 'cat-spm-label' }, h('b', {}, 'na żywo'), 'przeciągnij „' + S.colors.leaf + '” 1×2 na prawy koniec rzędów 6–7: premia jednego koloru; kolejka komunikatów (punkty → kropelki)')));
   }
   render();
 })();

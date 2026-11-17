@@ -1,6 +1,6 @@
 {
   "schema_version": 3,
-  "revision_id": "r7.2",
+  "revision_id": "r7.3",
   "id_migrations": [],
   "targets": [
     { "target_id": "mac-wide", "width": 1440, "height": 900 },
@@ -54,8 +54,20 @@
     { "state_id": "game.praise-amazing", "fixture_id": "default" },
     { "state_id": "game.praise-paradise", "fixture_id": "default" },
     { "state_id": "game.flower-bed", "fixture_id": "default" },
-    { "state_id": "game.watering-wilt", "fixture_id": "default" },
-    { "state_id": "game.watering-gold", "fixture_id": "default" },
-    { "state_id": "game.empty-garden-level-up", "fixture_id": "default" }
+    { "state_id": "game.empty-garden-level-up", "fixture_id": "default" },
+    { "state_id": "game.watering-bud", "fixture_id": "default" },
+    { "state_id": "game.watering-flower", "fixture_id": "default" },
+    { "state_id": "game.classic-start-drops", "fixture_id": "default" },
+    { "state_id": "game.queue-points", "fixture_id": "default" },
+    { "state_id": "game.queue-drops", "fixture_id": "default" },
+    { "state_id": "game.queue-level", "fixture_id": "default" },
+    { "state_id": "game.move-card-record", "fixture_id": "default" },
+    { "state_id": "game.level-up-no-clear", "fixture_id": "default" },
+    { "state_id": "game.full-watering", "fixture_id": "default" },
+    {
+      "state_id": "game.dragging-under-card",
+      "fixture_id": "default",
+      "target_ids": ["iphone-se"]
+    }
   ]
 }

@@ -79,7 +79,11 @@
   BG.assets = ['assets/bloomgrid-mark.svg', 'assets/img/home-hero.webp', 'assets/img/board-frame.webp', 'assets/img/cell-empty.webp', 'assets/img/slot.webp', 'assets/img/card.webp',
     'assets/img/btn-primary.webp', 'assets/img/btn-secondary.webp', 'assets/img/btn-danger.webp', 'assets/img/icon-home.webp', 'assets/img/badge-combo.webp', 'assets/img/badge-coin.webp',
     'assets/img/daily-ribbon.webp', 'assets/img/daily-sun-cap.webp', 'assets/img/daily-card.webp',
-    'assets/img/plant-1.webp', 'assets/img/plant-2.webp', 'assets/img/plant-3.webp', 'assets/img/plant-4.webp', 'assets/img/plant-5.webp', 'assets/img/plant-wilt.webp']
+    /* r7.3 (Q355, Q358): kwiatek Podlewania w 3 stopniach (0 kropelek kiełek, 1 pąk, 2 kwiat); listki, mały złoty kwiat i zwiędła roślina usunięte. */
+    'assets/img/plant-1.webp', 'assets/img/plant-3.webp', 'assets/img/plant-4.webp',
+    /* r7.3: ostre obrazy powiększonego kwiatka wskaźnika w święcie pełnego podlania (pąk, kwiat, złoty kwiat; wycinki z tych samych
+       oryginałów, 352×384). */
+    'assets/img/plant-3-big.webp', 'assets/img/plant-4-big.webp', 'assets/img/plant-5-big.webp']
     .concat(['poppy', 'sun', 'leaf', 'drop', 'berry'].reduce(function (a, c) { return a.concat(['assets/img/tile-' + c + '.webp', 'assets/img/tile-' + c + '-s.webp', 'assets/img/petal-' + c + '.webp']); }, []))
     .concat(BG.CIRCLE.reduce(function (a, b) { return a.concat(['assets/img/bg-' + b + '-phone.webp', 'assets/img/bg-' + b + '-desktop.webp']); }, []));
   /* Tło wyzwania dnia (Q104): wyliczane z daty ciągu (RRRR-MM-DD): numer dnia od 1970-01-01 modulo 3 w kolejności BG.BACKGROUNDS. */
@@ -133,7 +137,10 @@
     if (g.wide) {
       /* mac-wide i laptop: siatka Q112; plansza od wysokości: 32 + nagłówek 56 + 16 + plansza z ramą (2 × 10) + 32 ≤ H. */
       var cw = Math.max(MIN, Math.min(g.cell, Math.floor((H - 156 - 9 * g.gap - 2 * g.pad) / 8)));
-      return withSizes(cw, g.pc, { layout: 'wide', sp: { t: 32, b: 32 }, minH: B(cw) + 156 });
+      /* r7.3: kolumna trójki = wynik 79 + pasek Podlewania 76 + trójka 116 + 3 odstępy 24 (343 px) + gniazdo karty ruchu (do 216 px);
+         miejsce na kolumnę = H − 64 − 56. Gniazdo maleje na niskim oknie; komunikat zapisu (88 px), gdy się nie mieści, leży na wierszu wyniku (Q201). */
+      var colH = H - 120, slotH = Math.max(150, Math.min(216, colH - 343));
+      return withSizes(cw, g.pc, { layout: 'wide', sp: { t: 32, b: 32 }, minH: B(cw) + 156, cardSlotH: slotH, saveOver: colH < 343 + slotH + 88 });
     }
     if (W > H) {
       /* Telefon w poziomie (Q180, Q200): plansza po lewej na całą wysokość, po prawej kolumna 380 px: nagłówek, wynik, pasek, trójka. */
@@ -149,7 +156,8 @@
     /* r7 (Q232): wiersz poziomu 24 px pod nagłówkiem; najmniejsze odstępy: góra i dół 4, wynik 4, trójka 8 px.
        Wynik 4 px (nie 0): tabliczka wyniku wystaje 4 px w górę, tabliczka wiersza kończy się 2 px nad jego dołem — zostaje 2 px przerwy. */
     var NAT = { t: 59, b: 34, s: 8, g: 16 }, MINSP = { t: 4, b: 4, s: 4, g: 8 };
-    var need = function (sp, c, p, merged) { return sp.t + 48 + 24 + sp.s + 58 + (merged ? 12 : 46) + B(c) + sp.g + S(p) + sp.b; };
+    /* r7.3 (Q345): pasek Podlewania 2 + 54 px (było 2 + 44) — większa roślina (56×61) i odstęp od wyniku. */
+    var need = function (sp, c, p, merged) { return sp.t + 48 + 24 + sp.s + 58 + (merged ? 12 : 56) + B(c) + sp.g + S(p) + sp.b; };
     var c0 = g.cell, p0 = g.pc, alert = 76;
     if (H >= need(NAT, c0, p0)) return withSizes(c0, p0, { layout: 'phone', sp: NAT, minH: need(NAT, c0, p0), saveOver: H < need(NAT, c0, p0) + alert });
     var slack = H - need(MINSP, c0, p0);
@@ -212,7 +220,8 @@
         paintCell(ce, { color: place[i] ? null : board[i], previewColor: place[i] ? view.previewColor : null, preview: place[i] ? 'place' : null, line: line[i], clearing: clearing[i] });
       });
       badges.replaceChildren();
-      var lines = view.preview ? view.preview.lines : (view.bonusLines || []);
+      /* Korekta Q366 (Lider): plakietka „+500” tylko w podglądzie przeciągania (R-1.4); po ruchu premię pokazuje karta 3, nie plansza. */
+      var lines = view.preview ? view.preview.lines : [];
       lines.filter(function (l) { return l.mono; }).forEach(function (l) {
         /* Plakietka nie zasłania żadnego pola (Q59): rząd — od prawej krawędzi ramki na wysokości rzędu;
            kolumna — nad górną krawędzią ramki nad kolumną. Pola zaczynają się pad + gap od krawędzi planszy. */
@@ -306,35 +315,145 @@
     return '<svg viewBox="0 0 10 13" aria-hidden="true"><path d="M5 .8C5 .8 1 5.6 1 8.4A4 4 0 0 0 9 8.4C9 5.6 5 .8 5 .8Z" fill="' + (full ? '#4FB3F2' : 'none') + '" stroke="' + (full ? '#145C9E' : '#7A6A55') + '" stroke-width="1.2"' + (full ? '' : ' stroke-dasharray="2 1.4"') + '/>' +
       (full ? '<ellipse cx="3.8" cy="7.4" rx=".9" ry="1.6" fill="#fff" opacity=".8"/>' : '') + '</svg>';
   };
-  BG.plantStage = function (c) { return c >= 6 ? 5 : Math.max(1, c - 1); };
-  /* component.combo-badge — „Podlewanie” (r7, zastępuje „Seria ×c”): roślina rośnie ze stopniem serii, obok „×c” i trzy krople zapasu
-     (3 − ruchy bez czyszczenia; R-2.3). Przy ostatniej kropli roślina lekko więdnie. Tylko przy c ≥ 2 (R-2.7). */
+  /* r7.3 (Q355–Q359): stopień rośliny z liczby kropelek: 0 — kiełek (plant-1), 1 — pąk (plant-3), 2 — kwiat (plant-4),
+     3 (tylko w święcie) — kwiat, który rozkwita w złoty (plant-5). Obraz listków (plant-2) i zwiędłej rośliny nie są już używane. */
+  BG.plantStage = function (d) { return d >= 3 ? 4 : [1, 3, 4][Math.max(0, d)]; };
+  /* component.combo-badge — „Podlewanie” (r7.3, Q355–Q359): kwiatek w doniczce i trzy kropelki (pełne = zebrane, puste = brakujące).
+     Kwiatek rośnie z liczbą kropelek; zawsze widoczny w grze (także 0 kropelek); bez „×c”, bez więdnięcia. Przy 3 kropelkach — święto
+     (component.full-watering), potem 0 i nadmiar. o: { drops 0–3, S, elementId } */
   BG.comboBadge = function (o) {
-    if (o.c < 2) return null;
-    var full = BG.fmt(o.S.combo, { c: o.c }), drops = Math.max(0, 3 - (o.dry || 0)), stage = BG.plantStage(o.c);
-    /* r7: roślina z generatora (assets/img/plant-<stopień>.webp, 88×96 = 2× ramki 44×48, doniczka tej samej szerokości we wszystkich stopniach).
-       Przy ostatniej kropli: pąk i kwiat (stopnie 3–4) mają osobny obraz zwiędłej rośliny; kiełek, listki i złoty kwiat zostają swoim obrazem
-       z przygaszeniem (CSS), żeby stopień dalej był czytelny. BG.plantSVG zostaje tylko jako zapasowy rysunek (nieużywany). */
-    var wiltImg = drops <= 1 && (stage === 3 || stage === 4);
-    var plant = h('span', { 'class': 'bg-plant', 'data-img': wiltImg ? 'wilt' : String(stage) },
-      h('img', { src: 'assets/img/plant-' + (wiltImg ? 'wilt' : stage) + '.webp', alt: '', draggable: 'false' }));
+    var drops = Math.max(0, Math.min(3, o.drops || 0)), stage = BG.plantStage(drops);
+    var plant = h('span', { 'class': 'bg-plant', 'data-img': String(stage) },
+      h('img', { src: 'assets/img/plant-' + stage + '.webp', alt: '', draggable: 'false' }));
     var dropEls = h('span', { 'class': 'bg-drops', 'aria-hidden': 'true' }, [0, 1, 2].map(function (i) { return h('span', { 'class': 'bg-drop', 'data-full': i < drops ? 'true' : 'false', html: BG.dropSVG(i < drops) }); }));
-    return h('div', { 'class': 'bg-combo', 'data-component-id': 'component.combo-badge', 'data-element-id': o.elementId, 'data-stage': stage, 'data-drops': drops, 'data-wilt': drops <= 1 ? 'true' : null },
-      plant, h('span', { 'class': 'bg-combo-mult', 'aria-hidden': 'true' }, '×' + o.c), dropEls,
-      h('span', { 'class': 'bg-sr' }, full + ', ' + BG.fmt(o.S.combo_drops_sr, { d: drops })));
+    return h('div', { 'class': 'bg-combo', 'data-component-id': 'component.combo-badge', 'data-element-id': o.elementId, 'data-stage': stage, 'data-drops': drops },
+      plant, dropEls, h('span', { 'class': 'bg-sr' }, BG.fmt(o.S.watering_sr, { d: drops })));
   };
 
-  /* component.move-points — tylko po ruchu z czyszczeniem (R-2.6) */
-  BG.movePoints = function (o) {
-    var p = o.points, S = o.S, loc = o.loc;
-    if (!p || p.cleared < 1) return null;
-    var notes = [];
-    if (p.combo) notes.push(h('span', { 'class': 'bg-points-note', 'data-note': 'combo' }, BG.icon('sprout', 13), BG.fmt(S.move_combo, { n: BG.num(p.combo, loc) })));
-    if (p.mono) notes.push(h('span', { 'class': 'bg-points-note', 'data-note': 'mono' }, BG.icon('sparkle', 12), BG.fmt(S.move_mono, { n: BG.num(p.mono, loc) })));
-    return h('div', { 'class': 'bg-points', 'data-component-id': 'component.move-points', 'data-element-id': o.elementId, role: 'status', 'aria-live': 'polite' },
-      h('span', { 'class': 'bg-points-total', 'aria-hidden': 'true' }, '+' + BG.num(p.total, loc)),
-      h('span', { 'class': 'bg-sr' }, BG.fmt(S.move_points_sr, { n: BG.num(p.total, loc) })),
-      notes.length ? h('span', { 'class': 'bg-points-notes' }, notes) : null);
+  /* r7.3 (Q368): podpis karty punktów mówi tylko, co gracz zrobił — bez rachunku pól: „1 linia”, „3 linie naraz”, „5 linii naraz”,
+     ruch bez linii „położony klocek”; dopisek „· Kolorowa rabata +500” / „· Pusta grządka +1000”, gdy ruch je dał. */
+  BG.lineLabel = function (S, k) {
+    if (!k) return S.card_place;
+    var key = k === 1 ? 'card_line_1' : (k % 10 >= 2 && k % 10 <= 4 && (k % 100 < 12 || k % 100 > 14)) ? 'card_lines_few' : 'card_lines_many';
+    return BG.fmt(S[key], { k: k });
+  };
+  BG.pointsSub = function (p, S, loc) {
+    var parts = [BG.lineLabel(S, p.cleared)];
+    if (p.mono) parts.push(BG.fmt(S.card_flowerbed, { n: BG.num(p.mono, loc) }));
+    if (p.empty) parts.push(BG.fmt(S.card_empty, { n: BG.num(p.empty, loc) }));
+    return parts.join(' · ');
+  };
+  /* Punkty karty: przyrost wyniku bez premii „Pełne podlanie” (ma własną kartę „+500”, więc suma kart = przyrost wyniku). */
+  BG.pointsOf = function (p) { return p.total - (p.full || 0); };
+  /* component.move-card — r7.3 (Q366–Q368): jedyny komponent komunikatów chwilowych, jedno miejsce, wspólna ramka i typografia, trzy wiersze tekstu obok ilustracji:
+     nagłówek (opcjonalny), duża liczba (opcjonalna), podpis drobnym drukiem (opcjonalny); pusty wiersz się nie pokazuje.
+     Osiem treści (data-step / data-variant):
+       1 points        — / „+243” / „1 linia”
+       2 points+praise „Świetnie!” | „Wspaniale!” | „Cudownie!” | „Rajski ogród!” / „+723” / „3 linie naraz”
+       3 flowerbed     „Kolorowa rabata!” / „+743” / „1 linia · Kolorowa rabata +500”
+       4 empty-garden  „Pusta grządka!” / „+1243” / „2 linie naraz · Pusta grządka +1000”
+       5 drops         „+1 kropelka” | „+2 kropelki” / — / „3 kropelki = Pełne podlanie”
+       6 full          „Pełne podlanie!” / „+500” / „kwiatek zaczyna od nowa”
+       7 record        „Nowy rekord!” / „18 421” / —
+       8 level         „Nowy poziom!” / „4” / „Żywopłot”
+     Korekta Q366: każda treść ma własną ilustrację, kolor, animację i dźwięk (BG.cardArt, data-art 1–8; obwódka pochwały rośnie ze szczeblem, data-rung). Publiczne ID nagłówka i liczby zostają z wcześniejszych
+     wersji (element.game.praise, element.game.move-points, element.game.drops-gain, element.game.full-watering, element.game.new-record,
+     element.game.level-up). Bez interakcji (pointer-events: none). o: { step, praise, points, gain, dropsAfter, score, level: { n, motif }, ids } */
+  BG.dropsLabel = function (S, n) { return BG.fmt(S[n === 1 ? 'card_drops_1' : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? 'card_drops_few' : 'card_drops_many'], { n: n }); };
+  BG.PRAISE_TEXT = { great: 'praise_2', wonderful: 'praise_3', amazing: 'praise_4', paradise: 'praise_5', flowerbed: 'praise_flowerbed' };
+  BG.cardContent = function (o) {
+    var S = o.S, loc = o.loc, step = o.step || 'points', c = { head: null, num: null, sub: null, variant: step, headId: null, numId: null, rung: '0' };
+    if (step === 'points') {
+      var p = Object.assign({}, o.points, { empty: o.points.empty || 0 });
+      c.num = '+' + BG.num(BG.pointsOf(p), loc); c.numId = 'points'; c.sub = BG.pointsSub(p, S, loc);
+      if (p.empty) { c.head = S.card_empty_head; c.headId = 'praise'; c.variant = 'empty-garden'; }
+      else if (o.praise) { c.head = S[BG.PRAISE_TEXT[o.praise]]; c.headId = 'praise'; c.variant = o.praise; c.rung = String(({ great: 1, wonderful: 2, amazing: 3, paradise: 4 })[o.praise] || 0); }
+    } else if (step === 'drops') { c.head = BG.dropsLabel(S, o.gain); c.headId = 'drops'; c.sub = S.card_drops_hint; }
+    else if (step === 'full') { c.head = S.full_watering; c.headId = 'full'; c.num = '+' + BG.num(500 * (o.count || 1), loc); c.sub = S.card_full_sub; }
+    else if (step === 'record') { c.head = S.new_record; c.headId = 'record'; c.num = BG.num(o.score, loc); }
+    else if (step === 'level') { c.head = S.card_level_head; c.headId = 'level'; c.num = String(o.level.n); c.sub = S.motifs[o.level.motif]; }
+    return c;
+  };
+  /* r7.3, korekta Q366 (Tomasz zaakceptował sekcję katalogu „Komunikaty chwilowe”): osiem kart, każda z własną ilustracją (data-art 1–8),
+     kolorem, animacją wejścia i efektem oraz dźwiękiem; wspólne miejsce, ramka, fonty i rozmiary. Karty 1–4 to warianty karty punktów
+     ruchu (jedna na ruch, pierwszeństwo R-2.9: Pusta grządka, Kolorowa rabata, pochwała z liczby linii, zwykłe punkty).
+     Ilustracje: własne SVG i istniejące obrazy (kafle, płatki, rośliny, tła), bez nowych obrazów z generatora.
+     Bez klasy is-play każdy element ilustracji stoi w klatce szczytowej (capture); is-play odtwarza wejście i efekt. */
+  var MC_IMG = 'assets/img/', MC_COLS = ['poppy', 'sun', 'leaf', 'drop', 'berry'];
+  function mcImg(src, cls, style) { return '<img class="' + cls + '" src="' + MC_IMG + src + '" alt="" style="' + (style || '') + '">'; }
+  function mcStar(cls, style) { return '<svg class="' + cls + '" style="' + (style || '') + '" viewBox="0 0 24 24"><path d="M12 1.5l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 8.7l7.1-.6z" fill="#FFE070" stroke="#B5730E" stroke-width="1.4" stroke-linejoin="round"/><path d="M12 5.5l1.6 3.8 3.9.3" fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round" opacity=".8"/></svg>'; }
+  function mcSpark(cls, style) { return '<svg class="' + cls + '" style="' + (style || '') + '" viewBox="0 0 20 20"><path d="M10 0c.6 5 4.4 8.8 10 10-5.6 1.2-9.4 5-10 10-.6-5-4.4-8.8-10-10 5.6-1.2 9.4-5 10-10z" fill="#fff"/></svg>'; }
+  var mcUid = 0;
+  BG.CARD_ART = {
+    /* 1 · punkty: pięć kwiatów na pasie ziemi, przez który przechodzi świetlny błysk. */
+    1: function () { return '<div class="mcx-strip">' + MC_COLS.map(function (c, i) { return mcImg('tile-' + c + '-s.webp', 'mcx-tile', 'animation-delay:' + (i * 70) + 'ms'); }).join('') + '<span class="mcx-sweep"></span></div>' + mcSpark('mcx-spark', 'right:2%;top:14%'); },
+    /* 2 · pochwała: złota rozeta ze wstążkami na obracających się promieniach; gwiazdki według szczebla (1–3, „Rajski ogród!” 3 i płatki). */
+    2: function (o, c) {
+      var g = 'mcxg2-' + (++mcUid), d = '';
+      for (var i = 0; i < 24; i++) { var a = i / 24 * Math.PI * 2, r = i % 2 ? 36 : 42; d += (i ? 'L' : 'M') + (50 + Math.cos(a) * r).toFixed(1) + ' ' + (46 + Math.sin(a) * r).toFixed(1); }
+      var stars = [['left:-2%;top:6%;width:30%', ''], ['right:-4%;top:30%;width:24%', ' s2'], ['left:4%;bottom:2%;width:20%', ' s3']].slice(0, Math.min(3, +c.rung || 1));
+      return '<span class="mcx-rays"></span><svg class="mcx-rosette" viewBox="0 0 100 100"><defs><radialGradient id="' + g + '" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#FFF6C2"/><stop offset=".55" stop-color="#FFD24A"/><stop offset="1" stop-color="#E08E0B"/></radialGradient></defs><path d="M30 70l-10 26 13-6 7 12 8-26zM70 70l10 26-13-6-7 12-8-26z" fill="#D4306F" stroke="#7A1E4A" stroke-width="2" stroke-linejoin="round"/><path d="' + d + 'Z" fill="url(#' + g + ')" stroke="#9A5A06" stroke-width="2.4" stroke-linejoin="round"/><circle cx="50" cy="46" r="25" fill="#FFF3C4" stroke="#C98A12" stroke-width="2"/><path d="M50 30l5 10.5 11.5 1-8.7 7.6 2.6 11.3L50 54.5l-10.4 5.9 2.6-11.3-8.7-7.6 11.5-1z" fill="#FFB020" stroke="#9A5A06" stroke-width="1.8" stroke-linejoin="round"/></svg>'
+        + stars.map(function (s) { return mcStar('mcx-star' + s[1], s[0]); }).join('')
+        + (c.rung === '4' ? [0, 1, 2, 3].map(function (i) { return mcImg('petal-' + MC_COLS[i] + '.webp', 'mcx-confetti', 'left:' + [70, 8, 78, 40][i] + '%;top:' + [4, 70, 70, -2][i] + '%;--rot:' + (i * 80) + 'deg;animation-delay:' + (300 + i * 80) + 'ms'); }).join('') : '');
+    },
+    /* 3 · Kolorowa rabata: łuk pięciu jednakowych kwiatów wiśni w różowej poświacie, złota smuga i iskry. */
+    3: function () { return '<span class="mcx-glow pink"></span><div class="mcx-arc">' + [0, 1, 2, 3, 4].map(function (i) { return mcImg('tile-berry-s.webp', 'mcx-tile', 'animation-delay:' + (i * 80) + 'ms;transform:translateY(' + [8, 2, 0, 2, 8][i] + 'px) rotate(' + [-14, -7, 0, 7, 14][i] + 'deg)'); }).join('') + '<span class="mcx-sweep gold"></span></div>' + mcSpark('mcx-spark', 'left:4%;top:4%') + mcSpark('mcx-spark s2', 'right:6%;bottom:8%'); },
+    /* 4 · Pusta grządka: mini-plansza w drewnianej ramie rozkwita płatkami falą od środka; złota poświata. */
+    4: function () { var cells = ''; for (var i = 0; i < 16; i++) { var r = Math.floor(i / 4), c = i % 4, ring = Math.max(Math.abs(r - 1.5), Math.abs(c - 1.5)); cells += '<span class="mcx-cell">' + ((i * 7) % 3 !== 1 ? mcImg('petal-' + MC_COLS[(i * 3) % 5] + '.webp', 'mcx-bloom', 'animation-delay:' + Math.round(ring * 140) + 'ms;transform:rotate(' + ((i * 47) % 360) + 'deg)') : '') + '</span>'; } return '<span class="mcx-glow gold"></span><div class="mcx-board">' + cells + '</div>'; },
+    /* 5 · kropelki: konewka podlewa pąk w doniczce, dwie krople w locie, pod spodem licznik kropelek po ruchu (z 3). */
+    5: function (o) { var n = Math.max(0, Math.min(3, o.dropsAfter != null ? o.dropsAfter : (o.gain || 1))); return '<span class="mcx-glow blue"></span>' + mcImg('plant-3-big.webp', 'mcx-pot') + '<svg class="mcx-can" viewBox="0 0 64 44"><path d="M10 14h26l4 24H14z" fill="#5FB0E8" stroke="#145C9E" stroke-width="2.4" stroke-linejoin="round"/><path d="M36 20l20-10 3 4-21 13" fill="#5FB0E8" stroke="#145C9E" stroke-width="2.4" stroke-linejoin="round"/><path d="M14 14c0-9 18-9 18 0" fill="none" stroke="#145C9E" stroke-width="3" stroke-linecap="round"/><path d="M16 22h16" stroke="#fff" stroke-width="2" opacity=".6" stroke-linecap="round"/></svg><span class="mcx-drop d1">' + BG.dropSVG(true) + '</span><span class="mcx-drop d2">' + BG.dropSVG(true) + '</span><span class="mcx-meter">' + [0, 1, 2].map(function (i) { return '<span class="bg-drop' + (i === n - 1 ? ' is-new' : '') + '">' + BG.dropSVG(i < n) + '</span>'; }).join('') + '</span>'; },
+    /* 6 · Pełne podlanie: kwiat rozkwita z pąka w złoty kwiat na złotych promieniach, rozbłysk płatków (girlanda na ramce karty). */
+    6: function () { return '<span class="mcx-rays gold"></span><span class="mcx-glow gold"></span>' + [3, 4, 5].map(function (s) { return mcImg('plant-' + s + '-big.webp', 'mcx-plant p' + s); }).join('') + '<span class="mcx-burst">' + [0, 1, 2, 3, 4, 5, 6, 7].map(function (i) { var a = i / 8 * Math.PI * 2; return mcImg('petal-' + MC_COLS[i % 5] + '.webp', 'mcx-bpetal', '--dx:' + Math.round(Math.cos(a) * 46) + '%;--dy:' + Math.round(Math.sin(a) * 40 - 14) + '%;--rot:' + (i * 50) + 'deg;animation-delay:' + (500 + i * 20) + 'ms'); }).join('') + '</span>'; },
+    /* 7 · nowy rekord: złoty puchar z gwiazdą w wieńcu laurowym, konfetti z płatków, błysk przez puchar. */
+    7: function () { var g = 'mcxg7-' + (++mcUid); return '<span class="mcx-rays soft"></span><svg class="mcx-cup" viewBox="0 0 80 80"><defs><linearGradient id="' + g + '" x1="0" x2="1"><stop offset="0" stop-color="#E9A23A"/><stop offset=".45" stop-color="#FFE48A"/><stop offset="1" stop-color="#C9851A"/></linearGradient></defs><path d="M14 20c-12 2-10 22 8 22M66 20c12 2 10 22-8 22" fill="none" stroke="#B5730E" stroke-width="4" stroke-linecap="round"/><path d="M20 12h40c0 24-6 36-20 38C26 48 20 36 20 12z" fill="url(#' + g + ')" stroke="#8A5206" stroke-width="2.6" stroke-linejoin="round"/><path d="M36 50h8v10h-8z" fill="#E9A23A" stroke="#8A5206" stroke-width="2.4"/><path d="M26 60h28l3 10H23z" fill="#7A3A10" stroke="#4A2008" stroke-width="2.4" stroke-linejoin="round"/><path d="M40 20l3.6 7.4 8 .7-6 5.3 1.8 7.9L40 37.2l-7.4 4.1 1.8-7.9-6-5.3 8-.7z" fill="#fff8d0" stroke="#B5730E" stroke-width="1.4"/><path d="M8 66c4-12 10-20 18-24M72 66c-4-12-10-20-18-24" fill="none" stroke="#3E8E3A" stroke-width="3" stroke-linecap="round"/><g fill="#5DBB4A" stroke="#2E6E2A" stroke-width="1">' + [0, 1, 2].map(function (i) { return '<ellipse cx="' + (10 + i * 4) + '" cy="' + (60 - i * 7) + '" rx="5" ry="2.6" transform="rotate(-50 ' + (10 + i * 4) + ' ' + (60 - i * 7) + ')"/><ellipse cx="' + (70 - i * 4) + '" cy="' + (60 - i * 7) + '" rx="5" ry="2.6" transform="rotate(50 ' + (70 - i * 4) + ' ' + (60 - i * 7) + ')"/>'; }).join('') + '</g><path class="mcx-shine" d="M26 14l6 0-8 28-4 0z" fill="#fff" opacity=".55"/></svg>' + [0, 1, 2, 3, 4, 5].map(function (i) { return mcImg('petal-' + MC_COLS[(i + 1) % 5] + '.webp', 'mcx-confetti', 'left:' + (6 + i * 16) + '%;--rot:' + ((i % 2 ? 1 : -1) * (160 + i * 30)) + 'deg;top:' + [4, 64, 20, 72, 8, 58][i] + '%;animation-delay:' + (i * 90) + 'ms'); }).join(''); },
+    /* 8 · nowy poziom: okno w łuku, w którym ogród poprzedniego poziomu przechodzi w ogród nowego (miniatury teł motywów). */
+    8: function (o) { var n = o.level.n, old = BG.motifOf(0, Math.max(1, n - 1)); return '<span class="mcx-rays soft"></span><span class="mcx-window"><span class="mcx-scene old" style="background-image:url(' + MC_IMG + 'bg-' + old + '-phone.webp)"></span><span class="mcx-scene new" style="background-image:url(' + MC_IMG + 'bg-' + o.level.motif + '-phone.webp)"></span></span>' + mcSpark('mcx-spark', 'right:4%;top:2%') + mcSpark('mcx-spark s2', 'left:2%;bottom:14%'); }
+  };
+  /* Ilustracja i dźwięk (R-6.1; nazwy z source/app/sound/output/sound-output.ts) karty z treści. */
+  BG.cardArt = function (o, c) {
+    var step = o.step || 'points';
+    if (step === 'points') {
+      if (c.variant === 'empty-garden') return { art: 4, sound: 'empty-garden' };
+      if (c.variant === 'flowerbed') return { art: 3, sound: 'flower-bed' };
+      if (c.headId === 'praise') return { art: 2, sound: 'praise-' + c.variant };
+      return { art: 1, sound: o.points && o.points.cleared > 0 ? 'line' : 'place' };
+    }
+    return ({ drops: { art: 5, sound: 'watering-drop' }, full: { art: 6, sound: 'watering-grow' }, record: { art: 7, sound: 'new-record' }, level: { art: 8, sound: 'level-up' } })[step];
+  };
+  /* Czas karty (korekta Q366): tyle, ile trzeba na przeczytanie — max(2000, 1200 + 40 ms × liczba znaków treści), zaokrąglony do 100 ms;
+     karty z największym efektem (4 Pusta grządka, 6 Pełne podlanie, 8 Nowy poziom) co najmniej 3000 ms. */
+  BG.cardMs = function (c, art) {
+    var n = [c.head, c.num, c.sub].filter(Boolean).join(' ').length, ms = Math.max(2000, 1200 + 40 * n);
+    if (art === 4 || art === 6 || art === 8) ms = Math.max(3000, ms);
+    return Math.round(ms / 100) * 100;
+  };
+  BG.moveCard = function (o) {
+    var ids = o.ids || {}, c = BG.cardContent(o), a = BG.cardArt(o, c);
+    var headIds = { praise: ids.praise, drops: ids.drops, full: ids.full || 'element.game.full-watering', record: ids.record, level: ids.level };
+    var head = c.head ? h('span', { 'class': 'bg-mcard-head', 'data-element-id': headIds[c.headId] || null, 'data-component-id': c.headId === 'praise' ? 'component.praise' : null, 'data-variant': c.headId === 'praise' ? c.variant : null }, c.head) : null;
+    var num = c.num ? h('span', { 'class': 'bg-mcard-num', 'data-element-id': c.numId === 'points' ? ids.points : null, 'data-component-id': c.numId === 'points' ? 'component.move-points' : null }, c.num) : null;
+    var sub = c.sub ? h('span', { 'class': 'bg-mcard-sub' }, c.sub) : null;
+    var garland = (a.art === 4 || a.art === 6) ? h('span', { 'class': 'mcx-garland', 'aria-hidden': 'true', html: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(function (i) { var p = i < 5 ? 'left:' + (8 + i * 21) + '%;top:-7px' : 'left:' + (8 + (i - 5) * 21) + '%;bottom:-7px'; return mcImg('petal-' + MC_COLS[i % 5] + '.webp', 'mcx-gpetal', p + ';--rot:' + (i * 61) + 'deg;animation-delay:' + (i * 60) + 'ms'); }).join('') }) : null;
+    var fall = a.art === 4 ? h('span', { 'class': 'mcx-fall', 'aria-hidden': 'true', html: [0, 1, 2, 3, 4, 5].map(function (i) { return mcImg('petal-' + MC_COLS[(i + 2) % 5] + '.webp', 'mcx-fpetal', 'left:' + (12 + i * 15) + '%;top:' + [10, 60, 25, 70, 15, 50][i] + '%;--rot:' + (i * 70) + 'deg;animation-delay:' + (i * 120) + 'ms'); }).join('') }) : null;
+    return h('div', { 'class': 'bg-mcard', 'data-component-id': 'component.move-card', 'data-element-id': ids.card, 'data-step': o.step || 'points', 'data-variant': c.variant, 'data-rung': c.rung,
+      'data-art': String(a.art), 'data-sound': a.sound, 'data-duration-ms': String(BG.cardMs(c, a.art)), role: 'status', 'aria-live': 'polite' },
+      garland, fall, h('span', { 'class': 'mcx-art', 'aria-hidden': 'true', html: BG.CARD_ART[a.art](o, c) }), h('span', { 'class': 'bg-mcard-text' }, head, num, sub));
+  };
+  /* Kroki kolejki jednego ruchu (Q356, Q360): (1) punkty — przy ruchu z czyszczeniem, a bez czyszczenia tylko, gdy ruch ma inne kroki
+     (Q347: „+N” i „pola +N”); (2) kropelki („+n”) albo święto „full” (3 kropelki, Q357); (3) nowy rekord; (4) nowy poziom — zawsze ostatni.
+     Kroków, których ruch nie ma, nie ma w liście. ms: { level, record, empty } */
+  BG.stepsFor = function (mv, ms) {
+    ms = ms || {};
+    var p = mv.points, steps = [], clear = p.cleared > 0;
+    var pv = clear ? BG.praiseFor(mv, !!ms.empty) : null;
+    if (pv === 'empty-garden') pv = null;
+    var points = Object.assign({}, p, { empty: ms.empty || 0 });
+    if (clear || ms.level || ms.record) steps.push({ step: 'points', praise: pv, points: points });
+    if (p.fullCount > 0) steps.push({ step: 'full', count: p.fullCount, dropsBefore: p.dropsBefore, dropsAfter: p.dropsAfter });
+    else if (p.dropsGain > 0) steps.push({ step: 'drops', gain: p.dropsGain, dropsAfter: p.dropsAfter });
+    if (ms.record) steps.push({ step: 'record', score: ms.score });
+    if (ms.level) steps.push({ step: 'level', level: ms.level });
+    return steps;
   };
 
   /* component.icon-button */
@@ -364,35 +483,16 @@
     el._msg = msg;
     return el;
   };
-  /* component.empty-garden (r6, Q189) — „Pusta grządka!” po ruchu, który opróżnia planszę: duża miodowa plakietka nad środkiem
-     pustej planszy i rozkwit na wszystkich polach; zastępuje pochwałę w tym ruchu (jedna plakietka nad planszą). */
-  /* Q203: to wariant pochwały (component.praise, data-variant="empty-garden") z premią w tekście; ma pierwszeństwo przed
-     „Świetnie!” i „Wspaniale!” — jedna pochwała na ruch. */
-  BG.emptyGarden = function (o) {
-    return h('div', { 'class': 'bg-praise bg-empty-garden', 'data-component-id': 'component.praise', 'data-element-id': o.elementId, 'data-variant': 'empty-garden', role: 'status', 'aria-live': 'polite' },
-      BG.fmt(o.S.praise_empty, { n: BG.num(o.n || 300, o.loc) }));
-  };
-  /* Stała klatka rozkwitu na całej planszy (capture i koniec animacji): płatki pięciu kolorów na polach w stałym wzorze. */
-  BG.emptyBloomFrame = function (board) {
-    var layer = h('div', { 'class': 'bg-empty-bloom', 'aria-hidden': 'true' });
-    var cols = ['poppy', 'sun', 'leaf', 'drop', 'berry'];
-    for (var i = 0; i < 64; i++) {
-      if ((i * 7 + Math.floor(i / 8)) % 3) continue;
-      var b = board.cellBox(i);
-      layer.append(h('img', { 'class': 'bg-empty-petal', src: 'assets/img/petal-' + cols[(i * 3) % 5] + '.webp', alt: '',
-        style: { left: (b.x + b.s * 0.2) + 'px', top: (b.y + b.s * 0.2) + 'px', width: (b.s * 0.6) + 'px', height: (b.s * 0.6) + 'px', transform: 'rotate(' + ((i * 47) % 360) + 'deg)' } }));
-    }
-    return layer;
-  };
-  /* r7 (Q233): drabina pochwał. Siła ruchu S = L + max(0, c − 1) (L — linie wyczyszczone w ruchu, c — stopień podlewania po ruchu):
-     S ≤ 1 bez pochwały, 2–3 „Świetnie!”, 4–5 „Wspaniale!”, 6 „Cudownie!”, ≥ 7 „Rajski ogród!”. */
+  /* Korekta Q366 (r7.3): napis i płatki Pustej grządki na planszy (BG.emptyGarden, BG.emptyBloomFrame) usunięte — efekt jest w karcie 4. */
+  /* r7.3 (Q361; szczegóły Q363 czekają na Reprezentanta): drabina pochwał tylko z liczby linii naraz L:
+     L = 1 bez pochwały, 2 „Świetnie!”, 3 „Wspaniale!”, 4 „Cudownie!”, ≥ 5 „Rajski ogród!” (r7: siła ruchu z serią). */
   BG.PRAISE = [null, 'great', 'wonderful', 'amazing', 'paradise'];
-  BG.praiseRung = function (L, c) { var s = L + Math.max(0, c - 1); return s >= 7 ? 4 : s === 6 ? 3 : s >= 4 ? 2 : s >= 2 ? 1 : 0; };
+  BG.praiseRung = function (L) { return L >= 5 ? 4 : L === 4 ? 3 : L === 3 ? 2 : L === 2 ? 1 : 0; };
   /* Q234: jedna pochwała na ruch; pierwszeństwo: Pusta grządka, Kolorowa rabata (linia jednego koloru), drabina. */
-  BG.praiseFor = function (mv, comboAfter, emptyBoard) {
+  BG.praiseFor = function (mv, emptyBoard) {
     if (emptyBoard) return 'empty-garden';
     if (mv.lines.some(function (l) { return l.mono; })) return 'flowerbed';
-    return BG.PRAISE[BG.praiseRung(mv.points.cleared, comboAfter)];
+    return BG.PRAISE[BG.praiseRung(mv.points.cleared)];
   };
   /* component.praise (r5, Q139; r7) — chwilowa pochwała nad środkiem planszy (ok. 800 ms), bez interakcji, nigdy na trójce.
      Warianty: great, wonderful, amazing, paradise (każdy szczebel większy i z mocniejszym blaskiem, paradise z rozbłyskiem płatków),
@@ -421,6 +521,29 @@
     }
     return layer;
   };
+  /* r7.3 (Q366, Q367): component.full-watering usunięty — komunikat „Pełne podlanie!” to karta 6 (component.move-card); promienie,
+     poświata, płatki w tle, girlanda i osobny napis usunięte. Zostaje rozkwit kwiatka wskaźnika (element.game.combo) w czasie tej karty. */
+  /* mac-wide 1,35×: największe powiększenie, przy którym kwiatek nie wchodzi na tabliczkę wyniku (prześwit ≥ 1 px). */
+  BG.FW_SCALE = { wide: 1.35, phone: 2 };
+  BG.FW_STAGES = [[0, 3], [300, 4], [600, 5]];
+  /* Rozkwit kwiatka wskaźnika (ten sam element) w czasie karty „Pełne podlanie!”. mode 'anim': przez czas karty 6 (3000 ms) roślina rośnie od dna
+     doniczki (0–900 ms, 30% czasu, do BG.FW_SCALE, ease-out), rozkwita — obraz pąk → kwiat → złoty kwiat (0 / 300 / 600 ms, wycinki 352×384,
+     ostre przy powiększeniu), świeci złotą poświatą (pulsuje 2×), od 2400 ms (80%) wraca do zwykłego rozmiaru; potem zwykły obraz. 'still': stała klatka szczytu
+     (powiększony złoty kwiat z poświatą). 'reduced': bez wzrostu i zmiany obrazu, tylko poświata (przezroczystość). Zwraca restore(). */
+  BG.fwPill = function (pill, mode, timers, ms) {
+    var pl = pill && pill.querySelector('.bg-plant'), img = pl && pl.querySelector('img');
+    if (!pl || !img) return function () {};
+    var src0 = img.getAttribute('src');
+    /* Korekta Q366: rozkwit trwa tyle co karta 6 (data-duration-ms, domyślnie 3000 ms). */
+    if (ms) { pill.style.animationDuration = ms + 'ms'; pl.style.animationDuration = ms + 'ms'; }
+    pill.classList.add('is-fw', mode === 'still' ? 'is-fw-still' : mode === 'reduced' ? 'is-fw-reduced' : 'is-fw-anim');
+    if (mode === 'still') img.setAttribute('src', 'assets/img/plant-5-big.webp');
+    if (mode === 'anim') BG.FW_STAGES.forEach(function (s) {
+      var f = function () { img.setAttribute('src', 'assets/img/plant-' + s[1] + '-big.webp'); };
+      if (s[0]) timers.push(setTimeout(f, s[0])); else f();
+    });
+    return function () { pill.classList.remove('is-fw', 'is-fw-still', 'is-fw-reduced', 'is-fw-anim', 'is-fw-skip'); img.setAttribute('src', src0); };
+  };
   /* component.level-label (r6, Q147, Q152) — środek nagłówka gry klasycznej: „Poziom n” i nazwa motywu; ta sama budowa co nazwa trybu wyzwania. */
   BG.levelLabel = function (o) {
     var num = h('span', { 'class': 'bg-level-num' }), name = h('span', { 'class': 'bg-level-name' });
@@ -436,12 +559,7 @@
     api.set(o.level, o.motif);
     return api;
   };
-  /* component.level-up-badge (r6, Q150) — plakietka awansu nad środkiem planszy, 1,5 s; w stanie capture game.level-up stała. */
-  BG.levelUpBadge = function (o) {
-    return h('div', { 'class': 'bg-levelup', 'data-component-id': 'component.level-up-badge', 'data-element-id': o.elementId, role: 'status', 'aria-live': 'polite', 'aria-label': BG.fmt(o.S.level_up_sr, { n: o.level, name: o.S.motifs[o.motif] }) },
-      h('span', { 'class': 'bg-levelup-num', 'aria-hidden': 'true' }, BG.fmt(o.S.level_up, { n: o.level })),
-      h('span', { 'class': 'bg-levelup-name', 'aria-hidden': 'true' }, o.S.motifs[o.motif]));
-  };
+  /* r7.3 (Q342): component.level-up-badge (plakietka awansu na wyniku) usunięty — awans jest wpisem karty ruchu (BG.moveCard). */
   /* component.mode-label */
   BG.modeLabel = function (o) {
     return h('div', { 'class': 'bg-mode', 'data-component-id': 'component.mode-label', 'data-element-id': o.elementId, 'data-variant': o.variant },
@@ -480,7 +598,7 @@
   BG.gameOverPanel = function (o) {
     var S = o.S, loc = o.loc, tid = o.elementId + '.title', p = o.prefix, ip = p.indexOf('element.') === 0 ? p.replace('element.', 'interaction.') : null;
     var newDay = o.mode === 'daily' && o.dailyInfo === 'new-available';
-    var again = BG.button({ elementId: p + 'play-again', variant: 'primary', label: S.play_again, interactionId: ip && ip + 'play-again', action: 'tap', expected: o.mode === 'daily' ? 'navigate game.daily-start (nowe podejście, ciąg bieżącej daty)' : 'navigate game.classic-start (nowa gra klasyczna)', onClick: o.onAgain, demo: o.demoAgain });
+    var again = BG.button({ elementId: p + 'play-again', variant: 'primary', label: S.play_again, interactionId: ip && ip + 'play-again', action: 'tap', expected: o.mode === 'daily' ? 'navigate game.daily-start (nowe podejście, ciąg bieżącej daty)' : 'navigate game.classic-start (nowa gra klasyczna; r7.3, Q364: kwiatek zachowuje kropelki — przy kropelkach game.classic-start-drops)', onClick: o.onAgain, demo: o.demoAgain });
     var home = BG.button({ elementId: p + 'to-home', variant: 'secondary', label: S.to_home, interactionId: ip && ip + 'to-home', action: 'tap', expected: 'navigate screen.home', onClick: o.onHome });
     /* r5 (Q130): różnica do rekordu sprzed gry (recordBefore) — „Do rekordu zabrakło N”, przy równym wyniku „Rekord wyrównany”;
        przy nowym rekordzie plakietka „Nowy rekord!”; po podejściu innego dnia (R-3.6) bez różnicy. */
@@ -501,6 +619,11 @@
       gap,
       /* r6 (sugestia do Q151): osiągnięty poziom w panelu końca gry klasycznej. */
       o.mode !== 'daily' && o.level ? h('div', { 'class': 'bg-over-level', 'data-element-id': p + 'level' }, BG.fmt(S.over_level, { n: o.level, name: S.motifs[o.motif] })) : null,
+      /* r7.3 (Q364, Q365): w grze klasycznej kropelki kwiatka (0–2) przechodzą do następnej gry — panel pokazuje zebrane krople
+         i „2 z 3 kropelek — dokończ w następnej grze”, gdy są; wyzwanie dnia ma własny kwiatek od zera w każdym podejściu (bez wiersza). */
+      o.mode !== 'daily' && o.drops > 0 ? h('div', { 'class': 'bg-over-drops', 'data-element-id': p + 'drops' },
+        h('span', { 'class': 'bg-drops', 'aria-hidden': 'true' }, [0, 1, 2].map(function (i) { return h('span', { 'class': 'bg-drop', html: BG.dropSVG(i < o.drops) }); })),
+        h('span', {}, BG.fmt(S.over_drops, { d: o.drops }))) : null,
       o.mode === 'daily' ? h('div', { 'class': 'bg-daily-info', 'data-element-id': p + 'daily-info', 'data-variant': o.dailyInfo }, BG.icon('calendar', 20), o.dailyInfo === 'new-available' ? S.daily_new_available : S.daily_until_midnight) : null,
       h('div', { 'class': 'bg-actions' }, again, home));
     return o.scrim === false ? card : h('div', { 'class': 'bg-scrim' }, card);
@@ -523,7 +646,11 @@
   /* r5 (Q135–Q139): animacje. Czasy i krzywe: responsive-spec.md, sekcja „Ruch”. Każda animacja leży na warstwie efektów
      albo na klasie elementu, którą zdejmuje timer — stan gry jest już końcowy, więc animacje nie blokują gry (Q136).
      reduced = prefers-reduced-motion: wyłącznie zmiana przezroczystości do 150 ms. mode=capture: animacji nie ma. */
-  BG.MOTION = { settle: 150, bloom: 450, mono: 600, pop: 250, countUp: 400, deal: 240, dealStep: 80, praise: 800, rain: 1000, dim: 300, step: 1500, fade: 150, levelUp: 1500, crossfade: 800, emptyGarden: 2500, emptyWave: 60, emptyCount: 1500, emptyDeal: 1900, emptyLevelDelay: 1500, grow: 300, wither: 400 };
+  /* r7.3 (Q360, Q366, Q367): card — czas karty komunikatu z BG.cardMs (korekta Q366: 2000–3400 ms, min. 2000; card to wartość domyślna),
+     zanik 300 ms na końcu; wejście i efekt własne dla karty (CSS .bg-mcard[data-art]). emptyGarden 2500, emptyWave usunięte (bez płatków na polach). Usunięte: praise 800, levelUp 1500, wither 400,
+     cardDelay, fullWatering 3000, fullGrow, skip (święto pełnego podlania i jego pominięcie). */
+  BG.MOTION = { settle: 150, bloom: 450, mono: 600, pop: 250, countUp: 400, deal: 240, dealStep: 80, rain: 1000, dim: 300, step: 1500, fade: 150, crossfade: 800, emptyCount: 1500, emptyDeal: 1900, emptySkip: 600, grow: 300,
+    card: 2000, cardIn: 250, cardOut: 300, cardPraise: 350 };
   BG.fx = {
     reduced: function () { return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); },
     /* Klasa animacji na elemencie, zdejmowana po czasie (restart przy powtórzeniu). */
@@ -555,7 +682,7 @@
         }
       });
     },
-    /* (3) Linia jednego koloru: złoty błysk przesuwa się wzdłuż linii, plakietka „×2” podskakuje; 600 ms (jeden błysk na linię). */
+    /* (3) Linia jednego koloru: złoty błysk przesuwa się wzdłuż linii; 600 ms (jeden błysk na linię). Korekta Q366 (Lider): bez plakietki „+500” po ruchu — premię pokazuje karta 3. */
     sweep: function (board, line, S, reduced) {
       var g = board.geo, pitch = g.cell + g.gap, start = g.pad + g.gap, len = 8 * g.cell + 7 * g.gap;
       var box = line.kind === 'row' ? { left: start, top: start + line.index * pitch, width: len, height: g.cell } : { left: start + line.index * pitch, top: start, width: g.cell, height: len };
@@ -563,9 +690,6 @@
         var sw = h('div', { 'class': 'fx-sweep is-' + line.kind, style: { left: box.left + 'px', top: box.top + 'px', width: box.width + 'px', height: box.height + 'px', animationDuration: BG.MOTION.mono + 'ms' } });
         board.fx.append(sw); setTimeout(function () { sw.remove(); }, BG.MOTION.mono + 40);
       }
-      var bp = board.badgePos(line);
-      var bd = h('span', { 'class': 'bg-badge is-' + line.kind + (reduced ? ' fx-fadeout' : ' fx-badge'), style: { left: bp.x + 'px', top: bp.y + 'px', animationDuration: (reduced ? BG.MOTION.fade : BG.MOTION.mono) + 'ms' } }, S.bonus_badge);
-      board.fx.append(bd); setTimeout(function () { bd.remove(); }, (reduced ? BG.MOTION.fade : BG.MOTION.mono) + 40);
     },
     /* (4) Plakietka serii wyskakuje, 250 ms. */
     pop: function (el, reduced) { if (reduced) BG.fx.fade(el); else BG.fx.play(el, 'fx-pop', BG.MOTION.pop); },
@@ -586,54 +710,56 @@
     deal: function (pieces, reduced) {
       pieces.forEach(function (pe, i) { if (!pe) return; if (reduced) BG.fx.fade(pe); else BG.fx.play(pe, 'fx-deal', BG.MOTION.deal, i * BG.MOTION.dealStep); });
     },
-    /* Pochwała (Q139): nad środkiem planszy, 800 ms; najwyżej jedna na ruch. */
-    /* Pochwała (r7, Q233): szczebel 4 („Rajski ogród!”) z rozbłyskiem płatków wokół pigułki; reduced-motion: tylko przezroczystość. */
-    praise: function (host, el, reduced) {
+    /* r7.3: karta ruchu (Q340) — wejście 250 ms (8 px w górę, skala 0,96 → 1; pochwała w niej wyskakuje 0,7 → 1,08 → 1 w 350 ms),
+       postój, zanik w ostatnich 300 ms; razem 2400 ms. Przy „Rajski ogród!” rozbłysk 16 płatków z pochwały. Zwraca uchwyt { el, stop }:
+       stop() zdejmuje kartę od razu (zastąpienie kartą następnego ruchu, bez kolejki). reduced-motion: tylko przezroczystość 150 ms. */
+    card: function (host, el, reduced, place, onEnd) {
       host.append(el);
-      el.classList.add(reduced ? 'fx-praise-reduced' : 'fx-praise');
-      if (!reduced && el.getAttribute('data-variant') === 'paradise') {
-        var burst = BG.petalBurst(16); host.append(burst);
-        setTimeout(function () { burst.remove(); }, BG.MOTION.praise + 40);
-      }
-      setTimeout(function () { el.remove(); }, BG.MOTION.praise + 40);
+      if (place) place(el);
+      /* Korekta Q366: każda karta ma własne wejście i efekt (klasa is-play, CSS .bg-mcard[data-art]) i własny czas (data-duration-ms);
+         w ostatnich 300 ms klasa is-play schodzi (ilustracja w klatce szczytowej) i karta gaśnie. reduced-motion: tylko przezroczystość 150 ms. */
+      el.classList.add(reduced ? 'fx-card-in-reduced' : 'is-play');
+      var M = BG.MOTION, timers = [], ms = +el.getAttribute('data-duration-ms') || M.card;
+      var outAt = ms - (reduced ? M.fade : M.cardOut);
+      timers.push(setTimeout(function () { el.classList.remove('is-play'); el.classList.add(reduced ? 'fx-card-out-reduced' : 'fx-card-out'); }, outAt));
+      var end = function () { timers.forEach(clearTimeout); el.remove(); if (onEnd) onEnd(); };
+      timers.push(setTimeout(end, ms + 20));
+      /* skip(): pominięcie stuknięciem (Pusta grządka, Q241) — karta znika od razu i rusza następny krok kolejki. */
+      return { el: el, ms: ms, stop: function () { timers.forEach(clearTimeout); el.remove(); }, skip: end };
     },
     /* Podlewanie: nowy stopień — skok i rozbłysk 300 ms; utrata — więdnięcie i opadnięcie 400 ms, potem usunięcie. */
     grow: function (el, reduced) {
       if (reduced) { BG.fx.fade(el); return; }
       BG.fx.play(el, 'fx-grow', BG.MOTION.grow);
     },
-    wither: function (el, reduced) {
-      if (reduced) { BG.fx.play(el, 'fx-fadeout', BG.MOTION.fade); setTimeout(function () { el.remove(); }, BG.MOTION.fade); return; }
-      el.classList.add('fx-wither');
-      setTimeout(function () { el.remove(); }, BG.MOTION.wither);
-    },
+    /* r7.3 (Q358, Q362): więdnięcie (wither) usunięte — kwiatek nie traci kropelek. */
     /* (12) Święto Pustej grządki (r7, ok. 2,5 s, największe w grze): rozkwit planszy falą od środka, płatki przez cały ekran, duża pochwała
        „Pusta grządka! +2500” z doliczaniem wyniku (1,5 s); o.after() po napisie (wjazd nowej trójki, 1,9 s).
        reduced-motion: bez fali i lotu płatków — płatki na planszy i pochwała tylko przezroczystość, wynik od razu. */
-    emptyGarden: function (board, pill, reduced, o) {
+    /* r7.3 (Q366, Q367, korekta Q366): święto Pustej grządki to karta 4 w kolejce. Poza kartą nie ma efektów (bez płatków na polach,
+       napisu na planszy i płatków przez ekran); zostaje zwykły rozkwit czyszczonych linii, doliczanie wyniku (1500 ms) i pauza trójki
+       (Q241, wyjątek od Q136): nowa trójka pojawia się po 1900 ms, także przy reduced-motion (Q254); stuknięcie albo klik w ekran gry
+       po 600 ms kończy pauzę od razu (o.skip — karta 4 znika i rusza następny krok kolejki). */
+    emptyGarden: function (board, cleared, colorOf, reduced, o) {
       o = o || {};
-      var layer = BG.emptyBloomFrame(board);
-      [].forEach.call(layer.children, function (p) {
-        var x = parseFloat(p.style.left), y = parseFloat(p.style.top), c = board.geo.boardW / 2;
-        var ring = Math.round(Math.max(Math.abs(x - c), Math.abs(y - c)) / (board.geo.cell + board.geo.gap));
-        p.style.animationDelay = reduced ? '0ms' : (ring * BG.MOTION.emptyWave) + 'ms';
-        p.classList.add(reduced ? 'fx-fade' : 'fx-empty-petal');
-      });
-      board.fx.append(layer);
-      board.el.append(pill);
-      pill.classList.add(reduced ? 'fx-empty-reduced' : 'fx-empty');
-      var rain = null;
-      if (o.screen && !reduced) { rain = BG.screenPetals(28, true); rain.style.setProperty('--fall', (o.screen.offsetHeight + 60) + 'px'); o.screen.append(rain); }
+      if (cleared.length) BG.fx.bloom(board, cleared, colorOf, reduced, BG.MOTION.bloom);
       if (o.score) BG.fx.countUp(o.score, o.from, o.to, reduced, BG.MOTION.emptyCount);
-      if (o.after) setTimeout(o.after, BG.MOTION.emptyDeal); /* r7.2 (Q254): pauza święta także przy reduced-motion */
-      setTimeout(function () { layer.remove(); pill.remove(); if (rain) rain.remove(); }, BG.MOTION.emptyGarden + 40);
+      var t0 = Date.now(), done = false, tm = null, host = o.screen;
+      var release = function (tapped) {
+        if (done) return; done = true; clearTimeout(tm);
+        if (host) { host.removeEventListener('pointerdown', onTap, true); ['data-interaction-id', 'data-action', 'data-expected-effect'].forEach(function (k) { host.removeAttribute(k); }); }
+        if (o.after) o.after();
+        if (tapped && o.skip) o.skip();
+      };
+      var onTap = function () { if (Date.now() - t0 >= BG.MOTION.emptySkip) release(true); };
+      if (host) {
+        host.addEventListener('pointerdown', onTap, true);
+        host.setAttribute('data-interaction-id', 'interaction.game.empty-garden-skip'); host.setAttribute('data-action', 'tap / klik w ekran gry (po 600 ms)');
+        host.setAttribute('data-expected-effect', 'kończy pauzę Pustej grządki: karta „Pusta grządka!” znika, nowa trójka wjeżdża od razu, rusza następna karta kolejki');
+      }
+      tm = setTimeout(function () { release(false); }, BG.MOTION.emptyDeal);
     },
-    /* (10) Awans (Q150, Q188): plakietka poziomu na wyniku (nie na planszy ani trójce), 1,5 s. */
-    levelUp: function (host, el, reduced) {
-      host.append(el);
-      el.classList.add(reduced ? 'fx-levelup-reduced' : 'fx-levelup');
-      setTimeout(function () { el.remove(); }, BG.MOTION.levelUp + 40);
-    },
+    /* r7.3 (Q366, Q367): święto pełnego podlania (warstwy, napis, pominięcie stuknięciem) usunięte — karta 6 i rozkwit kwiatka (BG.fwPill). */
     /* (11) Przenikanie tła przy awansie (Q150): stare tło na warstwie nad tłem powierzchni gaśnie w 800 ms (reduced: 150 ms). */
     crossfade: function (surface, setNew, reduced) {
       var old = h('div', { 'class': 'bg-bgfade', 'aria-hidden': 'true' });
@@ -665,9 +791,56 @@
     var g = o.geo, S = o.S, loc = o.loc, st = o.state, next = R.rng(o.seed), surface = o.surface, ids = o.ids;
     var board = o.board, tray = o.tray, scoreApi = o.score, strip = o.strip;
     var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var busy = false, drag = null, pointsTimer = null;
+    var busy = false, drag = null;
+    /* r7.3: w pasku zostaje tylko Podlewanie; punkty ruchu są w karcie ruchu (o.card: { host, place(el) }; bez o.card karta stoi pod paskiem). */
     var comboHost = h('div', { 'class': 'bg-strip-left' }), pointsHost = h('div', { 'class': 'bg-strip-right' });
     strip.replaceChildren(comboHost, pointsHost);
+    var cardCfg = o.card || { host: pointsHost, place: null }, cardNow = null, fwNow = null;
+    var cardIds = o.cardIds || { card: ids.card || 'element.game.move-card', praise: ids.praise || 'element.game.praise', points: ids.points, drops: ids.drops || 'element.game.drops-gain', level: ids.level || 'element.game.level-up', record: ids.record || 'element.game.new-record' };
+    /* r7.3 (Q356, Q360, Q366): kolejka komunikatów — każdy krok to ta sama karta (2000 ms), nigdy kilka naraz; kroki następnego
+       ruchu dołączają na koniec kolejki; gra się nie zatrzymuje. Kropelki w pigułce zmieniają się, gdy zaczyna się krok kropelek;
+       w kroku „Pełne podlanie!” kwiatek wskaźnika rozkwita (BG.fwPill) przez czas karty, potem zaczyna od nowa;
+       nowy poziom (tło, etykieta) — gdy zaczyna się krok poziomu (o.onLevelStep). */
+    var queue = [], running = false;
+    function cardEl(spec) { return BG.moveCard({ S: S, loc: loc, step: spec.step, praise: spec.praise, points: spec.points, gain: spec.gain, dropsAfter: spec.dropsAfter, count: spec.count, score: spec.score, level: spec.level, ids: cardIds }); }
+    function enqueue(steps) { queue = queue.concat(steps); if (!running) nextStep(); }
+    function nextStep() {
+      cardNow = null;
+      var s = queue.shift();
+      if (!s) { running = false; return; }
+      running = true;
+      var after = nextStep, el = cardEl(s), ms = +el.getAttribute("data-duration-ms");
+      if (s.step === 'full') {
+        paintCombo(3, false);
+        var rs = BG.fwPill(comboHost.firstChild, reduced ? "reduced" : "anim", [], ms);
+        fwNow = { stop: function () { rs(); fwNow = null; } };
+        after = function () { if (fwNow) fwNow.stop(); paintCombo(s.dropsAfter, true); nextStep(); };
+      }
+      if (s.step === 'drops') paintCombo(s.dropsAfter, true);
+      if (s.step === 'level' && o.onLevelStep) o.onLevelStep(s.level.n);
+      cardNow = BG.fx.card(cardCfg.host, el, reduced, cardCfg.place, after);
+    }
+    /* Stała klatka (capture i stany bez odtwarzania): jeden krok kolejki; w user_preview znika po swoim czasie. */
+    function showStatic(spec) {
+      var el = cardEl(spec);
+      cardCfg.host.append(el); if (cardCfg.place) cardCfg.place(el);
+      cardNow = { el: el, stop: function () { el.remove(); } };
+      if (o.animate) { var tm = setTimeout(function () { el.classList.add(reduced ? 'fx-card-out-reduced' : 'fx-card-out'); setTimeout(function () { el.remove(); }, BG.MOTION.cardOut); }, (+el.getAttribute("data-duration-ms") || BG.MOTION.card) - BG.MOTION.cardOut);
+        cardNow.stop = function () { clearTimeout(tm); el.remove(); }; }
+    }
+    /* Karta przygasa, gdy przeciągany klocek jest nad obszarem pod nią (Q348): podgląd i wyróżnienie linii (R-1.4) zostają czytelne. */
+    function dimCard(gh) {
+      var el = cardNow && cardNow.el; if (!el || !el.isConnected) return;
+      var on = false;
+      if (gh) { var a = gh.getBoundingClientRect(), b = el.getBoundingClientRect(); on = a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top; }
+      el.classList.toggle('is-dimmed', on);
+    }
+    /* Stała klatka kroku „Pełne podlanie!”: kwiatek wskaźnika w szczycie rozkwitu (r7.3, Q367: bez osobnego święta). */
+    function fullWatering(still) {
+      if (fwNow) fwNow.stop();
+      var rs = BG.fwPill(comboHost.firstChild, 'still', []);
+      fwNow = { stop: function () { rs(); fwNow = null; } };
+    }
 
     function expected(i) {
       return 'przeciąganie: klocek w rozmiarze pól planszy (dotyk: nad palcem); nad miejscem, gdzie się mieści, podświetla pola i linie do wyczyszczenia (×2 inaczej); puszczenie tam kładzie klocek, inaczej wraca do slotu ' + (i + 1);
@@ -677,16 +850,14 @@
       if (o.interactive) pe.addEventListener('pointerdown', function (e) { start(e, i, pe); });
       return pe;
     }
-    /* r7: Podlewanie — nowy stopień rośliny: skok i rozbłysk (300 ms); utrata serii: roślina więdnie i opada (400 ms). */
-    function paintCombo(bump) {
+    /* r7.3: Podlewanie — kwiatek z kropelkami (0–3); nowy stopień: skok i rozbłysk (300 ms), ten sam stopień: podbicie (250 ms). */
+    var shownDrops = st.drops || 0;
+    function paintCombo(d, bump) {
       var old = comboHost.firstChild, oldStage = old ? +old.getAttribute('data-stage') : 0;
-      var cb = BG.comboBadge({ c: st.combo, S: S, dry: st.dry, elementId: ids.combo });
-      if (!cb && old && o.animate) { BG.fx.wither(old, reduced); return; }
-      comboHost.replaceChildren();
-      if (cb) {
-        comboHost.append(cb);
-        if (bump && o.animate) { if (+cb.getAttribute('data-stage') > oldStage) BG.fx.grow(cb, reduced); else BG.fx.pop(cb, reduced); } /* (4) */
-      }
+      shownDrops = d;
+      var cb = BG.comboBadge({ drops: d, S: S, elementId: ids.combo });
+      comboHost.replaceChildren(cb);
+      if (bump && o.animate) { if (+cb.getAttribute('data-stage') !== oldStage) BG.fx.grow(cb, reduced); else BG.fx.pop(cb, reduced); }
     }
     var staticGhost = null, staticView = false;
     /* Widok stanu z fixture: zwykła plansza, klatka czyszczenia (frame) albo statyczne przeciąganie (drag). */
@@ -696,55 +867,28 @@
       else board.render(st.board, {});
       tray.render(st.tray, makePiece);
       scoreApi.set(st.score);
-      paintCombo(false);
-      if (v.points) showPoints(v.points, false);
+      paintCombo(v.drops != null ? v.drops : (st.drops || 0), false);
+      if (v.card) showStatic(v.card);
       if (v.drag) staticDrag(v.drag);
       staticView = !!(v.frame || v.drag);
     }
     /* Pierwsza interakcja w user_preview zastępuje statyczną klatkę stanem gry. */
     function clearStatic() {
       if (!staticView) return;
-      staticView = false;
-      if (staticGhost) { staticGhost.remove(); staticGhost = null; }
+      staticView = false; staticGone = true;
+      if (staticGhost) { staticGhost.remove(); staticGhost = null; dimCard(null); }
+      if (fwNow && (o.view || {}).fullWatering) { fwNow.stop(); fwNow = null; }
       board.render(st.board, {});
       tray.render(st.tray, makePiece);
     }
-    /* (5) Punkty ruchu unoszą się i zostają widoczne do następnego położenia (r5; w r4 znikały po 1,4 s). */
-    var shownPoints = null;
-    function showPoints(p, live) {
-      pointsHost.replaceChildren();
-      shownPoints = p;
-      var mp = BG.movePoints({ points: p, S: S, loc: loc, elementId: ids.points });
-      if (!mp) return;
-      pointsHost.append(mp);
-      fitPoints();
-      if (live) { if (reduced) BG.fx.fade(mp); else BG.fx.play(mp, 'fx-rise', 300); }
+    /* r7.3: punkty ruchu z dopiskami w pasku (r5–r7.2, reguła Q203 i zwarte Podlewanie is-tight na pasku) zastąpiła karta ruchu.
+       Stała klatka święta (capture) liczy położenia z gotowego układu, więc powstaje w layout(). */
+    function relayout() {
+      if (cardNow && cardNow.el.isConnected && cardCfg.place) cardCfg.place(cardNow.el);
+      if ((o.view || {}).fullWatering && !staticGone) fullWatering(true);
+      if (staticGhostPos) staticGhostPos();
     }
-    /* r6 (Q203): tabliczka punktów pokazuje sumę i dopiski serii i koloru, gdy się mieszczą; gdy nie — zostaje jeden dopisek,
-       ten o większej wartości. Miejsce: pasek pod wynikiem (telefony), połowa wiersza wyniku (niskie okno, Q199). */
-    /* r7: najpierw zwarte Podlewanie (krople w kolumnie, mniejsza roślina, klasa is-tight na pasku), dopiero potem jeden dopisek. */
-    function fitPoints() {
-      strip.classList.remove('is-tight');
-      var mp = pointsHost.firstChild, p = shownPoints;
-      if (!mp || !p || !p.combo || !p.mono || !mp.getClientRects().length) return;
-      var merged = !!surface.closest('[data-layout=phone-merged]');
-      var row = (merged ? strip.parentNode : strip).getBoundingClientRect();
-      var scEl = merged && strip.parentNode.querySelector('.bg-score'), scr = scEl && scEl.getBoundingClientRect();
-      var hit = function (a, b, m) { return b && a.left < b.right + m && a.right > b.left - m && a.top < b.bottom && a.bottom > b.top; };
-      var isBad = function () {
-        var r = mp.getBoundingClientRect(), cb = comboHost.firstChild && comboHost.firstChild.getBoundingClientRect();
-        /* 14 px: tabliczka punktów wystaje 12 px w bok, zostają 2 px do pigułki Podlewania. */
-        return r.right > row.right + 0.5 || r.left < row.left - 0.5 || hit(r, cb, 14) || hit(r, scr, 14) || (!g.wide && !merged && r.height > 36.5) || (merged && r.height > 58.5);
-      };
-      if (!isBad()) return;
-      if (!g.wide && comboHost.firstChild) { strip.classList.add('is-tight'); if (!isBad()) return; }
-      var q = {}; for (var k in p) q[k] = p[k];
-      if (p.combo >= p.mono) q.mono = 0; else q.combo = 0;
-      pointsHost.replaceChildren(BG.movePoints({ points: q, S: S, loc: loc, elementId: ids.points }));
-      mp = pointsHost.firstChild;
-      strip.classList.remove('is-tight');
-      if (isBad() && !g.wide && comboHost.firstChild) strip.classList.add('is-tight');
-    }
+    var staticGone = false, staticGhostPos = null;
 
     function local(e) {
       var r = surface.getBoundingClientRect(), k = r.width / surface.offsetWidth;
@@ -766,9 +910,10 @@
     }
     /* Statyczne przeciąganie (stany capture): klocek narysowany nad polami docelowymi, bez wskaźnika (R-1.8: palec jest pod klockiem). */
     function staticDrag(d) {
-      var p = st.tray[d.slot], sh = R.shape(p.shape), a = R.analyze(st.board, sh, p.color, d.row, d.col);
+      /* r7.3: d.carry — klocek niesiony poza planszą (bez podglądu), np. nad kartą ruchu (game.dragging-under-card). */
+      var p = st.tray[d.slot], sh = R.shape(p.shape), a = d.carry ? null : R.analyze(st.board, sh, p.color, d.row, d.col);
       tray.pieces[d.slot].setAttribute('data-variant', 'lifted');
-      board.render(st.board, { preview: a, previewColor: p.color });
+      board.render(st.board, a ? { preview: a, previewColor: p.color } : {});
       var gh = ghostFor(p); surface.append(gh); staticGhost = gh;
       var pos = function () {
         var sr = surface.getBoundingClientRect(), k = sr.width / surface.offsetWidth, gr = board.grid.getBoundingClientRect();
@@ -776,6 +921,7 @@
         /* Klocek podąża za palcem bez przyciągania; w klatce stoi 0,3 pola w lewo i w górę od pól docelowych, które pozostają widoczne. */
         gh.style.left = ((gr.left - sr.left) / k + g.gap + (d.col - 0.3) * pitch) + 'px';
         gh.style.top = ((gr.top - sr.top) / k + g.gap + (d.row - 0.3) * pitch) + 'px';
+        dimCard(gh);
       };
       o.afterLayout = pos;
     }
@@ -807,6 +953,7 @@
       if (!drag || e.pointerId !== drag.id) return;
       var L = local(e), tl = { x: L.x - drag.off.x, y: L.y - drag.off.y };
       drag.gh.style.left = tl.x + 'px'; drag.gh.style.top = tl.y + 'px';
+      dimCard(drag.gh);
       drag.hit = locate(tl, drag.origin, drag.sh, drag.p);
       board.render(st.board, drag.hit ? { preview: drag.hit.a, previewColor: drag.p.color } : {});
     }
@@ -817,6 +964,7 @@
       d.pe.removeEventListener('pointercancel', cancel);
       d.pe.removeEventListener('lostpointercapture', cancel);
       d.gh.remove();
+      dimCard(null);
       return d;
     }
     function cancel(e) {
@@ -835,17 +983,18 @@
     /* r5: stan po ruchu jest od razu końcowy (plansza po czyszczeniu, nowa trójka, wynik), a animacje grają na warstwie efektów (Q136). */
     function commit(res, x) {
       x = x || {};
-      var mv = res.move, before = st.score, prevCombo = st.combo;
+      var mv = res.move, before = st.score;
       st = res.state;
       board.render(st.board, {});
       tray.render(st.tray, makePiece);
       var anim = !!o.animate;
       if (anim && x.emptyGarden) {
-        /* r7: święto Pustej grządki (stan z danymi premii) — zamiast pochwały; nowa trójka wjeżdża po napisie. */
+        /* r7 / korekta Q366: Pusta grządka (stan z danymi premii) — komunikat to karta 4; nowa trójka po 1900 ms albo po stuknięciu (od 600 ms). */
         var hid = tray.pieces.filter(Boolean); hid.forEach(function (pe) { pe.style.visibility = 'hidden'; });
         BG.fx.settle(mv.cells.map(function (i) { return board.cells[i]; }).filter(Boolean), reduced);
-        BG.fx.emptyGarden(board, BG.emptyGarden({ S: S, loc: loc, n: x.emptyGarden, elementId: ids.praise || 'element.game.praise' }), reduced,
-          { screen: surface, score: scoreApi, from: before, to: st.score, after: function () { hid.forEach(function (pe) { pe.style.visibility = ''; }); if (mv.dealt) BG.fx.deal(tray.pieces, reduced); } });
+        BG.fx.emptyGarden(board, mv.clearedCells, function (i) { return mv.placedBoard[i]; }, reduced,
+          { screen: surface, score: scoreApi, from: before, to: st.score, after: function () { hid.forEach(function (pe) { pe.style.visibility = ''; }); if (mv.dealt) BG.fx.deal(tray.pieces, reduced); },
+            skip: function () { if (cardNow && cardNow.el.getAttribute('data-art') === '4' && cardNow.skip) cardNow.skip(); } });
       } else if (anim) {
         var cleared = {}; mv.clearedCells.forEach(function (i) { cleared[i] = true; });
         BG.fx.settle(mv.cells.filter(function (i) { return !cleared[i]; }).map(function (i) { return board.cells[i]; }), reduced);       /* (1) */
@@ -853,14 +1002,18 @@
         if (mv.clearedCells.length) BG.fx.bloom(board, mv.clearedCells, function (i) { return mv.placedBoard[i]; }, reduced, monoLines.length ? BG.MOTION.mono : BG.MOTION.bloom); /* (2) */
         monoLines.forEach(function (l) { BG.fx.sweep(board, l, S, reduced); });                                                   /* (3) */
         if (mv.dealt) BG.fx.deal(tray.pieces, reduced);                                                                          /* (7) */
-        /* r6 (Q188): plakietka awansu stoi na wyniku, pochwała nad planszą — przy awansie i pochwale w jednym ruchu obie naraz, w różnych miejscach. */
-        /* r7 (Q233, Q234): wariant pochwały według pierwszeństwa i siły ruchu; Pustą grządkę pokazuje stan (punktacji prototyp nie liczy). */
-        var pv = mv.points.cleared > 0 ? BG.praiseFor(mv, st.combo, false) : null;
-        if (pv) BG.fx.praise(board.el, BG.praise({ S: S, variant: pv, elementId: ids.praise || 'element.game.praise' }), reduced);
         BG.fx.countUp(scoreApi, before, st.score, reduced);                                                                      /* (6) */
       } else scoreApi.set(st.score);
-      paintCombo(anim && st.combo > prevCombo);
-      if (mv.points.cleared > 0) showPoints(mv.points, anim); else pointsHost.replaceChildren();
+      /* r7.3 (Q356, Q360): kroki tego ruchu na koniec kolejki komunikatów (najwyżej 4: punkty → kropelki albo Pełne podlanie → rekord → poziom). */
+      var ms = o.milestones ? o.milestones(st, before, x) : {};
+      ms.empty = x.emptyGarden || 0;
+      var steps = BG.stepsFor(mv, ms);
+      /* r7.3 (Q366, Q367): Pusta grządka to karta 4 jak każda inna — kolejka startuje od razu. */
+      if (anim) enqueue(steps);
+      else {
+        paintCombo(st.drops || 0, false);
+        if (ms.level && o.onLevelStep) o.onLevelStep(ms.level.n);
+      }
       if (o.onMove) o.onMove(st, before, x);
       /* Koniec gry (Q128): krok końca zaczyna się po animacji ruchu. */
       if (st.over && o.onOver) {
@@ -879,7 +1032,8 @@
       if (x.emptyGarden) { res.state.score += x.emptyGarden; res.move.points = Object.assign({}, res.move.points, { total: res.move.points.total + x.emptyGarden }); }
       commit(res, x);
     }
-    return { get state() { return st; }, playMove: playMove, layout: function () { fitPoints(); if (o.afterLayout) o.afterLayout(); } };
+    staticGhostPos = function () { if (o.afterLayout) o.afterLayout(); };
+    return { get state() { return st; }, playMove: playMove, layout: relayout };
   };
 
   /* Pasek narzędzi podglądu (standard paczki) — narzędzie prototypu poza element.product-work-surface; tylko user_preview i katalog. */

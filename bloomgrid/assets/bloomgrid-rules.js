@@ -65,13 +65,16 @@
   }
 
   /* Punkty ruchu: R-2.1 (pola), R-2.2 (80·k za linię), R-2.4 (×2 za linię jednego koloru), R-2.3 (seria). */
-  function score(cellsPlaced, lines, combo, dry) {
-    var k = lines.length, base = 0, mono = 0, comboBonus = 0;
-    /* r7 (Q234): „kolorowa rabata” — +500 za każdą linię jednego koloru (zastępuje ×2 z R-2.4); model prototypu, punktację wdraża aplikacja. */
+  /* r7.3 (Q355–Q359, Q362): Podlewanie = kropelki. Ruch, który czyści L linii naraz, daje L − 1 kropelek (1 linia: 0). Kropelki zbierają
+     się między ruchami i nie znikają (puste ruchy nic nie zabierają). Każde 3 kropelki = „Pełne podlanie” (+500), nadmiar przechodzi dalej.
+     Usunięte: seria ×c, premia 50·c, „zapas wody” i jego utrata po 3 pustych ruchach. Model prototypu, punktację wdraża aplikacja. */
+  var FULL_BONUS = 500;
+  function score(cellsPlaced, lines, drops) {
+    var k = lines.length, base = 0, mono = 0;
+    /* r7 (Q234): „kolorowa rabata” — +500 za każdą linię jednego koloru (zastępuje ×2 z R-2.4). */
     lines.forEach(function (l) { base += 80 * k; if (l.mono) mono += 500; });
-    if (k > 0) { combo += 1; dry = 0; if (combo >= 2) comboBonus = 50 * combo; }
-    else { dry += 1; if (dry >= 3) { combo = 0; dry = 0; } }
-    return { place: cellsPlaced, lines: base, mono: mono, combo: comboBonus, total: cellsPlaced + base + mono + comboBonus, comboAfter: combo, dryAfter: dry, cleared: k };
+    var gain = Math.max(0, k - 1), sum = (drops || 0) + gain, full = Math.floor(sum / 3), bonus = FULL_BONUS * full;
+    return { place: cellsPlaced, lines: base, mono: mono, full: bonus, fullCount: full, dropsGain: gain, dropsBefore: drops || 0, total: cellsPlaced + base + mono + bonus, dropsAfter: sum % 3, cleared: k };
   }
 
   function rng(seed) {
@@ -100,14 +103,14 @@
     if (!p) return null;
     var sh = BY_ID[p.shape], a = analyze(state.board, sh, p.color, r, c);
     if (!a) return null;
-    var pts = score(sh.cells.length, a.lines, state.combo, state.dry);
+    var pts = score(sh.cells.length, a.lines, state.drops);
     var board = a.next.slice(), cleared = {};
     a.lines.forEach(function (l) { l.cells.forEach(function (i) { cleared[i] = true; }); });
     Object.keys(cleared).forEach(function (i) { board[i] = null; });
     var tray = state.tray.slice(); tray[slot] = null;
     var dealt = false;
     if (tray.every(function (t) { return !t; })) { tray = deal(next); dealt = true; }
-    var s2 = { board: board, tray: tray, score: Math.min(9999999, state.score + pts.total), combo: pts.comboAfter, dry: pts.dryAfter };
+    var s2 = { board: board, tray: tray, score: Math.min(9999999, state.score + pts.total), drops: pts.dropsAfter };
     s2.over = isOver(board, tray);
     return { state: s2, move: { cells: a.cells, lines: a.lines, clearedCells: Object.keys(cleared).map(Number), points: pts, dealt: dealt, placedBoard: a.next } };
   }
