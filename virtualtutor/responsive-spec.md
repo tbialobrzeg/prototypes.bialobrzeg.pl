@@ -1,6 +1,6 @@
-# VirtualTutor V4 - responsive-spec R10 (R12-RC2)
+# VirtualTutor V4 - responsive-spec R10 (R12-RC3)
 
-- **Rewizja:** `VT-VIRTUALTUTOR-PROTOTYPE-R12-RC2` · **Baza:** `VT-VIRTUALTUTOR-PROTOTYPE-R12-RC1` (R12-RC2 zmienia wyłącznie mechanizm przełączania stanów w podglądzie; układ i wygląd jak w R12-RC1) (geometria targetów bez zmian; RC11: §5.21 jakość głosu; RC7: §5.2 meta, §5.7 licznik, §5.8 szerokości; RC8: §5.18 tryb i temat w kompozytorze; RC9: §5.19 dzienny czas rozmowy; RC10: §5.20 strona WWW `landing`) · **Status:** kandydat do odbioru.
+- **Rewizja:** `VT-VIRTUALTUTOR-PROTOTYPE-R12-RC3` · **Baza:** `VT-VIRTUALTUTOR-PROTOTYPE-R12-RC2` (R12-RC3 zmienia wyłącznie sposób ładowania: zdjęcia w `assets/tutors/`, jedno pobranie `index.html`; układ i wygląd jak w R12-RC2) (geometria targetów bez zmian; RC11: §5.21 jakość głosu; RC7: §5.2 meta, §5.7 licznik, §5.8 szerokości; RC8: §5.18 tryb i temat w kompozytorze; RC9: §5.19 dzienny czas rozmowy; RC10: §5.20 strona WWW `landing`) · **Status:** kandydat do odbioru.
 - **Target (R10):** `target_id` = `targets[].target_id`. W `mode=capture` klasa układu (§2) wynika z `targets[].width` jawnego targetu, nie z okna przeglądarki; środowisko capture ustawia viewport na `targets[].width × height` targetu.
 - **Zakres R9:** (1) `advertisement-screen` pełnoekranowy (§5.13); (2) komponenty dynamiczne z regułami ruchu i klatką capture (§5.16); (3) własne ikony SVG zamiast znaków Unicode/emoji (§5.17); (4) usunięte wejście ekranu (fade 0,4–0,5 s). Pozostała geometria, kolejność, widoczność i minima bez zmian względem R8-RC2. `capture_surface` bez zmian (§1.1).
 - **Targety:** `targets[]` manifestu zawiera pięć targetów produktu (`target_id`, `width`, `height`).

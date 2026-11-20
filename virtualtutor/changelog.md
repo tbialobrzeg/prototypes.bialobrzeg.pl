@@ -1,7 +1,25 @@
-# changelog - VT-VIRTUALTUTOR-PROTOTYPE-R12-RC2
+# changelog - VT-VIRTUALTUTOR-PROTOTYPE-R12-RC3
 
-- **Rewizja:** `VT-VIRTUALTUTOR-PROTOTYPE-R12-RC2` · **Baza:** `VT-VIRTUALTUTOR-PROTOTYPE-R12-RC1` · **Status:** kandydat do odbioru, niezaakceptowany.
-- **Brief:** `VT-DESIGNER-BRIEF-013` (szybkie przełączanie stanów w podglądzie). Bramka pytań: „Brak pytań”.
+- **Rewizja:** `VT-VIRTUALTUTOR-PROTOTYPE-R12-RC3` · **Baza:** `VT-VIRTUALTUTOR-PROTOTYPE-R12-RC2` · **Status:** kandydat do odbioru, niezaakceptowany.
+- **Brief:** `VT-DESIGNER-BRIEF-014` (szybkie pierwsze otwarcie). Bramka pytań: „Brak pytań”.
+
+## R12-RC3 (względem R12-RC2) - sposób ładowania i noindex
+
+Zmiana wyłącznie sposobu ładowania i `noindex`. **Brak dodanych, zmienionych i usuniętych ID** (`id_migrations: []`). Wygląd, treść, logika, stany, fixture, katalog i strona WWW bez zmian.
+
+1. **Zdjęcia tutorów raz, w osobnych plikach.** 12 zdjęć w `assets/tutors/<tutor>.webp` (curie, davinci, sherlock, cleopatra, copernicus, lovelace, confucius, austen, shakespeare, earhart, robinhood, dorothy), każde raz w paczce. `index.html` i `catalog.html` odwołują się do tych samych plików (wcześniej: 12 PNG 384 px wklejonych dwa razy w `index.html`, osobne WebP 288 px na stronie WWW i kolejne kopie PNG w katalogu).
+2. **Rozdzielczość 296 × 296 px.** Największy rozmiar wyświetlania zdjęcia to kafel tutora na mac-wide: 120 × 148 px z `object-fit: cover` (kwadratowe zdjęcie skalowane do 148 px), × 2 = 296 px. Pozostałe: powitanie 124 px, strona WWW 118 px (wachlarz), 112 px (karta), 84 px i 64 px, nagłówek rozmowy 42 px. Źródło: PNG 384 px z R12-RC2, zmniejszone i zapisane jako WebP (jakość 0,9), 11-27 KB na zdjęcie.
+3. **Jedno pobranie `index.html` w podglądzie.** Ramka podglądu otwiera ten sam adres co strona, a parametry capture przekazuje po `#` (`index.html#mode=capture&state=…&target=…`). Ten sam adres = ta sama pozycja w pamięci podręcznej przeglądarki, więc ramka nie pobiera pliku drugi raz (GitHub Pages: `cache-control: max-age=600`). Dokument przyjmuje parametry capture z `?` (jak dotąd) albo, gdy `?` jest pusty, z `#mode=capture&…`. `VirtualTutorPrototype.go()` aktualizuje adres w tej samej postaci, w jakiej dokument został otwarty.
+4. **Runtime nie pobiera własnego `index.html` ponownie.** Runtime komponentów po starcie pobierał `location.href`, żeby odświeżyć szablon (narzędzie edycji). Szablon jest już w dokumencie, więc `window.__resources = {}` w `<head>` wyłącza to pobranie. Pozostałe ścieżki runtime bez zmian (brak zasobów w `__resources` = zachowanie domyślne).
+5. **`<meta name="robots" content="noindex">`** w `<head>` `index.html` i `catalog.html`.
+6. **Kontrakt capture bez zmian:** `index.html?mode=capture&state=…&target=…` otwarty bezpośrednio działa jak w R12-RC2; zdjęcia ładowane z `assets/tutors/` (ten sam origin), `data-prototype-ready` czeka na ich wczytanie jak dotąd.
+7. **Strona WWW:** treść i wygląd bez zmian; `<img src>` w bloku `vt-landing` wskazują `assets/tutors/*.webp`. Publikując blok na innej stronie, trzeba skopiować też katalog `assets/tutors/`.
+8. **Uwaga o bazie:** R12-RC3 zawiera zmianę tła ekranu szkolenia wprowadzoną w R12-RC2 na prośbę Użytkownika (domyślne tło obszaru rozmowy, zielony tylko panel nagrywania i wpisywania). Jeśli opublikowana R12-RC2 jej nie miała, to jedyna różnica wyglądu względem publikacji.
+9. **Etykiety rewizji:** `revision_id`, komentarz rewizji w `index.html`, nagłówek katalogu, `responsive-spec.md`, README.
+
+## Poprzednia rewizja: R12-RC2
+
+- **Brief:** `VT-DESIGNER-BRIEF-013` (szybkie przełączanie stanów).
 
 ## R12-RC2 (względem R12-RC1) - przełączanie stanów w podglądzie
 
@@ -11,7 +29,8 @@ Zmiana wyłącznie mechanizmu przełączania w podglądzie (`index.html` bez par
 2. **`VirtualTutorPrototype.go(state_id, target_id)`** (nowa metoda API dokumentu capture): ustawia target (`targets[].width × height`), zeruje przewinięcia i fokus, a następnie wykonuje tę samą ścieżkę co świeże otwarcie adresu capture (`debugApply`: stan początkowy komponentu + dane fixture, zatrzymanie timerów, `markReady`). Adres ramki jest aktualizowany przez `history.replaceState` na `?mode=capture&state=…&target=…` (bez nawigacji). Gdy pary stan + target nie da się przełączyć (np. stan niedostępny dla targetu), podgląd wraca do dotychczasowego przeładowania ramki.
 3. **Kontrakt capture bez zmian:** bezpośrednie otwarcie `index.html?mode=capture&state=…&target=…` działa jak w R12-RC1 (`go` nie jest wywoływane; samodzielny dokument, jeden `element.product-work-surface` z `data-prototype-ready="true"`, bez narzędzi podglądu).
 4. **Ruch na żywo w podglądzie:** po każdym przełączeniu, gdy stan jest gotowy, podgląd wznawia animacje nieskończone (`setMotionFrame(null)`), jak dotąd po załadowaniu ramki.
-5. **Etykiety rewizji:** `revision_id` w manifeście, komentarz rewizji w `index.html`, nagłówek katalogu, `responsive-spec.md`, README.
+5. **Tło ekranu szkolenia (na prośbę Użytkownika, 2026-11-16):** obszar rozmowy i karta „Ćwiczysz zdanie” w trybie szkolenia mają domyślne tło jak w zwykłej rozmowie (było zielone #E8F1E9). Zielone tło zostaje tylko w panelu nagrywania i wpisywania wiadomości. Elementy, ID i treść bez zmian.
+6. **Etykiety rewizji:** `revision_id` w manifeście, komentarz rewizji w `index.html`, nagłówek katalogu, `responsive-spec.md`, README.
 
 ## Poprzednia rewizja: R12-RC1
 

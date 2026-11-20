@@ -1,11 +1,11 @@
-# VirtualTutor V4 - prototyp VT-VIRTUALTUTOR-PROTOTYPE-R12-RC2
+# VirtualTutor V4 - prototyp VT-VIRTUALTUTOR-PROTOTYPE-R12-RC3
 
-- **Rewizja:** `VT-VIRTUALTUTOR-PROTOTYPE-R12-RC2` (ta sama w `prototype-manifest.json → revision_id`, `index.html`, `catalog.html`, `responsive-spec.md` i `changelog.md`).
-- **Baza:** `VT-VIRTUALTUTOR-PROTOTYPE-R12-RC1` (zaakceptowana, opublikowana).
-- **Brief:** `VT-DESIGNER-BRIEF-013` - szybkie przełączanie stanów w podglądzie (bramka pytań: „Brak pytań”). Wcześniej: `VT-DESIGNER-BRIEF-012`. Decyzja Użytkownika: **4a Porcelana** (po 1a Nokturn i 1c Aura), „zmień tylko wygląd, nie logikę”. Wersje Nokturn i Aura: osobne paczki `-nokturn.zip`, `-aura.zip`.
-- **Standard:** manifest v3; paczka 10 plików (wyjątek Lidera dla `assets/voice_help/*.png`, bez zmian).
-- **Status:** kandydat do odbioru, niezaakceptowany (R12-RC1 zaakceptowana i opublikowana).
-- **Zakres R12-RC2:** wyłącznie mechanizm przełączania w podglądzie: ramka ładuje `index.html` raz, a wybór stanu, strzałki i profil przełączają stan w już załadowanym dokumencie (`VirtualTutorPrototype.go`). Brak dodanych, zmienionych i usuniętych ID (`id_migrations: []`). Wygląd, treść, logika, stany, fixture, katalog i strona WWW jak w R12-RC1. Szczegóły: `changelog.md`.
+- **Rewizja:** `VT-VIRTUALTUTOR-PROTOTYPE-R12-RC3` (ta sama w `prototype-manifest.json → revision_id`, `index.html`, `catalog.html`, `responsive-spec.md` i `changelog.md`).
+- **Baza:** `VT-VIRTUALTUTOR-PROTOTYPE-R12-RC2` (zaakceptowana, opublikowana).
+- **Brief:** `VT-DESIGNER-BRIEF-014` - szybkie pierwsze otwarcie (bramka pytań: „Brak pytań”). Wcześniej: `VT-DESIGNER-BRIEF-013`, `VT-DESIGNER-BRIEF-012`.
+- **Standard:** manifest v3; paczka: 8 plików standardu + katalog `assets/` (`fixtures.json`, `voice_help/*.png`, nowy `tutors/*.webp`), razem 22 pliki.
+- **Status:** kandydat do odbioru, niezaakceptowany (R12-RC2 zaakceptowana i opublikowana).
+- **Zakres R12-RC3:** wyłącznie sposób ładowania i `noindex`: zdjęcia tutorów raz w `assets/tutors/*.webp` (296 px), ramka podglądu otwiera ten sam adres co strona (parametry po `#`), runtime nie pobiera ponownie własnego `index.html`, `<meta name="robots" content="noindex">` w `index.html` i `catalog.html`. Brak dodanych, zmienionych i usuniętych ID (`id_migrations: []`). Szczegóły: `changelog.md`.
 
 ## Otwarte
 
@@ -13,7 +13,29 @@
 - **Pisma 31 języków:** osadzone kroje Instrument Serif / Instrument Sans mają łacinę (bez wietnamskich liter z tonami); cyrylica: Onest (osadzony). Greka, wietnamski, japoński, chiński (SC/TC), koreański, tajski i dewanagari używają krojów systemowych macOS przez reguły `[lang|=…]` - łańcuch i wagi w `responsive-spec.md`. Nie osadzono nowych krojów.
 - **Wygląd:** jasna Porcelana, jeden wariant.
 
-## Raport kontroli R12-RC2 (2026-11-16)
+## Raport kontroli R12-RC3 (2026-11-16)
+
+| Kontrola | Wynik |
+| --- | --- |
+| Struktura ZIP: katalog `prototype/` w korzeniu, 22 pliki (8 plików standardu + `assets/fixtures.json`, `assets/voice_help/*.png`, `assets/tutors/*.webp`); `checksums.sha256` zgodne po rozpakowaniu | OK |
+| `prototype-manifest.json` parsuje się, `schema_version` 3, `revision_id` = `VT-VIRTUALTUTOR-PROTOTYPE-R12-RC3`, `id_migrations: []` | OK |
+| Macierz capture: 92 stany × 5 profili, świeże otwarcie każdego adresu: `data-prototype-ready` na jedynym `element.product-work-surface`, zgodny `data-state-id`, rozmiar = target, brak błędów konsoli, brak „—”, interlinia ≥ 1,4, wszystkie widoczne `<img>` wczytane, `noindex` | **460/460**, 0 błędów |
+| Ten sam wynik co R12-RC2: `outerHTML` `element.product-work-surface` R12-RC3 vs R12-RC2 dla 92 stanów na mac-wide (źródło zdjęcia sprowadzone do nazwy tutora, bo zmienia się tylko z `data:` na `assets/tutors/…`) | **92/92 identyczne** |
+| Zdjęcia: każde z 12 zdjęć w paczce raz (`assets/tutors/*.webp`, 296 × 296 px, 11-27 KB, razem 202 KB); `index.html` i `catalog.html` nie zawierają już obrazów `data:image` | OK |
+| Wygląd zdjęć R12-RC2 vs R12-RC3 przy największym rozmiarze wyświetlania (kafel 148 px × 2 = 296 px; strona WWW 118 px × 2 = 236 px): średnia różnica kanału RGB | 1,4-2,9 / 255 (aplikacja), 1,6-3,4 / 255 (strona WWW) - bez widocznej różnicy |
+| Pierwsze otwarcie podglądu: liczba pobrań `index.html` z sieci | **1** (ramka otwiera ten sam adres po `#`, wpis ramki w Resource Timing: `transferSize` 0 = pamięć podręczna; samoodczyt runtime usunięty) |
+| Łączny transfer pierwszego otwarcia podglądu (po gzip, jak na GitHub Pages) | **≈ 0,59 MB** (`index.html` 0,34 MB z 0,96 MB, zdjęcia 0,20 MB, `voice_help` 0,03 MB, manifest i fixture 0,01 MB); R12-RC2: ≈ 11,4 MB × 2 |
+| Czas do pierwszego stanu przy 0,8 MB/s | ≈ 0,7 s transferu + start dokumentu; w środowisku projektowym (bez gzip, 1,0 MB) pierwszy stan po 5,6-6,6 s, R12-RC2 w tym samym środowisku po 28-65 s |
+| Przełączanie w podglądzie (widoczna karta): 20 przełączeń, 15 różnych stanów, listą (9), strzałkami ← → (6), zmianą profilu na wszystkie 5 targetów (5) | wszystkie w tym samym dokumencie, **0 nowych pobrań**, 10-46 ms (najdłuższy 46 ms) |
+| Błędy konsoli w podglądzie i w macierzy | 0 |
+| `<meta name="robots" content="noindex">` w `index.html` i `catalog.html` | OK |
+
+Uwagi:
+- Czas przy 0,8 MB/s jest obliczony z rozmiarów po gzip, a nie zmierzony z ograniczeniem łącza; środowisko projektowe nie pozwala ustawić przepustowości ani nagłówków GitHub Pages. Do potwierdzenia na Pages po publikacji.
+- Jedno pobranie `index.html` zakłada pamięć podręczną przeglądarki dla tego samego adresu (Pages: `cache-control: max-age=600`). Ramka ma ten sam adres co strona, różni się tylko częścią po `#`, której przeglądarka nie wysyła do serwera.
+- Porównanie z R12-RC2 wykonano na mac-wide (92 stany); pozostałe 4 targety sprawdzono w macierzy R12-RC3 (kryteria jak wyżej).
+
+## Raport kontroli R12-RC2 (poprzednia rewizja)
 
 | Kontrola | Wynik |
 | --- | --- |
