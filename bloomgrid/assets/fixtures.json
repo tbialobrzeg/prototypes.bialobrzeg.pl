@@ -60,8 +60,8 @@
         "cells_one": "pole",
         "cells_few": "pola",
         "cells_many": "pól",
-        "bonus_badge": "+500",
-        "bonus_sr": "linia jednego koloru, Kolorowa rabata +500",
+        "bonus_badge": "+720",
+        "bonus_sr": "linia jednego koloru, Kolorowa rabata +720",
         "no_moves": "Nie ma już miejsca na żaden klocek",
         "no_fit_sr": "nie mieści się",
         "over_reason": "Brak ruchów — żaden klocek się nie mieści",
@@ -82,7 +82,7 @@
       "scenarios": {
         "home.first-run": { "screen": "home", "records": { "classic": 0, "daily": 0 }, "saved": null, "notice": null },
         "home.with-records": { "screen": "home", "records": { "classic": 18420, "daily": 2980 }, "saved": null, "notice": null },
-        "home.resume-available": { "screen": "home", "records": { "classic": 18420, "daily": 2980 }, "saved": { "score": 2340 }, "notice": null },
+        "home.resume-available": { "screen": "home", "records": { "classic": 18420, "daily": 2980 }, "saved": { "score": 2400 }, "notice": null },
         "home.read-error": { "screen": "home", "records": { "classic": 18420, "daily": 2980 }, "saved": null, "notice": "read-error" },
         "game.classic-start": {
           "screen": "game", "mode": "classic", "background": "dawn-meadow", "records": { "classic": 18420, "daily": 2980 }, "seed": 20261110,
@@ -100,7 +100,7 @@
           "screen": "game", "mode": "classic", "background": "hedge", "records": { "classic": 18420, "daily": 2980 }, "seed": 4471,
           "board": ["........", ".....ss.", "b....s..", "bb..ddd.", "ll.pp...", "llpp.bb.", "dsl.lbbl", "pdsl.bsd"],
           "tray": [null, { "shape": "l4-b", "color": "leaf" }, { "shape": "corner3-tl", "color": "sun" }],
-          "score": 2340, "drops": 1
+          "score": 2400, "drops": 1
         },
         "game.daily-start": {
           "screen": "game", "mode": "daily", "records": { "classic": 18420, "daily": 2980 }, "seed": 20261110,
@@ -112,91 +112,91 @@
           "screen": "game", "mode": "classic", "background": "hedge", "records": { "classic": 18420, "daily": 2980 }, "seed": 4471,
           "board": ["........", ".....ss.", "b....s..", "bb..ddd.", "ll.pp...", "llpp.bb.", "dsl.lbbl", "pdsl.bsd"],
           "tray": [null, { "shape": "l4-b", "color": "leaf" }, { "shape": "corner3-tl", "color": "sun" }],
-          "score": 2340, "drops": 1,
+          "score": 2400, "drops": 1,
           "drag": { "slot": 1, "row": 0, "col": 2 }
         },
         "game.dragging-line-preview": {
           "screen": "game", "mode": "classic", "background": "firefly-night", "records": { "classic": 18420, "daily": 2980 }, "seed": 7,
           "board": ["........", "........", "..b.....", "..b.....", "dd.bb...", "lllllll.", "spdsbpd.", ".......d"],
           "tray": [{ "shape": "line2-v", "color": "leaf" }, { "shape": "square2", "color": "sun" }, { "shape": "corner5-tl", "color": "berry" }],
-          "score": 6210, "drops": 1,
+          "score": 4240, "drops": 1,
           "drag": { "slot": 0, "row": 5, "col": 7 }
         },
         "game.line-clear": {
           "screen": "game", "mode": "classic", "background": "lily-pond", "records": { "classic": 18420, "daily": 2980 }, "seed": 31,
           "board": ["........", "........", "..b.....", "..b.....", "dd.bb...", "l.....p.", "spd.bpdl", "pdsl.bsd"],
           "tray": [{ "shape": "single", "color": "sun" }, { "shape": "square2", "color": "drop" }, { "shape": "line3-v", "color": "poppy" }],
-          "score": 1250, "drops": 0,
+          "score": 1680, "drops": 0,
           "move": { "slot": 0, "row": 7, "col": 4 }
         },
         "game.color-bonus": {
-          "screen": "game", "mode": "classic", "background": "hedge", "records": { "classic": 18420, "daily": 2980 }, "seed": 32,
+          "screen": "game", "mode": "classic", "background": "lily-pond", "records": { "classic": 18420, "daily": 2980 }, "seed": 32,
           "board": ["........", "........", "..b.....", "..b.....", "dd.bb...", "lllllll.", "spd.bpd.", ".......d"],
           "tray": [{ "shape": "single", "color": "leaf" }, { "shape": "line3-h", "color": "sun" }, { "shape": "square2", "color": "berry" }],
-          "score": 2900, "drops": 0,
+          "score": 1680, "drops": 0,
           "move": { "slot": 0, "row": 5, "col": 7 }
         },
         "game.combo-color": {
-          "screen": "game", "mode": "classic", "background": "hedge", "records": { "classic": 18420, "daily": 2980 }, "seed": 32,
+          "screen": "game", "mode": "classic", "background": "lily-pond", "records": { "classic": 18420, "daily": 2980 }, "seed": 32,
           "board": ["........", "........", "..b.....", "..b.....", "dd.bb...", "lllllll.", "spd.bpd.", ".......d"],
           "tray": [{ "shape": "single", "color": "leaf" }, { "shape": "line3-h", "color": "sun" }, { "shape": "square2", "color": "berry" }],
-          "score": 2240, "drops": 1,
+          "score": 1680, "drops": 1,
           "move": { "slot": 0, "row": 5, "col": 7 }
         },
         "game.combo": {
           "screen": "game", "mode": "classic", "background": "garden-dusk", "records": { "classic": 18420, "daily": 2980 }, "seed": 33,
           "board": ["......p.", "......d.", "b.....s.", "bb....b.", "l.....l.", "ddsbl..s", "......d.", "p.....s."],
           "tray": [{ "shape": "line2-h", "color": "poppy" }, { "shape": "t4-up", "color": "drop" }, { "shape": "corner3-tr", "color": "sun" }],
-          "score": 4210, "drops": 1,
+          "score": 3280, "drops": 1,
           "move": { "slot": 0, "row": 5, "col": 5 }
         },
         "game.daily-exit-confirm": {
           "screen": "game", "mode": "daily", "records": { "classic": 18420, "daily": 2980 }, "seed": 20261110,
           "board": ["........", "........", "....s...", "...ss...", "b..d....", "bb.dd...", "lbbpl...", "llppl.d."],
           "tray": [{ "shape": "line4-h", "color": "berry" }, null, { "shape": "z4-h", "color": "poppy" }],
-          "score": 860, "drops": 0,
+          "score": 880, "drops": 0,
           "overlay": "confirm"
         },
         "game.save-error": {
           "screen": "game", "mode": "classic", "background": "hedge", "records": { "classic": 18420, "daily": 2980 }, "seed": 4471,
           "board": ["........", ".....ss.", "b....s..", "bb..ddd.", "ll.pp...", "llpp.bb.", "dsl.lbbl", "pdsl.bsd"],
           "tray": [null, { "shape": "l4-b", "color": "leaf" }, { "shape": "corner3-tl", "color": "sun" }],
-          "score": 2340, "drops": 1,
+          "score": 2400, "drops": 1,
           "alert": "save-error"
         },
         "game.crash": {
           "screen": "game", "mode": "classic", "background": "hedge", "records": { "classic": 18420, "daily": 2980 }, "seed": 4471,
           "board": ["........", ".....ss.", "b....s..", "bb..ddd.", "ll.pp...", "llpp.bb.", "dsl.lbbl", "pdsl.bsd"],
           "tray": [null, { "shape": "l4-b", "color": "leaf" }, { "shape": "corner3-tl", "color": "sun" }],
-          "score": 2340, "drops": 1,
+          "score": 2400, "drops": 1,
           "alert": "crash"
         },
         "game.over-classic": {
           "screen": "game", "mode": "classic", "background": "firefly-night", "records": { "classic": 18420, "daily": 2980 }, "seed": 1,
           "board": ["pdsl.bsd", "lb.dpsl.", "sdplb.bp", ".bsdlpds", "dlb.sp.l", "sp.dlbsd", "ldsbp.pl", "d.spl.sd"],
           "tray": [{ "shape": "square3", "color": "berry" }, { "shape": "line5-h", "color": "sun" }, null],
-          "score": 6842, "drops": 2,
+          "score": 4080, "drops": 2,
           "over": { "record": 18420, "newRecord": false }
         },
         "game.over-classic-new-record": {
           "screen": "game", "mode": "classic", "background": "hedge", "records": { "classic": 18420, "daily": 2980 }, "seed": 1,
           "board": ["pdsl.bsd", "lb.dpsl.", "sdplb.bp", ".bsdlpds", "dlb.sp.l", "sp.dlbsd", "ldsbp.pl", "d.spl.sd"],
           "tray": [{ "shape": "square3", "color": "berry" }, { "shape": "line5-h", "color": "sun" }, null],
-          "score": 21360, "drops": 0,
-          "over": { "record": 21360, "newRecord": true }
+          "score": 22000, "drops": 0,
+          "over": { "record": 22000, "newRecord": true }
         },
         "game.over-daily": {
           "screen": "game", "mode": "daily", "records": { "classic": 18420, "daily": 2980 }, "seed": 1,
           "board": ["pdsl.bsd", "lb.dpsl.", "sdplb.bp", ".bsdlpds", "dlb.sp.l", "sp.dlbsd", "ldsbp.pl", "d.spl.sd"],
           "tray": [null, { "shape": "rect-3x2", "color": "drop" }, { "shape": "line4-v", "color": "poppy" }],
-          "score": 2140, "drops": 0,
+          "score": 2160, "drops": 0,
           "over": { "record": 2980, "newRecord": false, "dailyInfo": "until-midnight" }
         },
         "game.over-daily-new-day": {
           "screen": "game", "mode": "daily", "records": { "classic": 18420, "daily": 2980 }, "seed": 1,
           "board": ["pdsl.bsd", "lb.dpsl.", "sdplb.bp", ".bsdlpds", "dlb.sp.l", "sp.dlbsd", "ldsbp.pl", "d.spl.sd"],
           "tray": [null, { "shape": "rect-3x2", "color": "drop" }, { "shape": "line4-v", "color": "poppy" }],
-          "score": 3310, "drops": 0,
+          "score": 3280, "drops": 0,
           "over": { "record": null, "newRecord": false, "dailyInfo": "new-available" }
         },
         "home.music-muted": { "screen": "home", "records": { "classic": 18420, "daily": 2980 }, "saved": null, "notice": null, "music": false },
@@ -205,24 +205,24 @@
           "screen": "game", "mode": "classic", "background": "hedge", "records": { "classic": 18420, "daily": 2980 }, "seed": 4471,
           "board": ["........", ".....ss.", "b....s..", "bb..ddd.", "ll.pp...", "llpp.bb.", "dsl.lbbl", "pdsl.bsd"],
           "tray": [null, { "shape": "l4-b", "color": "leaf" }, { "shape": "corner3-tl", "color": "sun" }],
-          "score": 2340, "drops": 1, "music": false
+          "score": 2400, "drops": 1, "music": false
         },
         "game.no-moves-classic": {
           "screen": "game", "mode": "classic", "background": "firefly-night", "records": { "classic": 18420, "daily": 2980 }, "seed": 1,
           "board": ["pdsl.bsd", "lb.dpsl.", "sdplb.bp", ".bsdlpds", "dlb.sp.l", "sp.dlbsd", "ldsbp.pl", "d.spl.sd"],
           "tray": [{ "shape": "square3", "color": "berry" }, { "shape": "line5-h", "color": "sun" }, { "shape": "rect-3x2", "color": "drop" }],
-          "score": 6842, "drops": 0,
+          "score": 4080, "drops": 0,
           "noMoves": true
         },
         "game.no-moves-daily": {
           "screen": "game", "mode": "daily", "records": { "classic": 18420, "daily": 2980 }, "seed": 1,
           "board": ["pdsl.bsd", "lb.dpsl.", "sdplb.bp", ".bsdlpds", "dlb.sp.l", "sp.dlbsd", "ldsbp.pl", "d.spl.sd"],
           "tray": [null, { "shape": "rect-3x2", "color": "drop" }, { "shape": "line4-v", "color": "poppy" }],
-          "score": 2140, "drops": 0,
+          "score": 2160, "drops": 0,
           "noMoves": true
         },
         "game.over-classic-tied": {
-          "screen": "game", "mode": "classic", "background": "lily-pond", "records": { "classic": 18420, "daily": 2980 }, "seed": 1,
+          "screen": "game", "mode": "classic", "background": "firefly-night", "records": { "classic": 18420, "daily": 2980 }, "seed": 1,
           "board": ["pdsl.bsd", "lb.dpsl.", "sdplb.bp", ".bsdlpds", "dlb.sp.l", "sp.dlbsd", "ldsbp.pl", "d.spl.sd"],
           "tray": [{ "shape": "square3", "color": "berry" }, { "shape": "line5-h", "color": "sun" }, null],
           "score": 18420, "drops": 0,
@@ -230,141 +230,134 @@
         },
         "game.level-up": {
           "screen": "game", "mode": "classic", "background": "lily-pond", "records": { "classic": 18420, "daily": 2980 }, "seed": 4471,
-          "board": ["........", ".....ss.", "b....s..", "bb..ddd.", "ll.pp...", "llpp.bb.", "dsl.lbbl", "pdsl.bsd"],
-          "tray": [null, { "shape": "l4-b", "color": "leaf" }, { "shape": "corner3-tl", "color": "sun" }],
-          "score": 780, "drops": 1,
-          "move": { "slot": 1, "row": 0, "col": 0 }, "step": "level", "replay": true
+          "board": ["........", ".....ss.", "b....s..", "bb..ddd.", "ll.pp...", "llpp.bb.", "dsl.lbbl", "pdsldbs."],
+          "tray": [{ "shape": "single", "color": "drop" }, { "shape": "l4-b", "color": "leaf" }, { "shape": "corner3-tl", "color": "sun" }],
+          "score": 1520, "drops": 1,
+          "move": { "slot": 0, "row": 7, "col": 7 }, "step": "level", "replay": true
         },
         "game.level-up-praise": {
           "screen": "game", "mode": "classic", "background": "hedge", "records": { "classic": 18420, "daily": 2980 }, "seed": 7,
           "board": ["........", "........", "..b.....", "..b.....", "dd.bb...", "lllllll.", "spdsbpd.", ".......d"],
           "tray": [{ "shape": "line2-v", "color": "leaf" }, { "shape": "square2", "color": "sun" }, { "shape": "corner5-tl", "color": "berry" }],
-          "score": 1580, "drops": 0,
+          "score": 1600, "drops": 0,
           "move": { "slot": 0, "row": 5, "col": 7 },
           "step": "level", "replay": true
         },
         "game.empty-garden": {
-          "screen": "game", "mode": "classic", "background": "dawn-meadow", "records": { "classic": 18420, "daily": 2980 }, "seed": 11,
+          "screen": "game", "mode": "classic", "background": "firefly-night", "records": { "classic": 18420, "daily": 2980 }, "seed": 11,
           "board": ["........", "........", "........", "........", "........", "........", "........", "spdsbpd."],
           "tray": [{ "shape": "single", "color": "leaf" }, { "shape": "square2", "color": "sun" }, { "shape": "line3-h", "color": "drop" }],
-          "score": 9100, "drops": 0,
-          "move": { "slot": 0, "row": 7, "col": 7, "emptyBonus": 3500 },
-          "emptyGarden": true, "replay": true
+          "score": 4560, "drops": 0,
+          "move": { "slot": 0, "row": 7, "col": 7 },
+          "replay": true
         },
         "game.empty-garden-level-up": {
           "screen": "game", "mode": "classic", "background": "garden-dusk", "records": { "classic": 18420, "daily": 2980 }, "seed": 11,
           "board": ["........", "........", "........", "........", "........", "........", "........", "spdsbpd."],
           "tray": [{ "shape": "single", "color": "leaf" }, { "shape": "square2", "color": "sun" }, { "shape": "line3-h", "color": "drop" }],
-          "score": 2100, "drops": 0,
-          "move": { "slot": 0, "row": 7, "col": 7, "emptyBonus": 2000 },
-          "emptyGarden": true, "step": "level", "replay": true
+          "score": 2320, "drops": 0,
+          "move": { "slot": 0, "row": 7, "col": 7 },
+          "step": "level", "replay": true
         },
         "game.praise-great": {
           "screen": "game", "mode": "classic", "background": "lily-pond", "records": { "classic": 18420, "daily": 2980 }, "seed": 21,
           "board": ["........", "........", "........", "l.......", "........", "........", "pdsbl.pd", "dspbl.sb"],
           "tray": [{ "shape": "line2-v", "color": "drop" }, { "shape": "square2", "color": "sun" }, { "shape": "line3-h", "color": "berry" }],
-          "score": 1120, "drops": 0,
+          "score": 1680, "drops": 0,
           "move": { "slot": 0, "row": 6, "col": 5 }, "replay": true
         },
         "game.praise-wonderful": {
           "screen": "game", "mode": "classic", "background": "hedge", "records": { "classic": 18420, "daily": 2980 }, "seed": 21,
           "board": [".s......", "...b....", "........", "........", "lbsdp.bs", "plbsd.lb", "dplbs.pl", "........"],
           "tray": [{ "shape": "line3-v", "color": "drop" }, { "shape": "square2", "color": "sun" }, { "shape": "line3-h", "color": "berry" }],
-          "score": 2400, "drops": 0,
+          "score": 2480, "drops": 0,
           "move": { "slot": 0, "row": 4, "col": 5 }, "replay": true
         },
         "game.praise-amazing": {
           "screen": "game", "mode": "classic", "background": "garden-dusk", "records": { "classic": 18420, "daily": 2980 }, "seed": 21,
           "board": [".s...pl.", "...b.dp.", ".....sd.", ".....bs.", ".....lb.", "plbsd..b", "dplbs..l", ".....sd."],
           "tray": [{ "shape": "square2", "color": "sun" }, { "shape": "square2", "color": "sun" }, { "shape": "line3-h", "color": "berry" }],
-          "score": 3600, "drops": 0,
+          "score": 3280, "drops": 0,
           "move": { "slot": 0, "row": 5, "col": 5 }, "replay": true
         },
         "game.praise-paradise": {
           "screen": "game", "mode": "classic", "background": "firefly-night", "records": { "classic": 18420, "daily": 2980 }, "seed": 21,
           "board": [".s..dp..", "...bsd..", "....bs..", "....lb..", "lbsd...s", "plbs...b", "dplb...l", "....bs.."],
           "tray": [{ "shape": "square3", "color": "berry" }, { "shape": "square2", "color": "sun" }, { "shape": "line3-h", "color": "berry" }],
-          "score": 6400, "drops": 0,
+          "score": 4080, "drops": 0,
           "move": { "slot": 0, "row": 4, "col": 4 }, "replay": true
         },
         "game.flower-bed": {
-          "screen": "game", "mode": "classic", "background": "hedge", "records": { "classic": 18420, "daily": 2980 }, "seed": 32,
+          "screen": "game", "mode": "classic", "background": "lily-pond", "records": { "classic": 18420, "daily": 2980 }, "seed": 32,
           "board": ["........", "........", "..b.....", "..b.....", "dd.bb...", "lllllll.", "spd.bpd.", ".......d"],
           "tray": [{ "shape": "single", "color": "leaf" }, { "shape": "line3-h", "color": "sun" }, { "shape": "square2", "color": "berry" }],
-          "score": 2500, "drops": 0,
+          "score": 1680, "drops": 0,
           "move": { "slot": 0, "row": 5, "col": 7 }, "replay": true
         },
         "game.level-5": {
           "screen": "game", "mode": "classic", "background": "garden-dusk", "records": { "classic": 18420, "daily": 2980 }, "seed": 4471,
           "board": ["........", ".....ss.", "b....s..", "bb..ddd.", "ll.pp...", "llpp.bb.", "dsl.lbbl", "pdsl.bsd"],
           "tray": [{ "shape": "square2", "color": "berry" }, { "shape": "l4-b", "color": "leaf" }, { "shape": "corner3-tl", "color": "sun" }],
-          "score": 5940, "drops": 0
+          "score": 3920, "drops": 0
         },
         "game.level-6": {
           "screen": "game", "mode": "classic", "background": "firefly-night", "records": { "classic": 18420, "daily": 2980 }, "seed": 4471,
           "board": ["........", ".....ss.", "b....s..", "bb..ddd.", "ll.pp...", "llpp.bb.", "dsl.lbbl", "pdsl.bsd"],
           "tray": [{ "shape": "line3-h", "color": "drop" }, { "shape": "l4-b", "color": "leaf" }, { "shape": "corner3-tl", "color": "sun" }],
-          "score": 6480, "drops": 0
+          "score": 4480, "drops": 0
         },
         "game.watering-bud": {
           "screen": "game", "mode": "classic", "background": "hedge", "records": { "classic": 18420, "daily": 2980 }, "seed": 4471,
           "board": ["........", ".....ss.", "b....s..", "bb..ddd.", "ll.pp...", "llpp.bb.", "dsl.lbbl", "pdsl.bsd"],
           "tray": [null, { "shape": "l4-b", "color": "leaf" }, { "shape": "corner3-tl", "color": "sun" }],
-          "score": 2840, "drops": 1
+          "score": 2400, "drops": 1
         },
         "game.watering-flower": {
           "screen": "game", "mode": "classic", "background": "hedge", "records": { "classic": 18420, "daily": 2980 }, "seed": 4471,
           "board": ["........", ".....ss.", "b....s..", "bb..ddd.", "ll.pp...", "llpp.bb.", "dsl.lbbl", "pdsl.bsd"],
           "tray": [null, { "shape": "l4-b", "color": "leaf" }, { "shape": "corner3-tl", "color": "sun" }],
-          "score": 2840, "drops": 2
+          "score": 2400, "drops": 2
         },
         "game.queue-points": {
           "screen": "game", "mode": "classic", "background": "lily-pond", "records": { "classic": 18420, "daily": 2980 }, "seed": 21,
           "board": [".s......", "...b....", "........", "........", "lbsdp.bs", "plbsd.lb", "dplbs.pl", "........"],
           "tray": [{ "shape": "line3-v", "color": "drop" }, { "shape": "square2", "color": "sun" }, { "shape": "line3-h", "color": "berry" }],
-          "score": 1500, "drops": 0,
+          "score": 1680, "drops": 0,
           "move": { "slot": 0, "row": 4, "col": 5 }, "step": "points", "replay": true
         },
         "game.queue-drops": {
           "screen": "game", "mode": "classic", "background": "lily-pond", "records": { "classic": 18420, "daily": 2980 }, "seed": 21,
           "board": [".s......", "...b....", "........", "........", "lbsdp.bs", "plbsd.lb", "dplbs.pl", "........"],
           "tray": [{ "shape": "line3-v", "color": "drop" }, { "shape": "square2", "color": "sun" }, { "shape": "line3-h", "color": "berry" }],
-          "score": 1500, "drops": 0,
+          "score": 1680, "drops": 0,
           "move": { "slot": 0, "row": 4, "col": 5 }, "step": "drops", "replay": true
         },
         "game.queue-level": {
           "screen": "game", "mode": "classic", "background": "hedge", "records": { "classic": 18420, "daily": 2980 }, "seed": 21,
           "board": [".s......", "...b....", "........", "........", "lbsdp.bs", "plbsd.lb", "dplbs.pl", "........"],
           "tray": [{ "shape": "line3-v", "color": "drop" }, { "shape": "square2", "color": "sun" }, { "shape": "line3-h", "color": "berry" }],
-          "score": 1500, "drops": 0,
+          "score": 1680, "drops": 0,
           "move": { "slot": 0, "row": 4, "col": 5 }, "step": "level", "replay": true
         },
         "game.move-card-record": {
-          "screen": "game", "mode": "classic", "background": "garden-dusk", "records": { "classic": 4700, "daily": 2980 }, "seed": 21,
+          "screen": "game", "mode": "classic", "background": "firefly-night", "records": { "classic": 4700, "daily": 2980 }, "seed": 21,
           "board": ["........", "........", "........", "l.......", "........", "........", "pdsbl.pd", "dspbl.sb"],
           "tray": [{ "shape": "line2-v", "color": "drop" }, { "shape": "square2", "color": "sun" }, { "shape": "line3-h", "color": "berry" }],
-          "score": 4600, "drops": 0,
+          "score": 4640, "drops": 0,
           "move": { "slot": 0, "row": 6, "col": 5 }, "step": "record", "replay": true
         },
-        "game.level-up-no-clear": {
-          "screen": "game", "mode": "classic", "background": "hedge", "records": { "classic": 18420, "daily": 2980 }, "seed": 4471,
-          "board": ["........", ".....ss.", "b....s..", "bb..ddd.", "ll.pp...", "llpp.bb.", "dsl.lbbl", "pdsl.bsd"],
-          "tray": [null, { "shape": "l4-b", "color": "leaf" }, { "shape": "corner3-tl", "color": "sun" }],
-          "score": 1996, "drops": 1,
-          "move": { "slot": 1, "row": 2, "col": 2 }, "step": "level", "replay": true
-        },
         "game.full-watering": {
-          "screen": "game", "mode": "classic", "background": "firefly-night", "records": { "classic": 18420, "daily": 2980 }, "seed": 21,
+          "screen": "game", "mode": "classic", "background": "lily-pond", "records": { "classic": 18420, "daily": 2980 }, "seed": 21,
           "board": ["........", "........", "........", "l.......", "........", "........", "pdsbl.pd", "dspbl.sb"],
           "tray": [{ "shape": "line2-v", "color": "drop" }, { "shape": "square2", "color": "sun" }, { "shape": "line3-h", "color": "berry" }],
           "score": 6400, "drops": 2,
           "move": { "slot": 0, "row": 6, "col": 5 }, "step": "full", "replay": true
         },
         "game.dragging-under-card": {
-          "screen": "game", "mode": "classic", "background": "hedge", "records": { "classic": 3400, "daily": 2980 }, "seed": 32,
+          "screen": "game", "mode": "classic", "background": "garden-dusk", "records": { "classic": 3400, "daily": 2980 }, "seed": 32,
           "board": [".......l", ".......l", "..b....l", "..b....l", "dd.bb..l", "lllllll.", "spd.bpdl", ".......l"],
           "tray": [{ "shape": "single", "color": "leaf" }, { "shape": "line3-h", "color": "sun" }, { "shape": "square2", "color": "berry" }],
-          "score": 3300, "drops": 1,
+          "score": 3280, "drops": 1,
           "move": { "slot": 0, "row": 5, "col": 7 },
           "drag": { "slot": 2, "row": -2, "col": 3, "carry": true }
         }
@@ -374,7 +367,7 @@
         "board": ["........", "........", "..b.....", "..b.....", "dd.bb...", "lllllll.", "spdsbpd.", ".......d"],
         "tray": [{ "shape": "line2-v", "color": "leaf" }, { "shape": "square2", "color": "sun" }, { "shape": "corner5-tl", "color": "berry" }],
         "drag": { "slot": 0, "row": 5, "col": 7 },
-        "score": 6210,
+        "score": 4240,
         "drops": 1,
         "seed": 7
       }
@@ -439,8 +432,8 @@
         "cells_one": "cell",
         "cells_few": "cells",
         "cells_many": "cells",
-        "bonus_badge": "+500",
-        "bonus_sr": "single-colour line, Flower bed +500",
+        "bonus_badge": "+720",
+        "bonus_sr": "single-colour line, Flower bed +720",
         "no_moves": "No room for any piece",
         "no_fit_sr": "doesn't fit",
         "over_reason": "No moves left — no piece fits",
@@ -470,21 +463,21 @@
           "screen": "game", "mode": "classic", "background": "firefly-night", "records": { "classic": 18420, "daily": 2980 }, "seed": 1,
           "board": ["pdsl.bsd", "lb.dpsl.", "sdplb.bp", ".bsdlpds", "dlb.sp.l", "sp.dlbsd", "ldsbp.pl", "d.spl.sd"],
           "tray": [{ "shape": "square3", "color": "berry" }, { "shape": "line5-h", "color": "sun" }, null],
-          "score": 6842, "drops": 2,
+          "score": 4080, "drops": 2,
           "over": { "record": 18420, "newRecord": false }
         },
         "game.over-daily": {
           "screen": "game", "mode": "daily", "records": { "classic": 18420, "daily": 2980 }, "seed": 1,
           "board": ["pdsl.bsd", "lb.dpsl.", "sdplb.bp", ".bsdlpds", "dlb.sp.l", "sp.dlbsd", "ldsbp.pl", "d.spl.sd"],
           "tray": [null, { "shape": "rect-3x2", "color": "drop" }, { "shape": "line4-v", "color": "poppy" }],
-          "score": 2140, "drops": 0,
+          "score": 2160, "drops": 0,
           "over": { "record": 2980, "newRecord": false, "dailyInfo": "until-midnight" }
         },
         "game.no-moves-classic": {
           "screen": "game", "mode": "classic", "background": "firefly-night", "records": { "classic": 18420, "daily": 2980 }, "seed": 1,
           "board": ["pdsl.bsd", "lb.dpsl.", "sdplb.bp", ".bsdlpds", "dlb.sp.l", "sp.dlbsd", "ldsbp.pl", "d.spl.sd"],
           "tray": [{ "shape": "square3", "color": "berry" }, { "shape": "line5-h", "color": "sun" }, { "shape": "rect-3x2", "color": "drop" }],
-          "score": 6842, "drops": 0,
+          "score": 4080, "drops": 0,
           "noMoves": true
         }
       },
@@ -493,7 +486,7 @@
         "board": ["........", "........", "..b.....", "..b.....", "dd.bb...", "lllllll.", "spdsbpd.", ".......d"],
         "tray": [{ "shape": "line2-v", "color": "leaf" }, { "shape": "square2", "color": "sun" }, { "shape": "corner5-tl", "color": "berry" }],
         "drag": { "slot": 0, "row": 5, "col": 7 },
-        "score": 6210,
+        "score": 4240,
         "drops": 1,
         "seed": 7
       }

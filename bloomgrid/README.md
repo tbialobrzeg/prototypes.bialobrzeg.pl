@@ -1,4 +1,6 @@
-# Bloomgrid — paczka prototypu `r7.3`
+# Bloomgrid — paczka prototypu `r7.4`
+
+Rewizja r7.4 na bazie r7.3 (Q394–Q402): punktacja i poziomy jak w aplikacji od 2026-11-20 (X = 80, położenie bez linii 0, k linii X·3^(k−1), Kolorowa rabata +720, Pełne podlanie +480, Pusta grządka z reguły, poziom co 800 punktów). Zmieniają się liczby stanów i kart oraz tła wynikające z poziomu; wygląd bez zmian. 51 stanów (`game.level-up-no-clear` usunięty). Szczegóły: `changelog.md`, sekcja r7.4; tabela „Tła stanów” niżej przeliczona.
 
 Rewizja r7.3 na bazie r7.2 (BLG-22; Q339–Q362): jeden sposób komunikatów chwilowych i nowe Podlewanie.
 - Podlewanie (Q355–Q359, Q362): kropelki za zbicie kilku linii naraz (L linii = L − 1 kropelek), zbierają się i nie znikają; wskaźnik to kwiatek i trzy krople (bez „×c”, bez więdnięcia); 3 kropelki = święto „Pełne podlanie!” i +500, potem od nowa, nadmiar przechodzi dalej.
@@ -79,20 +81,21 @@ Ekran startowy ma zawsze `blossom-wall`. Gra klasyczna losuje tło przy każdej 
 | Stan | Tło |
 |---|---|
 | `home.first-run`, `home.first-run.en`, `home.with-records`, `home.resume-available`, `home.read-error`, `home.music-muted` (r7), `home.all-muted` (r7) | `blossom-wall` (stałe) |
-| Poziom 1: `game.classic-start`, `game.classic-start.en` | `dawn-meadow` |
-| Poziom 3: `game.line-clear`, `game.level-up`, `game.praise-great` | `lily-pond` |
-| r7.3 (Q360), poziom widoczny w klatce (przed krokiem „poziom” — poziom sprzed ruchu): 3 — `game.queue-points`, `game.queue-drops`; 4 — `game.watering-bud`, `game.watering-flower`, `game.level-up-no-clear`, `game.queue-level`, `game.dragging-under-card` (awans 4 → 5 dopiero w ostatnim kroku); 5 — `game.move-card-record`; 6 — `game.full-watering`. `game.watering-wilt` i `game.watering-gold` usunięte | `lily-pond` / `hedge` / `garden-dusk` / `firefly-night` |
-| Poziom 4: `game.classic-resumed`, `game.dragging-fits`, `game.color-bonus`, `game.combo-color`, `game.save-error`, `game.crash`, `game.music-muted`, `game.level-up-praise`, `game.praise-wonderful`, `game.flower-bed`, `game.watering-wilt` | `hedge` |
-| Poziom 5: `game.combo`, `game.level-5` (po awansie na żywo: `firefly-night`), `game.praise-amazing`, `game.empty-garden-level-up` (odtworzenie zaczyna od poziomu 4, `hedge`) | `garden-dusk` |
-| Poziom 6: `game.dragging-line-preview`, `game.over-classic`, `game.over-classic.en`, `game.no-moves-classic`, `game.no-moves-classic.en`, `game.level-6`, `game.praise-paradise`, `game.watering-gold` | `firefly-night` |
-| Poziom 7: `game.empty-garden` (wynik 9100, premia +3500) | `dawn-meadow` |
-| Poziom 9: `game.over-classic-tied` | `lily-pond` |
-| Poziom 10: `game.over-classic-new-record` | `hedge` |
+| Poziom 1 (wynik 0): `game.classic-start`, `game.classic-start.en`, `game.classic-start-drops` | `dawn-meadow` |
+| Poziom 3 (1600–2399): `game.line-clear` (1680 → 1760), `game.level-up` (1520 → 1600, klatka w kroku „poziom”), `game.praise-great` (1680 → 1920); przed krokiem „poziom” (awans 3 → 4 dopiero w ostatniej karcie): `game.color-bonus`, `game.combo-color`, `game.flower-bed` (1680 → 2480), `game.queue-points`, `game.queue-drops` (1680 → 2400) | `lily-pond` |
+| Poziom 4 (2400–3199): `game.classic-resumed`, `game.dragging-fits`, `game.save-error`, `game.crash`, `game.music-muted`, `game.watering-bud`, `game.watering-flower` (2400); `game.level-up-praise` (1600 → 2560, krok „poziom”), `game.queue-level` (krok „poziom”), `game.praise-wonderful` (2480 → 3200, przed krokiem „poziom”) | `hedge` |
+| Poziom 5 (3200–3999): `game.combo` (3280 → 3520), `game.level-5` (3920; po awansie na żywo `firefly-night`), `game.empty-garden-level-up` (2320 → 3840, krok „poziom”); przed krokiem „poziom”: `game.praise-amazing` (3280 → 5920), `game.dragging-under-card` (3280 → 4960) | `garden-dusk` |
+| Poziom 6 (4000–4799): `game.dragging-line-preview` (4240), `game.over-classic`, `game.over-classic.en`, `game.no-moves-classic`, `game.no-moves-classic.en` (4080), `game.level-6` (4480); przed krokiem „poziom”: `game.praise-paradise` (4080 → 11 040), `game.empty-garden` (4560 → 7520, premia 36X = 2880), `game.move-card-record` (4640 → 4880, krok „rekord”) | `firefly-night` |
+| Poziom 9 (6400–7199): `game.full-watering` (6400 → 7120) | `lily-pond` |
+| Poziom 24: `game.over-classic-tied` (18 420 = rekord fixture) | `firefly-night` |
+| Poziom 28: `game.over-classic-new-record` (22 000) | `hedge` |
 | `game.daily-start`, `game.daily-exit-confirm`, `game.over-daily`, `game.over-daily.en`, `game.over-daily-new-day`, `game.no-moves-daily` | `garden-dusk` (z daty 2026-11-10) |
+
+r7.4 (Q394–Q402): poziom = 1 + ⌊wynik / 800⌋ (R-2.11), więc tabela jest przeliczona na nowe wyniki (wielokrotności X = 80 jak w danych aplikacji, `tests/support/prototype-state-data.ts`). W stanie z ruchem tło to motyw poziomu widocznego w stałej klatce: przed kartą „Nowy poziom” — poziom sprzed ruchu (Q360), od tej karty — poziom po ruchu. `game.level-up-no-clear` usunięty (ruch bez linii daje 0 punktów, więc nie daje awansu).
 
 r6: w grze klasycznej tło stanu jest motywem jego poziomu; prototyp wylicza z niego początek kręgu (`start`), więc etykieta poziomu i awans na żywo przechodzą po kręgu `blossom-wall` → `lily-pond` → `garden-dusk` → `dawn-meadow` → `hedge` → `firefly-night`.
 
-r7.1 (Q219, Q237): tło i nazwa ogrodu wynikają wyłącznie z poziomu. Poziom n ma motyw numer (n − 1) mod 6 z kręgu „dzień w podróży” (Q237): 1 Łąka o świcie (`dawn-meadow`), 2 Kwietna ściana (`blossom-wall`), 3 Staw z liliami (`lily-pond`), 4 Żywopłot (`hedge`), 5 Ogród o zmroku (`garden-dusk`), 6 Noc świetlików (`firefly-night`); poziom 7 to znów Łąka o świcie. Dzięki temu tło poziomu 1 różni się od tła ekranu startowego (Q219). Prototyp liczy motyw z poziomu (`BG.CIRCLE`, start kręgu 0), a pole `background` w fixture musi być motywem poziomu stanu po ruchu; sprawdza to `tmp/r6-build/motif71.cjs`. Tabela wyżej jest według tego poziomu. W r7 krąg zaczynał się od Kwietnej ściany w kolejności R-5.4; akapit r6 wyżej opisuje stan sprzed r7.
+r7.1 (Q219, Q237): tło i nazwa ogrodu wynikają wyłącznie z poziomu. Poziom n ma motyw numer (n − 1) mod 6 z kręgu „dzień w podróży” (Q237): 1 Łąka o świcie (`dawn-meadow`), 2 Kwietna ściana (`blossom-wall`), 3 Staw z liliami (`lily-pond`), 4 Żywopłot (`hedge`), 5 Ogród o zmroku (`garden-dusk`), 6 Noc świetlików (`firefly-night`); poziom 7 to znów Łąka o świcie. Dzięki temu tło poziomu 1 różni się od tła ekranu startowego (Q219). Prototyp liczy motyw z poziomu (`BG.CIRCLE`, start kręgu 0), a pole `background` w fixture musi być motywem poziomu widocznego w stałej klatce stanu (r7.4: przed kartą „Nowy poziom” poziom sprzed ruchu); sprawdza to `tmp/r6-build/motif71.cjs`. Tabela wyżej jest według tego poziomu. W r7 krąg zaczynał się od Kwietnej ściany w kolejności R-5.4; akapit r6 wyżej opisuje stan sprzed r7.
 
 ## Klikalność w `user_preview`
 
@@ -107,10 +110,25 @@ r7.1 (Q219, Q237): tło i nazwa ogrodu wynikają wyłącznie z poziomu. Poziom n
 - r7: przełączniki „Muzyka” i „Efekty” (ekran startowy i nagłówek gry) zmieniają stan, ikonę i `aria-pressed` niezależnie od siebie. Dźwięku prototyp nie odtwarza, pokazuje tylko komunikat narzędzia.
 - r7, odtwarzanie animacji: stany z ruchem w scenariuszu otwierają się w stanie sprzed ruchu, a po 0,7 s od gotowości prototyp sam wykonuje ten ruch. Dotyczy stanów `game.praise-*`, `game.flower-bed`, `game.empty-garden`, `game.empty-garden-level-up` i `game.level-up-praise`. Widać pochwałę, Podlewanie, Kolorową rabatę, święto i awans. Przycisk „▶ Odtwórz animację” w pasku podglądu (`data-prototype-tool="replay"`) powtarza animację; ma go też `game.level-up`. Potem gra działa dalej na żywo.
 - r7, katalog: przyciski „Odtwórz” odtwarzają każdą nową animację na stronie (`data-prototype-tool="catalog-replay"`): Podlewanie ×2 → ×7 i usychanie (`component.combo-badge`), drabinę pochwał, Kolorową rabatę i święto z wynikiem i trójką (`foundation.motion`).
-- r7.3, odtwarzanie: także `game.level-up`, `game.move-card-record`, `game.level-up-no-clear` i `game.full-watering` zaczynają się sprzed ruchu i po 0,7 s wykonują ruch — widać kartę ruchu (2400 ms) i święto pełnego podlania (3000 ms; stuknięcie w ekran je pomija i od razu chwyta klocek). Stany z ruchem bez odtwarzania (`game.line-clear`, `game.color-bonus`, `game.combo`, `game.combo-color`) pokazują kartę jako klatkę, która w `user_preview` znika po 2400 ms. W grze na żywo karta przygasa, gdy niesiony klocek jest nad nią.
+- r7.3, odtwarzanie: także `game.level-up`, `game.move-card-record` i `game.full-watering` zaczynają się sprzed ruchu i po 0,7 s wykonują ruch — widać kartę ruchu (2400 ms) i święto pełnego podlania (3000 ms; stuknięcie w ekran je pomija i od razu chwyta klocek). Stany z ruchem bez odtwarzania (`game.line-clear`, `game.color-bonus`, `game.combo`, `game.combo-color`) pokazują kartę jako klatkę, która w `user_preview` znika po 2400 ms. W grze na żywo karta przygasa, gdy niesiony klocek jest nad nią.
 - Komunikaty narzędzia mają `data-prototype-tool` i nie występują w `mode=capture`.
 
 ## Raport kontroli
+
+### r7.4
+
+Własna kontrola Designera: **zielona**. Receipty `tmp/project/commands/1589–1594`; skrypty w `tmp/tasks/BLG-22/work/r73/`. Bez wywołań generatora. Wynik capture i pomiaru anchoru Lidera wpiszę po jego wiadomości.
+
+| Kontrola | Wynik |
+|---|---|
+| Dane stanów z nowych reguł (`verify74.cjs`, poza receiptem: tylko odczyt) | Wszystkie stany gry klasycznej i wyzwania dnia: wyniki są wielokrotnościami X (poza rekordem fixture 18 420 w `game.over-classic-tied`), ruch każdego scenariusza jest możliwy, krok `step` istnieje w kolejce ruchu, tło fixture = motyw poziomu w klatce. |
+| Poziom → motyw (`motif74.cjs`, 1589) | 38 stanów gry klasycznej: dane i render na iphone-standard i mac-wide zgodne (`data-background`, etykieta poziomu), 0 problemów. |
+| Na żywo (`live77.cjs`, 1593) | 26/26 z nowymi liczbami: „Wspaniale! / +720”, „Rajski ogród! / +6480” → karta 6 → karta 8 (awans 6 → 14), „Pełne podlanie! / +480”, „Nowy rekord! / 4880”, `game.level-up` „+80 / 1 linia” → „Nowy poziom! / 3”, Pusta grządka „+1440” z pauzą trójki 1900 ms i pominięciem po 600 ms. Przebieg 1590 (22/26) — test oczekiwał jeszcze „+500” w karcie 6; poprawiony test, prototyp bez zmian. |
+| Pary stan × target (`check73.cjs`, 1591) | 401 par (51 stanów), `problems: []`, 0 złych rozmiarów, jawne błędy 6/6, katalog 22 sekcje bez błędów na mac-wide i 360 px. |
+| Wymiary (`dims73.cjs`, 1592) | 654 OK; poza tym jak w r7.3: 43 przy 320×449 (poniżej granicy Q181), 5 par spoza `target_ids` `game.dragging-under-card`, 4 zamierzone nakładania kwiatka w `game.full-watering`. |
+| Katalog „Komunikaty chwilowe” (`catshot.cjs`, 1594) | 16 kart, teksty „+80”, „+720”, „+800 · Kolorowa rabata +720”, „+1200 · Pusta grządka +960”, „+480”, „18 480”; wysokości kart jak w r7.3 (104–117 / 128–171 px), bez przycięć i błędów. |
+| Manifest | `revision_id` `r7.4`, `id_migrations` `[]`, 51 stanów (`game.level-up-no-clear` usunięty), targety bez zmian. |
+| Capture procesu i anchor (Lider) | Do wpisania po wyniku Lidera. |
 
 ### r7.3
 

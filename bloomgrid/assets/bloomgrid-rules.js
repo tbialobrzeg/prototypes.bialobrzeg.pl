@@ -64,17 +64,19 @@
     return { cells: cells, lines: lines, next: next };
   }
 
-  /* Punkty ruchu: R-2.1 (pola), R-2.2 (80·k za linię), R-2.4 (×2 za linię jednego koloru), R-2.3 (seria). */
-  /* r7.3 (Q355–Q359, Q362): Podlewanie = kropelki. Ruch, który czyści L linii naraz, daje L − 1 kropelek (1 linia: 0). Kropelki zbierają
-     się między ruchami i nie znikają (puste ruchy nic nie zabierają). Każde 3 kropelki = „Pełne podlanie” (+500), nadmiar przechodzi dalej.
-     Usunięte: seria ×c, premia 50·c, „zapas wody” i jego utrata po 3 pustych ruchach. Model prototypu, punktację wdraża aplikacja. */
-  var FULL_BONUS = 500;
-  function score(cellsPlaced, lines, drops) {
-    var k = lines.length, base = 0, mono = 0;
-    /* r7 (Q234): „kolorowa rabata” — +500 za każdą linię jednego koloru (zastępuje ×2 z R-2.4). */
-    lines.forEach(function (l) { base += 80 * k; if (l.mono) mono += 500; });
-    var gain = Math.max(0, k - 1), sum = (drops || 0) + gain, full = Math.floor(sum / 3), bonus = FULL_BONUS * full;
-    return { place: cellsPlaced, lines: base, mono: mono, full: bonus, fullCount: full, dropsGain: gain, dropsBefore: drops || 0, total: cellsPlaced + base + mono + bonus, dropsAfter: sum % 3, cleared: k };
+  /* r7.4 (Q394–Q402, punktacja aplikacji od 2026-11-20; R-2.1–R-2.4, R-2.10, R-2.11, R-2.13): jednostka X = 80.
+     Położenie klocka bez zbicia linii daje 0 punktów. k linii naraz daje X·3^(k−1) (80, 240, 720, 2160, 6480, 19 440). Każda linia jednego
+     koloru („Kolorowa rabata”) +9X (720). Kropelki (r7.3, Q355–Q362): ruch, który czyści L linii, daje L − 1 kropelek; każde 3 kropelki
+     = „Pełne podlanie” +6X (480), nadmiar przechodzi dalej. Pusta grządka (plansza pusta po ruchu z linią): gra klasyczna
+     max(12X, 6X × poziom sprzed ruchu), wyzwanie dnia 25X (2000). Poziom = 1 + ⌊wynik / 10X⌋ (co 800 punktów). */
+  var X = 80;
+  function levelOf(score) { return 1 + Math.floor(score / (10 * X)); }
+  function emptyBonus(daily, levelBefore) { return X * (daily ? 25 : Math.max(12, 6 * levelBefore)); }
+  function score(cellsPlaced, lines, drops, empty) {
+    var k = lines.length, base = k ? X * Math.pow(3, k - 1) : 0, mono = 0;
+    lines.forEach(function (l) { if (l.mono) mono += 9 * X; });
+    var gain = Math.max(0, k - 1), sum = (drops || 0) + gain, full = Math.floor(sum / 3), bonus = 6 * X * full, em = k ? (empty || 0) : 0;
+    return { place: 0, lines: base, mono: mono, full: bonus, fullCount: full, empty: em, dropsGain: gain, dropsBefore: drops || 0, total: base + mono + bonus + em, dropsAfter: sum % 3, cleared: k };
   }
 
   function rng(seed) {
@@ -98,15 +100,17 @@
   }
 
   /* Ruch: kładzie klocek ze slotu, czyści linie, liczy punkty, po trzech położeniach dobiera trójkę (R-1.1), sprawdza koniec (R-1.7). */
-  function play(state, slot, r, c, next) {
+  /* opts.daily: wyzwanie dnia (premia Pustej grządki 25X, bez poziomu). */
+  function play(state, slot, r, c, next, opts) {
     var p = state.tray[slot];
     if (!p) return null;
     var sh = BY_ID[p.shape], a = analyze(state.board, sh, p.color, r, c);
     if (!a) return null;
-    var pts = score(sh.cells.length, a.lines, state.drops);
     var board = a.next.slice(), cleared = {};
     a.lines.forEach(function (l) { l.cells.forEach(function (i) { cleared[i] = true; }); });
     Object.keys(cleared).forEach(function (i) { board[i] = null; });
+    var isEmpty = a.lines.length > 0 && board.every(function (x) { return x === null; });
+    var pts = score(sh.cells.length, a.lines, state.drops, isEmpty ? emptyBonus(!!(opts && opts.daily), levelOf(state.score)) : 0);
     var tray = state.tray.slice(); tray[slot] = null;
     var dealt = false;
     if (tray.every(function (t) { return !t; })) { tray = deal(next); dealt = true; }
@@ -126,6 +130,6 @@
   window.BGRules = {
     N: N, COLORS: COLORS, SHAPES: SHAPES, shape: function (id) { return BY_ID[id]; },
     parseBoard: parseBoard, canPlace: canPlace, fitsAnywhere: fitsAnywhere, analyze: analyze,
-    score: score, rng: rng, deal: deal, isOver: isOver, play: play, formatNumber: formatNumber
+    score: score, levelOf: levelOf, emptyBonus: emptyBonus, X: X, rng: rng, deal: deal, isOver: isOver, play: play, formatNumber: formatNumber
   };
 })();

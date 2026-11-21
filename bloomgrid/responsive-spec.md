@@ -1,4 +1,16 @@
-# Bloomgrid r7.3 — specyfikacja responsywności i ruchu
+# Bloomgrid r7.4 — specyfikacja responsywności i ruchu
+
+r7.4 (Q394–Q402): punktacja i poziomy jak w aplikacji od 2026-11-20 (sekcja „Punktacja i poziomy (r7.4)”). Wygląd, układ i ruch bez zmian; zmieniają się liczby w kartach i stanach oraz tła stanów, które wynikają z poziomu (README.md, „Tła stanów”). Opisy punktów i progów w starszych sekcjach zastępuje ta sekcja.
+
+## Punktacja i poziomy (r7.4, Q394–Q402) — zastępuje wcześniejsze liczby punktów i progi poziomów
+
+- Jednostka X = 80 (R-2.1). Położenie klocka bez zbicia linii daje 0 punktów, więc ruch bez linii nie ma karty punktów, awansu ani rekordu (karta „położony klocek” znika).
+- k linii naraz daje X·3^(k−1): 1 linia 80, 2 — 240, 3 — 720, 4 — 2160, 5 — 6480, 6 — 19 440 (R-2.2).
+- Każda linia jednego koloru („Kolorowa rabata”) +9X = 720 (R-2.4); plakietka w podglądzie przeciągania ma tekst „+720”.
+- Kropelki bez zmian (L − 1 za ruch); każde 3 kropelki = „Pełne podlanie” +6X = 480 (R-2.3); karta 6 pokazuje „+480”.
+- Pusta grządka (plansza pusta po ruchu z linią): gra klasyczna max(12X, 6X × poziom sprzed ruchu) — poziom 1 i 2: 960, od poziomu 3: 480 × poziom; wyzwanie dnia 25X = 2000 (R-2.10). Prototyp liczy premię z reguły (bez danych premii w stanie).
+- Poziom gry klasycznej = 1 + ⌊wynik / 800⌋ — nowy poziom co 10X (R-2.11; zastępuje progi Q197 i Q371). Motyw tła: krąg sześciu od poziomu 1 (Łąka o świcie) jak w r7.1.
+- Przykładowe liczby kart (katalog, sekcja „Komunikaty chwilowe”): 1 „+80 / 1 linia”; 2 „Wspaniale! / +720 / 3 linie naraz”; 3 „Kolorowa rabata! / +800 / 1 linia · Kolorowa rabata +720”; 4 „Pusta grządka! / +1200 / 2 linie naraz · Pusta grządka +960”; 6 „Pełne podlanie! / +480”; 7 „Nowy rekord! / 18 480”. Rozmiary kart bez zmian.
 
 r7.3, korekta Q366 (zaakceptowana przez Tomasza): komunikaty chwilowe to osiem kart z własną ilustracją, kolorem, animacją, dźwiękiem i czasem (2–3,4 s), jedna naraz w kolejce; poza kartą nie ma efektów komunikatów (zostaje rozkwit kwiatka wskaźnika przy karcie 6), a przy Pustej grządce trójka pojawia się po 1900 ms (stuknięcie po 600 ms pomija). Opis: podsekcja „Osiem kart” i wiersze 12, 14, 15 (korekta Q366) w „Ruch”; zastępuje opisy wcześniejsze tam, gdzie się różnią.
 
@@ -196,7 +208,7 @@ Opis r6 (dla `wide`):
 - Tylko gra klasyczna, środek nagłówka — to samo miejsce co nazwa trybu w wyzwaniu dnia (oś treści między lewą grupą wyjście + dźwięk a rekordem; wyśrodkowanie zmierzone 0 px na każdym targecie). Nagłówek bez zmiany wysokości: 48 px telefony, 56 px mac-wide.
 - Dwa wiersze na kremowej tabliczce (jak wynik i rekord): „Poziom n” 16 px / 800, nazwa motywu 12,5 px / 700 w jednym wierszu; mac-wide 18 / 14 px. Etykieta 32,8 px wysokości na telefonach, 36,8 px na mac-wide.
 - Nazwy motywów mają najwyżej 14 znaków, żeby na mobile-compact tabliczka nie sięgała pod przełącznik dźwięku: najmniejszy odstęp tabliczki od przełącznika 10 px („Ogród o zmroku”), od tabliczki rekordu 31 px (mobile-compact). EN krótsze.
-- Poziom z wyniku (Q197, Q153): progi 300, 800, 2000, 3500, 6000, 9000, dalej co 4000; poziom = 1 + liczba osiągniętych progów. Motyw poziomu n: `CIRCLE[(start + n − 1) mod 6]`, `start` losowany przy nowej grze (Q148). W prototypie `start` wynika z tła stanu.
+- Poziom z wyniku (Q197, Q153; r7.4 zastępuje: poziom = 1 + ⌊wynik / 800⌋, sekcja „Punktacja i poziomy (r7.4)”): progi 300, 800, 2000, 3500, 6000, 9000, dalej co 4000; poziom = 1 + liczba osiągniętych progów. Motyw poziomu n: `CIRCLE[(start + n − 1) mod 6]`, `start` losowany przy nowej grze (Q148). W prototypie `start` wynika z tła stanu.
 - r7.1 (Q219, Q237) zastępuje zdanie wyżej i kolejność z r6: motyw wynika wyłącznie z poziomu. Poziom n ma motyw numer (n − 1) mod 6 z kręgu `dawn-meadow` (Łąka o świcie), `blossom-wall` (Kwietna ściana), `lily-pond` (Staw z liliami), `hedge` (Żywopłot), `garden-dusk` (Ogród o zmroku), `firefly-night` (Noc świetlików). Ekran startowy i wyzwanie dnia bez zmian.
 
 ### Plakietka awansu i przenikanie tła (Q150, Q188)
@@ -213,7 +225,7 @@ r7.3 (Q342): plakietka awansu na wyniku jest usunięta (`component.level-up-badg
 - Rozkwit: płatki 0,6 pola na 24 z 64 pól w stałym wzorze (co trzecie pole), na warstwie efektów planszy; stała klatka w capture.
 - Punkty ruchu: suma ruchu (z premią), bez dopisku „pusta grządka”.
 
-r7: premia za pustą planszę w grze klasycznej wynosi max(1000, 500 × poziom), w wyzwaniu dnia 2000. Napis „Pusta grządka! +N” ma 32 px, na mac-wide 48 px. W prototypie premia liczy się z poziomu, na którym zagrano ruch (przed ewentualnym awansem). `game.empty-garden` jest na poziomie 7 (+3500, bez awansu), a `game.empty-garden-level-up` awansuje z poziomu 4 na 5 (+2000). Przebieg święta opisuje wiersz 12 w „Ruch”.
+r7: premia za pustą planszę w grze klasycznej wynosi max(1000, 500 × poziom), w wyzwaniu dnia 2000 (r7.4: max(960, 480 × poziom sprzed ruchu), w wyzwaniu 2000; stany: `game.empty-garden` poziom 6, +2880, awans 6 → 10; `game.empty-garden-level-up` poziom 3, +1440, awans 3 → 5). Napis „Pusta grządka! +N” ma 32 px, na mac-wide 48 px. W prototypie premia liczy się z poziomu, na którym zagrano ruch (przed ewentualnym awansem). `game.empty-garden` jest na poziomie 7 (+3500, bez awansu), a `game.empty-garden-level-up` awansuje z poziomu 4 na 5 (+2000). Przebieg święta opisuje wiersz 12 w „Ruch”.
 
 r7.3: święto bez zmian. Punkty ruchu pokazuje karta ruchu 1500 ms po ruchu (razem z przenikaniem tła awansu), z częścią „Pusta grządka +N” w rozbiciu i ewentualnym wpisem poziomu; karta nie ma pochwały (pochwałą jest napis święta). Napis święta zachowuje `element.game.praise` (`data-variant="empty-garden"`).
 
@@ -234,7 +246,7 @@ r7.3: pochwała nie stoi już nad środkiem planszy, tylko jako największy elem
 
   „Kolorowa rabata!” / „Flower bed!” ma 30 / 38 px, różową tabliczkę i złoty błysk na linii (wiersz 3 w „Ruch”).
 - Szerokość pochwały: najwyżej szerokość planszy − 24 px. Dłuższy tekst zawija się w wyrównane, wyśrodkowane wiersze, więc pochwała nie wychodzi poza planszę ani na trójkę.
-- Dopiski punktów ruchu: „kolorowa rabata +500” za każdą linię jednego koloru i „podlewanie +N”. Reguła Q203 (gdy brak miejsca, zostaje dopisek o większej wartości) obowiązuje dalej.
+- Dopiski punktów ruchu (r7.4: +720): „kolorowa rabata +500” za każdą linię jednego koloru i „podlewanie +N”. Reguła Q203 (gdy brak miejsca, zostaje dopisek o większej wartości) obowiązuje dalej.
 - `component.combo-badge` „Podlewanie” zastępuje plakietkę „Seria ×c”. To kremowa pigułka 30 px (mac-wide 34 px) z rośliną w doniczce po lewej, „×c” i trzema kroplami. Roślina 44×48 px (mac-wide 50×56) wystaje nad pigułkę, ale nie sięga nad planszę ani na wynik. W kontroli par nie nakłada się na żaden element na żadnym targecie.
   - Stopnie rośliny: ×2 kiełek, ×3 listki, ×4 pąk, ×5 kwiat, ×6 i więcej złoty kwiat z promieniami. Obrazy z generatora (`assets/img/plant-<stopień>.webp`, 88×96 = 2×) mają stałą ramkę 44×48 px i doniczkę tej samej szerokości. Roślina rośnie w obrazie, a ramka się nie zmienia. Przy złotym kwiecie pigułka ma złotą obwódkę i poświatę.
   - Krople to zapas wody (3 − ruchy bez linii). Przy ostatniej kropli pąk i kwiat (×4, ×5) zmieniają się w obraz zwiędłej rośliny (`plant-wilt.webp`). Kiełek, listki i złoty kwiat zostają swoim obrazem, przygaszonym (CSS `saturate(.5) brightness(.9) sepia(.2)`), żeby stopień był dalej czytelny.
@@ -275,15 +287,15 @@ r7.3: pochwała nie stoi już nad środkiem planszy, tylko jako największy elem
 
 - Wszystkie komunikaty chwilowe pokazuje `component.move-card` (`element.game.move-card`) w jednym miejscu (telefony: nad paskiem Podlewania; mac-wide: gniazdo w kolumnie trójki), z jednym wyglądem i trzema wierszami: nagłówek (24 px / 900 `#3A2405`, mac-wide 30 px), duża liczba (36 px / 900 `var(--green-d)`, mac-wide 46 px), podpis (13 px / 700 `#5A4630`, mac-wide 15 px). Pusty wiersz się nie pokazuje. Karta: kremowa `rgba(255,246,226,.97)`, obrys `#8A5A1E` 2 px, cień, padding 8 / 14 px (mac-wide 12 / 18 px), szerokość od 180 px (mac-wide 220 px) do szerokości treści (380 px). Jedyny akcent: obwódka mocniejsza przy pochwale szczebla 2–4.
 - Osiem treści (nagłówek / liczba / podpis):
-  1. punkty: — / „+243” / „1 linia”;
-  2. punkty z pochwałą: „Świetnie!” | „Wspaniale!” | „Cudownie!” | „Rajski ogród!” / „+723” / „3 linie naraz” (2 linie: „2 linie naraz”; 5+: „5 linii naraz”);
-  3. Kolorowa rabata: „Kolorowa rabata!” / „+743” / „1 linia · Kolorowa rabata +500”;
-  4. Pusta grządka: „Pusta grządka!” / „+1243” / „2 linie naraz · Pusta grządka +1000”;
+  1. punkty: — / „+80” / „1 linia” (r7.4; było „+243”);
+  2. punkty z pochwałą: „Świetnie!” | „Wspaniale!” | „Cudownie!” | „Rajski ogród!” / „+720” / „3 linie naraz” (2 linie: „2 linie naraz”; 5+: „5 linii naraz”);
+  3. Kolorowa rabata: „Kolorowa rabata!” / „+800” / „1 linia · Kolorowa rabata +720”;
+  4. Pusta grządka: „Pusta grządka!” / „+1200” / „2 linie naraz · Pusta grządka +960”;
   5. kropelki: „+1 kropelka” | „+2 kropelki” / — / „3 kropelki = Pełne podlanie”;
-  6. Pełne podlanie: „Pełne podlanie!” / „+500” / „kwiatek zaczyna od nowa”;
-  7. nowy rekord: „Nowy rekord!” / „18 421” (wynik) / —;
+  6. Pełne podlanie: „Pełne podlanie!” / „+480” / „kwiatek zaczyna od nowa”;
+  7. nowy rekord: „Nowy rekord!” / „18 480” (wynik) / —;
   8. nowy poziom: „Nowy poziom!” / „4” / „Żywopłot”.
-  Ruch bez linii (z rekordem albo poziomem, Q347): — / „+4” / „położony klocek”. Liczba karty punktów to przyrost wyniku bez premii „Pełne podlanie” (ma kartę 6 „+500”), więc suma kart = przyrost wyniku. Podpis bez rachunku pól (Q368).
+  Ruch bez linii: r7.4 — bez karty (0 punktów; było Q347: — / „+4” / „położony klocek”). Liczba karty punktów to przyrost wyniku bez premii „Pełne podlanie” (ma kartę 6 „+480”), więc suma kart = przyrost wyniku. Podpis bez rachunku pól (Q368).
 - Publiczne ID wierszy: nagłówek pochwały, Kolorowej rabaty i Pustej grządki — `element.game.praise` (`component.praise`, `data-variant`); kropelek — `element.game.drops-gain`; Pełnego podlania — `element.game.full-watering`; rekordu — `element.game.new-record`; poziomu — `element.game.level-up`; liczba punktów — `element.game.move-points` (`component.move-points`).
 - Kolejka bez zmian (punkty → kropelki albo Pełne podlanie → rekord → poziom), każda karta 2000 ms, także 4 i 6 (było: święto pełnego podlania 3000 ms, kolejka Pustej grządki od 1500 ms). Ta sama animacja wejścia i zaniku dla każdej treści (bez rozbłysku płatków przy „Rajski ogród!”).
 - Usunięte (Q367): osobny napis „Pełne podlanie!” przy pigułce, złote promienie, poświata, płatki w tle i girlanda na ramie (`component.full-watering` jako warstwy, `interaction.game.full-watering-skip` — nie ma czego pomijać); przy Pustej grządce napis „Pusta grządka! +N” na planszy i płatki przez cały ekran. Zostaje: rozkwit kwiatka wskaźnika (`element.game.combo`) w czasie karty 6 (2000 ms: wzrost 0–600 ms, pąk → kwiat → złoty kwiat 0 / 300 / 600 ms, dwa pulsy poświaty, powrót od 1600 ms; telefony 2×, mac-wide 1,35×; zachodzi na kartę i nagłówek) oraz przy Pustej grządce rozkwit pól planszy, doliczanie wyniku i pauza trójki (R-2.10).
@@ -307,7 +319,7 @@ r7.3: pochwała nie stoi już nad środkiem planszy, tylko jako największy elem
 ### Karta ruchu (`component.move-card`, `element.game.move-card`)
 
 - Krok `points`: pochwała (`element.game.praise`, największa), suma „+N” (`element.game.move-points`, 24 / mac-wide 30 px) i pod nią rozbicie „pola +4 · 3 linie +720 · Kolorowa rabata +500 · Pełne podlanie +500 · Pusta grządka +N” (13 / 15 px; tylko niezerowe części; suma = przyrost wyniku). Krok `drops`: krople i „+2 kropelki” (26 / 32 px, `element.game.drops-gain`) oraz „3 kropelki = Pełne podlanie” (13 / 15 px). Krok `record`: „Nowy rekord!” na złotej pigułce (24 / 28 px, `element.game.new-record`). Krok `level`: „Nowy poziom n · ogród” na zielonej pigułce (`element.game.level-up`).
-- Kiedy: krok punktów przy ruchu z czyszczeniem, a bez czyszczenia tylko, gdy ruch ma rekord albo poziom (suma i „pola +N”, Q347). „Nowy rekord!” raz na grę, w ruchu przekroczenia rekordu trybu sprzed gry; przy rekordzie 0 sprzed gry bez (Q352); w wyzwaniu dnia tylko, gdy podejście liczy się do rekordu dnia (R-3.6). Poziom tylko w grze klasycznej.
+- Kiedy: krok punktów tylko przy ruchu z czyszczeniem (r7.4; było: bez czyszczenia, gdy ruch ma rekord albo poziom, Q347). „Nowy rekord!” raz na grę, w ruchu przekroczenia rekordu trybu sprzed gry; przy rekordzie 0 sprzed gry bez (Q352); w wyzwaniu dnia tylko, gdy podejście liczy się do rekordu dnia (R-3.6). Poziom tylko w grze klasycznej.
 - Czas: każdy krok 2000 ms (wejście 250 ms, zanik w ostatnich 300 ms); zastępowanie bez kolejki (Q340, Q353) zastąpiła kolejka (Q360).
 - mac-wide: gniazdo 216 px w kolumnie trójki pod Podlewaniem; karta do 380 px, wyśrodkowana na osi kolumny, przy górnej krawędzi gniazda. Nie zasłania planszy, wyniku ani trójki.
 - Telefony (`phone`; tymczasowo także `phone-merged` i `landscape`, Q349): warstwa nad ekranem, karta do szerokości treści (kolumna `landscape`: 380 px), wyśrodkowana nad planszą (`landscape`: nad kolumną). Położenie w pionie (Q348):

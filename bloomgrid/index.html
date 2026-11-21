@@ -363,19 +363,14 @@
     /* r6 (Q175): stany z ruchem (line-clear, color-bonus, combo) pokazują stan PO ruchu — plansza po czyszczeniu, punkty ruchu, seria;
        rozkwit jest tylko w katalogu (foundation.motion) i na żywo. */
     if (sc.move) {
-      var res = BGRules.play(state, sc.move.slot, sc.move.row, sc.move.col, BGRules.rng(sc.seed));
+      /* r7.4 (Q394–Q402): punkty ruchu, premie i Pusta grządka z reguł aplikacji (BGRules.play, R-2.1–R-2.4, R-2.10) — bez danych premii w stanie. */
+      var res = BGRules.play(state, sc.move.slot, sc.move.row, sc.move.col, BGRules.rng(sc.seed), { daily: daily });
       moveRes = res;
       state = res.state;
-      /* r6 (Q189, Q203), r7: premia „Pusta grządka” z danych scenariusza (move.emptyBonus) — w sumie punktów ruchu;
-         r7.3: w rozbiciu karty jako „Pusta grządka +N”; punktacji prototyp nie liczy. */
-      if (sc.move.emptyBonus) {
-        res.move.points = Object.assign({}, res.move.points, { total: res.move.points.total + sc.move.emptyBonus });
-        state.score += sc.move.emptyBonus;
-      }
       /* r7.3 (Q356, Q360): stała klatka stanu po ruchu pokazuje jeden krok kolejki komunikatów tego ruchu — sc.step (points, drops,
          full, record, level), domyślnie pierwszy. Kropelki w pigułce i poziom (tło, etykieta) odpowiadają chwili tego kroku:
          przed krokiem kropelek/święta — stan sprzed ruchu, w święcie — 3 kropelki, przed krokiem poziomu — poprzedni poziom. */
-      var ms0 = milestones(state.score, sc.score, false); ms0.empty = sc.move.emptyBonus || 0;
+      var ms0 = milestones(state.score, sc.score, false); ms0.empty = res.move.points.empty || 0;
       var steps0 = BG.stepsFor(res.move, ms0), want = sc.step || (steps0[0] && steps0[0].step);
       var idx = steps0.map(function (x) { return x.step; }).indexOf(want), cur = steps0[idx];
       if (cur) {
@@ -427,9 +422,9 @@
     /* r7.3 (Q366, Q367): bez napisu „Pusta grządka! +N” na planszy — komunikat to karta 4; zostaje rozkwit pól planszy. */
     /* Korekta Q366 (r7.3): bez płatków na polach planszy — efekt Pustej grządki jest tylko w karcie 4. Stała klatka game.empty-garden
        to chwila karty 4 w pauzie trójki (Q241: nowa trójka po 1900 ms) — miejsca trójki są puste (klocki ukryte, układ bez zmian). */
-    if (sc.emptyGarden && !replay && view.card && view.card.step === 'points') tray.pieces.filter(Boolean).forEach(function (pe) { pe.style.visibility = 'hidden'; });
+    if (moveRes && moveRes.move.points.empty && !replay && view.card && view.card.step === 'points') tray.pieces.filter(Boolean).forEach(function (pe) { pe.style.visibility = 'hidden'; });
     /* Ruch odtwarzany 0,7 s po gotowości strony (obrazy wczytane), żeby było widać stan sprzed ruchu. */
-    var startReplay = replay ? function () { setTimeout(function () { game.playMove(sc.move, { emptyGarden: sc.emptyGarden ? sc.move.emptyBonus : 0 }); }, 700); } : null;
+    var startReplay = replay ? function () { setTimeout(function () { game.playMove(sc.move); }, 700); } : null;
     /* Stany game.no-moves-*: krok końca; w user_preview po 1,5 s (albo po stuknięciu) panel końca. */
     if (sc.noMoves) openNoMoves({ score: sc.score, record: Math.max(recordBefore, sc.score), newRecord: sc.score > recordBefore, dailyInfo: 'until-midnight', drops: sc.drops || 0 }, ctx.nav.live);
     if (sc.alert === 'crash') {
